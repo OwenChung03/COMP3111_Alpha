@@ -55,9 +55,9 @@ public class ManagerLoginController implements Initializable {
         }
     }
 
-    private boolean isValidLogin(String username, String password) {
+    static boolean isValidLogin(String username, String password) {
         // Replace this with actual login logic (e.g., checking against a database)
-        return "manager".equals(username) && "password123".equals(password);
+        return "dllm".equals(username) && "onlun9".equals(password);
     }
 
     private void showWelcomeMessage(String username) {
