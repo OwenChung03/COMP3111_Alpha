@@ -43,4 +43,12 @@ public class TeacherLoginController implements Initializable {
     @FXML
     public void register() {
     }
+
+    public static String checkOddOrEven(int number) {
+        if (number % 2 == 0) {
+            return "Even";
+        } else {
+            return "Odd";
+        }
+    }
 }
