@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<VBox alignment="CENTER" maxHeight="-Infinity" style="-fx-background-repeat: stretch;-fx-background-position: center center;" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600" prefWidth="600" spacing="20.0" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" fx:controller="comp3111.examsystem.controller.SelectLoginController">
+   <children>
+      <ImageView fitHeight="200.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
+         <Image url="@../../imgs/hkust_logo.png"/>
+      </ImageView>
+      <Label text="Welcome to HKUST Examination System" style="-fx-font-size: 24px; -fx-alignment: center;" />
+      <Button mnemonicParsing="false"  onAction="#studentLogin" prefHeight="39.0" prefWidth="162.0" text="Student Login" />
+      <Button mnemonicParsing="false"  onAction="#teacherLogin" prefHeight="39.0" prefWidth="162.0" text="Teacher Login" />
+      <Button mnemonicParsing="false"  onAction="#managerLogin" prefHeight="39.0" prefWidth="162.0" text="Manager Login" />
+   </children>
+</VBox>

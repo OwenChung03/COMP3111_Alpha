@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="800.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.examsystem.controller.TeacherGradeStatisticController">
+   <top>
+      <HBox alignment="CENTER" prefHeight="80.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Course" />
+            <ChoiceBox fx:id="courseCombox" prefWidth="150.0">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </ChoiceBox>
+            <Label text="Exam">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Label>
+            <ChoiceBox fx:id="examCombox" prefWidth="150.0">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </ChoiceBox>
+            <Label text="Student">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Label>
+            <ChoiceBox fx:id="studentCombox" prefWidth="150.0">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </ChoiceBox>
+            <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#reset" text="Reset">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#query" text="Filter">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+   </top>
+   <bottom>
+      <HBox alignment="CENTER_RIGHT" prefHeight="71.0" prefWidth="960.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button mnemonicParsing="false" onAction="#refresh" text="Refresh">
+               <HBox.margin>
+                  <Insets right="20.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+   </bottom>
+   <left>
+      <VBox prefHeight="379.0" prefWidth="460.0" BorderPane.alignment="CENTER">
+         <children>
+            <TableView fx:id="gradeTable" prefHeight="312.0" prefWidth="460.0">
+              <columns>
+                  <TableColumn fx:id="studentColumn" prefWidth="75.0" text="Student" />
+                <TableColumn fx:id="courseColumn" prefWidth="75.0" text="Course" />
+                <TableColumn fx:id="examColumn" prefWidth="77.0" text="Exam" />
+                  <TableColumn fx:id="scoreColumn" prefWidth="77.0" text="Score" />
+                  <TableColumn fx:id="fullScoreColumn" prefWidth="77.0" text="Full Score" />
+                  <TableColumn fx:id="timeSpendColumn" prefWidth="77.0" text="Time Spend" />
+              </columns>
+            </TableView>
+            <PieChart fx:id="pieChart" prefHeight="338.0" prefWidth="460.0" />
+         </children>
+      </VBox>
+   </left>
+   <right>
+      <VBox prefHeight="200.0" prefWidth="500.0" BorderPane.alignment="CENTER">
+         <children>
+            <BarChart fx:id="barChart">
+                <xAxis>
+                    <CategoryAxis fx:id="categoryAxisBar" side="BOTTOM" />
+                </xAxis>
+                <yAxis>
+                    <NumberAxis fx:id="numberAxisBar" side="LEFT" />
+                </yAxis>
+            </BarChart>
+            <LineChart fx:id="lineChart">
+              <xAxis>
+                <CategoryAxis fx:id="categoryAxisLine" side="BOTTOM" />
+              </xAxis>
+              <yAxis>
+                <NumberAxis fx:id="numberAxisLine" side="LEFT" />
+              </yAxis>
+            </LineChart>
+         </children>
+      </VBox>
+   </right>
+</BorderPane>

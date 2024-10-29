@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="mainbox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600" prefWidth="1023.0" style="-fx-background-repeat: stretch;-fx-background-position: center center;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.examsystem.controller.ManagerMainController">
+   <children>
+      <MenuBar>
+        <menus>			
+          <Menu mnemonicParsing="false" text="Options">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#exit" text="Exit" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <VBox alignment="CENTER" prefHeight="572.0" prefWidth="1023.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#openStudentManageUI" prefHeight="23.0" prefWidth="268.0" text="Student Management">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Button layoutX="438.0" layoutY="86.0" mnemonicParsing="false" onAction="#openTeacherManageUI" prefHeight="23.0" prefWidth="268.0" text="Teacher Management">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+             <Button layoutX="438.0" layoutY="332.0" mnemonicParsing="false" onAction="#openCourseManageUI" prefHeight="23.0" prefWidth="268.0" text="Course Management">
+                 <font>
+                     <Font size="20.0" />
+                 </font>
+             </Button>
+         </children>
+      </VBox>
+   </children>
+</VBox>
