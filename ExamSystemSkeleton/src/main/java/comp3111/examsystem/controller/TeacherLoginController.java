@@ -2,6 +2,7 @@ package comp3111.examsystem.controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -12,15 +13,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 public class TeacherLoginController implements Initializable {
 
-    public static class Teacher{
+
+
+    public static class Teacher extends Entity{
         private String username;
         private String name;
         private String gender;
@@ -75,11 +75,11 @@ public class TeacherLoginController implements Initializable {
     @FXML
     public TextField nameTxt;
     @FXML
-    public TextField genderTxt;
+    public ComboBox<String> genderCombo; // Ensure this matches the fx:id in FXML
     @FXML
     public TextField ageTxt;
     @FXML
-    public TextField positionTxt;
+    public ComboBox<String> PositionCombo;
     @FXML
     public TextField departmentTxt;
     @FXML
@@ -88,7 +88,10 @@ public class TeacherLoginController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
     }
-
+    public TeacherLoginController() {
+        Database<Teacher> teacherDatabase = new Database<>(Teacher.class); // Initialize the database
+    }
+    // Method to register a new teacher (to be called in your register method)
     @FXML
     public void login(ActionEvent e) {
         String username = usernameTxt.getText();
@@ -116,11 +119,14 @@ public class TeacherLoginController implements Initializable {
     }
 
     private boolean ValidLogin(String username, String password){
-        // Placeholder for actual authentication logic
-        return "manager".equals(username) && "password123".equals(password);
-        //TeacherInfo teacherInfo = registrationController.getTeacherInfo(username);
-        //return teacherInfo != null && password.equals(teacherInfo.getPassword());
+        for (Teacher teacher : TeacherDatabase.getTeachers()) {
+            if (teacher.getUsername().equals(username) && teacher.getPassword().equals(password)) {
+                return true; // Valid login found
+            }
+        }
+        return false; // No matching credentials found
     }
+
 
     private void showWelcomeMessage(String username) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -139,18 +145,6 @@ public class TeacherLoginController implements Initializable {
     }
 
     @FXML
-    public void hegister(ActionEvent e) {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("TeacherRegistrationUI.fxml"));
-        Stage stage = new Stage();
-        stage.setTitle("Teacher Registration");
-        try {
-            stage.setScene(new Scene(fxmlLoader.load()));
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-        stage.show();
-        ((Stage) usernameTxt.getScene().getWindow()).close(); // Close login window
-    }
     public void register(ActionEvent e) {
         try {
             Stage stage = new Stage();
@@ -163,7 +157,46 @@ public class TeacherLoginController implements Initializable {
             e1.printStackTrace();
         }
     }
-    public void close(ActionEvent actionEvent) {
+    @FXML
+    public void close(ActionEvent e) {
+        // Get the current stage (window) and close it
+        Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+        stage.close();
+    }
+    @FXML
+    public void enterinfo(ActionEvent e) {
+        // Retrieve data from input fields
+        String username = usernameTxt.getText();
+        String name = nameTxt.getText();
+        String gender = genderCombo.getValue();
+        int age = Integer.parseInt(ageTxt.getText());
+        String position = PositionCombo.getValue();
+        String department = departmentTxt.getText();
+        String password = passwordTxt.getText();
+        String passwordConfirm = passwordconfirmTxt.getText();
+
+        // Basic validation (you can expand this as needed)
+        if (username.isEmpty() || name.isEmpty() || gender == null || age < 0 || position == null || department.isEmpty() || password.isEmpty() || !password.equals(passwordConfirm)) {
+            // Show an error message (you can use an Alert dialog for this)
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Register Failed");
+            alert.setHeaderText(null);
+            alert.setContentText("Please fill in all fields correctly.");
+            alert.showAndWait();
+            return;
+        }
+
+        // Create a new Teacher object
+        Teacher newTeacher = new Teacher(username, name, gender, age, position, department, password);
+        TeacherDatabase.addTeacher(newTeacher); // Add to the list of teachers
+        // Here you can add the newTeacher to a list or save it to a database, etc.
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Register Successful");
+        alert.setHeaderText(null);
+        alert.setContentText("Teacher registered: " + newTeacher.getName());
+        alert.showAndWait();
+        Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+        stage.close();
     }
 }
 
