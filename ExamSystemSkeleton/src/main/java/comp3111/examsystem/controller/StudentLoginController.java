@@ -14,7 +14,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class StudentLoginController implements Initializable {
@@ -97,4 +96,46 @@ public class StudentLoginController implements Initializable {
         stage.show();
 
     }
+
+    public void close(ActionEvent actionEvent) {
+        Stage stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
+        stage.close();
+    }
+
+    public void enterinfo(ActionEvent actionEvent) {
+
+
+          String username = usernameTxt.getText();
+//        String name = nameTxt.getText();
+//        String gender = genderCombo.getValue();
+//        int age = Integer.parseInt(ageTxt.getText());
+//        String position = PositionCombo.getValue();
+//        String department = departmentTxt.getText();
+//        String password = passwordTxt.getText();
+//        String passwordConfirm = passwordconfirmTxt.getText();
+//
+//        // Basic validation (you can expand this as needed)
+//        if (username.isEmpty() || name.isEmpty() || gender == null || age < 0 || position == null || department.isEmpty() || password.isEmpty() || !password.equals(passwordConfirm)) {
+//            // Show an error message (you can use an Alert dialog for this)
+//            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//            alert.setTitle("Register Failed");
+//            alert.setHeaderText(null);
+//            alert.setContentText("Please fill in all fields correctly.");
+//            alert.showAndWait();
+//            return;
+//        }
+//
+//        // Create a new Teacher object
+//        Student newStudent = new Teacher(username, name, gender, age, department, password);
+//        StudentDatabase.addTeacher(newStudent); // Add to the list of teachers
+//        // Here you can add the newStudent to a list or save it to a database, etc.
+//        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//        alert.setTitle("Register Successful");
+//        alert.setHeaderText(null);
+//        alert.setContentText("Student registered: " + newStudent.getName());
+//        alert.showAndWait();
+//        Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+//        stage.close();
+    }
+
 }
