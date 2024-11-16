@@ -61,7 +61,7 @@ public class StudentLoginController implements Initializable {
     static boolean isValidLogin(String username, String password) {
         // Replace this with actual login logic (e.g., checking against a database)
         boolean username_flag = username.matches(ALLOWED_LOGIN_CHARS);
-        boolean password_flag = username.matches(ALLOWED_LOGIN_CHARS);
+        boolean password_flag = username.matches(ALLOWED_PASSWORD_CHARS);
 
         return username_flag && password_flag;
     }
@@ -86,5 +86,15 @@ public class StudentLoginController implements Initializable {
 
     @FXML
     public void register() {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("StudentRegisterUI.fxml"));
+        Stage stage = new Stage();
+        stage.setTitle("Student Registration");
+        try {
+            stage.setScene(new Scene(fxmlLoader.load()));
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        stage.show();
+
     }
 }
