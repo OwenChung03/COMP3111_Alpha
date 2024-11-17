@@ -17,7 +17,8 @@ public class Database<T> {
     public Database(Class<T> entity) {
         entitySample = entity;
         tableName = entitySample.getSimpleName().toLowerCase();
-        jsonFile = Paths.get("src", "main", "resources", "database", "StudentList" + ".txt").toString();
+        jsonFile = Paths.get("database", tableName + ".txt").toString();
+
         File file = new File(jsonFile);
         if (!file.exists()) {
             try {
