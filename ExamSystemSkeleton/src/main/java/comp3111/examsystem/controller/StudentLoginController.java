@@ -71,7 +71,7 @@ public class StudentLoginController implements Initializable {
             showMsg("Login Successful");
             //showWelcomeMessage(username);
 
-            // Load the Manager Main UI
+            // Load the Student Main UI
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("StudentMainUI.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Hi " + username + ", Welcome to HKUST Examination System");

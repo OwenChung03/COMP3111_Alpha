@@ -60,7 +60,16 @@ public class StudentMainController implements Initializable {
     @FXML
     public void openGradeStatistic(ActionEvent event) {
         // Logic for opening the Grade Statistics screen (e.g., loading another FXML)
-        showMsg("Grade statistics functionality is not yet implemented.");
+        // Load the Student Main UI
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("StudentGradeStat.fxml"));
+        Stage stage1 = new Stage();
+        stage1.setTitle("Grade Statistics");
+        try {
+            stage1.setScene(new Scene(fxmlLoader.load()));
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        stage1.show();
     }
 
     @FXML
