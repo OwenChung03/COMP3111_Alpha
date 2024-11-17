@@ -4,34 +4,72 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollBar?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="533.0" prefWidth="614.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.examsystem.controller.QuizScreenController">
 
     <!-- Quiz title -->
-    <Label fx:id="quizTitleLabel" layoutX="200.0" layoutY="20.0" text="Quiz Title" />
+    <Label fx:id="quizTitleLabel" layoutX="259.0" layoutY="16.0" text="Quiz Title">
+      <font>
+         <Font name="Arial Bold" size="24.0" />
+      </font></Label>
 
     <!-- Total number of questions -->
-    <Label fx:id="totalQuestionsLabel" layoutX="200.0" layoutY="50.0" text="Total Questions: 0" />
+    <Label fx:id="totalQuestionsLabel" layoutX="200.0" layoutY="74.0" text="Total Questions: ">
+      <font>
+         <Font name="Arial" size="13.0" />
+      </font></Label>
 
     <!-- Timer for the quiz -->
-    <Label fx:id="timerLabel" layoutX="400.0" layoutY="50.0" text="Remaining Time: 0" />
+    <Label fx:id="timerLabel" layoutX="396.0" layoutY="74.0" text="Remaining Time: ">
+      <font>
+         <Font name="Arial" size="13.0" />
+      </font></Label>
 
     <!-- List of questions on the left side -->
     <ListView fx:id="questionsListView" layoutX="20.0" layoutY="100.0" prefWidth="150.0" />
 
     <!-- Question label -->
-    <Label fx:id="questionLabel" layoutX="200.0" layoutY="100.0" text="Question" />
+    <Label fx:id="questionLabel" layoutX="354.0" layoutY="107.0" text="Question">
+      <font>
+         <Font name="Arial" size="13.0" />
+      </font></Label>
 
     <!-- Radio buttons for multiple choice answers -->
-    <RadioButton fx:id="optionA" layoutX="200.0" layoutY="300.0" text="Option A" />
-    <RadioButton fx:id="optionB" layoutX="200.0" layoutY="330.0" text="Option B" />
-    <RadioButton fx:id="optionC" layoutX="200.0" layoutY="360.0" text="Option C" />
-    <RadioButton fx:id="optionD" layoutX="200.0" layoutY="390.0" text="Option D" />
+    <RadioButton fx:id="optionA" layoutX="200.0" layoutY="300.0" text="Option A">
+      <font>
+         <Font name="Arial" size="13.0" />
+      </font></RadioButton>
+    <RadioButton fx:id="optionB" layoutX="200.0" layoutY="330.0" text="Option B">
+      <font>
+         <Font name="Arial" size="13.0" />
+      </font></RadioButton>
+    <RadioButton fx:id="optionC" layoutX="200.0" layoutY="360.0" text="Option C">
+      <font>
+         <Font name="Arial" size="13.0" />
+      </font></RadioButton>
+    <RadioButton fx:id="optionD" layoutX="200.0" layoutY="390.0" text="Option D">
+      <font>
+         <Font name="Arial" size="13.0" />
+      </font></RadioButton>
 
     <!-- Navigation buttons -->
-    <Button fx:id="nextButton" layoutX="336.0" layoutY="460.0" onAction="#nextQuestion" text="Next" />
-    <Button fx:id="prevButton" layoutX="236.0" layoutY="460.0" onAction="#prevQuestion" text="Previous" />
-    <Button fx:id="submitButton" layoutX="436.0" layoutY="460.0" onAction="#submitQuiz" text="Submit" />
+    <Button fx:id="nextButton" layoutX="354.0" layoutY="468.0" onAction="#nextQuestion" prefHeight="26.0" prefWidth="64.0" text="Next">
+      <font>
+         <Font name="Arial" size="13.0" />
+      </font></Button>
+    <Button fx:id="prevButton" layoutX="259.0" layoutY="468.0" onAction="#prevQuestion" text="Previous">
+      <font>
+         <Font name="Arial" size="13.0" />
+      </font></Button>
+    <Button fx:id="submitButton" layoutX="447.0" layoutY="468.0" onAction="#submitQuiz" prefHeight="26.0" prefWidth="64.0" text="Submit">
+      <font>
+         <Font name="Arial" size="13.0" />
+      </font></Button>
+   <TextArea fx:id="questionText" editable="false" layoutX="198.0" layoutY="131.0" prefHeight="143.0" prefWidth="396.0" wrapText="true" />
+   <ScrollBar layoutX="20.0" layoutY="500.0" prefHeight="16.0" prefWidth="150.0" />
 
 </AnchorPane>
