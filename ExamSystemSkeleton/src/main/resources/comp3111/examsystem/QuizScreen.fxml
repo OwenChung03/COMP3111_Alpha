@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="comp3111.examsystem.controller.QuizScreenController"
+            prefHeight="400.0" prefWidth="600.0">
+
+    <!-- Quiz title -->
+    <Label fx:id="quizTitleLabel" layoutX="200.0" layoutY="20.0" text="Quiz Title" />
+
+    <!-- Total number of questions -->
+    <Label fx:id="totalQuestionsLabel" layoutX="200.0" layoutY="50.0" text="Total Questions: 0" />
+
+    <!-- Timer for the quiz -->
+    <Label fx:id="timerLabel" layoutX="400.0" layoutY="50.0" text="Remaining Time: 0" />
+
+    <!-- List of questions on the left side -->
+    <ListView fx:id="questionsListView" layoutX="20.0" layoutY="100.0" prefWidth="150.0" />
+
+    <!-- Question label -->
+    <Label fx:id="questionLabel" layoutX="200.0" layoutY="100.0" text="Question" />
+
+    <!-- Radio buttons for multiple choice answers -->
+    <RadioButton fx:id="optionA" layoutX="200.0" layoutY="140.0" text="Option A" />
+    <RadioButton fx:id="optionB" layoutX="200.0" layoutY="170.0" text="Option B" />
+    <RadioButton fx:id="optionC" layoutX="200.0" layoutY="200.0" text="Option C" />
+    <RadioButton fx:id="optionD" layoutX="200.0" layoutY="230.0" text="Option D" />
+
+    <!-- Navigation buttons -->
+    <Button fx:id="nextButton" layoutX="400.0" layoutY="300.0" text="Next" onAction="#nextQuestion" />
+    <Button fx:id="prevButton" layoutX="300.0" layoutY="300.0" text="Previous" onAction="#prevQuestion" />
+    <Button fx:id="submitButton" layoutX="500.0" layoutY="300.0" text="Submit" onAction="#submitQuiz" />
+
+</AnchorPane>

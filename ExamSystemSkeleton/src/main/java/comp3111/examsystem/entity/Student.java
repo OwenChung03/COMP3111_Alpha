@@ -3,15 +3,21 @@ package comp3111.examsystem.entity;
 import comp3111.examsystem.tools.Entity;
 
 public class Student extends Entity {
+    private String username;
     private String name;
     private String gender;
-    private int age;
+    private String age;
     private String department;
     private String password;
 
+    public Student() {
+        super();
+    }
+
     // Constructor
-    public Student(Long id, String name, String gender, int age, String department, String password) {
+    public Student(Long id,String username, String name, String gender, String age, String department, String password) {
         super(id);
+        this.username = username;
         this.name = name;
         this.gender = gender;
         this.age = age;
@@ -20,6 +26,14 @@ public class Student extends Entity {
     }
 
     // Getters and Setters
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getName() {
         return name;
     }
@@ -36,11 +50,11 @@ public class Student extends Entity {
         this.gender = gender;
     }
 
-    public int getAge() {
+    public String getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(String age) {
         this.age = age;
     }
 

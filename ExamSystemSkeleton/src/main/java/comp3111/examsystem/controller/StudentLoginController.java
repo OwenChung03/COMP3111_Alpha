@@ -152,9 +152,8 @@ public class StudentLoginController implements Initializable {
             return;
         }
 
-        int age;
         try {
-            age = Integer.parseInt(ageString);
+            int age = Integer.parseInt(ageString);   // Convert age from String to int
             if (age <= 0) {
                 showMsg("Error: Age must be a positive number.");
                 return;
@@ -171,16 +170,20 @@ public class StudentLoginController implements Initializable {
         }
 
         // Check if the username already exists in the database
-        if (!studentDatabase.queryByField("name", username).isEmpty()) {
+        if (!studentDatabase.queryByField("username", username).isEmpty()) {
             showMsg("Error: Username already exists. Please choose a different one.");
             return;
         }
 
         // Create a new Student object
-        Student newStudent = new Student(null, username, gender, age, department, password);
+        Student newStudent = new Student(null, username,name, gender, ageString, department, password);
+
+        System.out.println(newStudent);
 
         // Add the new student to the database (write to file)
         studentDatabase.add(newStudent);
+
+        System.out.println("Added");
 
         List<Student> allStudents = studentDatabase.getAll();
         System.out.println("All students after registration:");

@@ -18,8 +18,11 @@ public class Database<T> {
         entitySample = entity;
         tableName = entitySample.getSimpleName().toLowerCase();
         jsonFile = Paths.get("database", tableName + ".txt").toString();
+        jsonFile = "/Users/Terry/COMP3111_Alpha/ExamSystemSkeleton/database/student.txt";
 
         File file = new File(jsonFile);
+        System.out.println("File path: " + file.getAbsolutePath());
+
         if (!file.exists()) {
             try {
                 file.createNewFile();
