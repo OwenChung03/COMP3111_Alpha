@@ -1,5 +1,9 @@
 package comp3111.examsystem.controller;
 
+import comp3111.examsystem.entity.Student;
+import comp3111.examsystem.tools.MsgSender;
+import comp3111.examsystem.tools.Database;
+
 import comp3111.examsystem.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,9 +18,11 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class StudentLoginController implements Initializable {
+    private Database<Student> studentDatabase;
     @FXML
     private TextField usernameTxt;
     @FXML
@@ -27,16 +33,23 @@ public class StudentLoginController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         // Initialization code, if needed
+        studentDatabase = new Database<>(Student.class);
+
+        // Additional initialization code if required
+
     }
 
     @FXML
     public void login(ActionEvent e) {
         String username = usernameTxt.getText();
         String password = passwordTxt.getText();
+        List<Student> students = studentDatabase.queryByField("name", username);
 
         // Simple validation for demonstration
-        if (isValidLogin(username, password)) {
+        if (isValidLogin(username, password) && students.get(0).getPassword().equals(password)) {
+            MsgSender.showMsg("Login Successful");
             showWelcomeMessage(username);
 
             // Load the Manager Main UI
@@ -54,6 +67,7 @@ public class StudentLoginController implements Initializable {
             ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();
         } else {
             showErrorMessage("Invalid username or password.");
+            MsgSender.showMsg("Login Failed: Invalid username or password.");
         }
     }
 
