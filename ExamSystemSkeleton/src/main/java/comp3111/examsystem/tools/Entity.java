@@ -1,6 +1,4 @@
-package comp3111.examsystem.controller;
-
-import java.lang.reflect.Member;
+package comp3111.examsystem.tools;
 
 public class Entity implements java.io.Serializable, Comparable<Entity> {
     protected Long id = 0L;
@@ -26,4 +24,3 @@ public class Entity implements java.io.Serializable, Comparable<Entity> {
         return Long.compare(this.id, o.id);
     }
 }
-

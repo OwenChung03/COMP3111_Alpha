@@ -1,6 +1,6 @@
-package comp3111.examsystem.controller;
+package comp3111.examsystem.tools;
 
-import comp3111.examsystem.controller.Entity;
+import comp3111.examsystem.tools.Entity;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +18,7 @@ public class Database<T> {
     public Database(Class<T> entity) {
         entitySample = entity;
         tableName = entitySample.getSimpleName().toLowerCase();
-        jsonFile = Paths.get("src", "main", "resources", "database", tableName + ".txt").toString();
+        jsonFile = Paths.get("C:","Users","jerry","IdeaProjects","COMP3111_Alpha","ExamSystemSkeleton","src","main","resources","database", tableName + ".txt").toString();
         File file = new File(jsonFile);
         if (!file.exists()) {
             try {

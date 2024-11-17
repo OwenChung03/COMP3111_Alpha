@@ -2,7 +2,6 @@ package comp3111.examsystem.controller;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -11,59 +10,18 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import static comp3111.examsystem.tools.MsgSender.showMsg;
+
+import comp3111.examsystem.tools.Database;
+import comp3111.examsystem.Entity.Teacher;
 
 public class TeacherLoginController implements Initializable {
 
-
-
-    public static class Teacher extends Entity{
-        private String username;
-        private String name;
-        private String gender;
-        private int age;
-        private String position;
-        private String department;
-        private String password;
-
-        //constructor
-        public Teacher(String username, String name, String gender, int age, String position, String department, String password) {
-            this.username = username;
-            this.name = name;
-            this.gender = gender;
-            this.age = age;
-            this.position = position;
-            this.department = department;
-            this.password = password;
-        }
-
-        // Getters and setters
-        public String getUsername() {
-            return username;
-        }
-        public String getName() {
-            return name;
-        }
-        public String getGender() {
-            return gender;
-        }
-        public int getAge() {
-            return age;
-        }
-        public String getPosition() {
-            return position;
-        }
-        public String getDepartment() {
-            return department;
-        }
-        public String getPassword() {
-            return password;
-        }
-    }
-
+    private static final String ALLOWED_LOGIN_CHARS = "^[a-zA-Z0-9_]+$";
+    private static final String ALLOWED_PASSWORD_CHARS = "^[a-zA-Z0-9!@#\\$%\\^&\\*\\(\\)_\\+\\-=\\[\\]\\{\\}\\|;:'\",<.>/?]+$";
     @FXML
     private TextField usernameTxt;
     @FXML
@@ -84,22 +42,24 @@ public class TeacherLoginController implements Initializable {
     public TextField departmentTxt;
     @FXML
     public PasswordField passwordconfirmTxt;
+    private Database<Teacher> TeacherDatabase;
 
     public void initialize(URL location, ResourceBundle resources) {
-
-    }
-    public TeacherLoginController() {
-        Database<Teacher> teacherDatabase = new Database<>(Teacher.class); // Initialize the database
+        TeacherDatabase = new Database<>(Teacher.class);
     }
     // Method to register a new teacher (to be called in your register method)
     @FXML
     public void login(ActionEvent e) {
         String username = usernameTxt.getText();
         String password = passwordTxt.getText();
-
+        List<Teacher> teachers = TeacherDatabase.queryByField("username", username);
         // Assume we have an validation method
-        if (ValidLogin(username, password)) {
-            showWelcomeMessage(username);
+        if (teachers.isEmpty()) {
+            showMsg("Error","Login Failed: No user found.");
+            return;
+        }
+        if (ValidLogin(username, password) && teachers.get(0).getPassword().equals(password)) {
+            showMsg("Welcome","Login Successful");
 
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("TeacherMainUI.fxml"));
             Stage stage = new Stage();
@@ -113,18 +73,16 @@ public class TeacherLoginController implements Initializable {
             ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();
         }
         else {
-            showErrorMessage("Invalid username or password.");
+            showMsg("Error","Invalid username or password.");
         }
 
     }
 
-    private boolean ValidLogin(String username, String password){
-        for (Teacher teacher : TeacherDatabase.getTeachers()) {
-            if (teacher.getUsername().equals(username) && teacher.getPassword().equals(password)) {
-                return true; // Valid login found
-            }
-        }
-        return false; // No matching credentials found
+    private boolean ValidLogin(String username, String password) {
+        // Initialize the database
+        boolean username_flag = username.matches(ALLOWED_LOGIN_CHARS);
+        boolean password_flag = password.matches(ALLOWED_PASSWORD_CHARS);
+        return username_flag && password_flag;
     }
 
 
@@ -168,33 +126,59 @@ public class TeacherLoginController implements Initializable {
         // Retrieve data from input fields
         String username = usernameTxt.getText();
         String name = nameTxt.getText();
+        String age = ageTxt.getText();
         String gender = genderCombo.getValue();
-        int age = Integer.parseInt(ageTxt.getText());
         String position = PositionCombo.getValue();
         String department = departmentTxt.getText();
         String password = passwordTxt.getText();
         String passwordConfirm = passwordconfirmTxt.getText();
 
         // Basic validation (you can expand this as needed)
-        if (username.isEmpty() || name.isEmpty() || gender == null || age < 0 || position == null || department.isEmpty() || password.isEmpty() || !password.equals(passwordConfirm)) {
+        if (username.isEmpty() || name.isEmpty() || gender == null || age.isEmpty() || position == null || department.isEmpty() || password.isEmpty() || passwordConfirm.isEmpty()) {
             // Show an error message (you can use an Alert dialog for this)
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Register Failed");
-            alert.setHeaderText(null);
-            alert.setContentText("Please fill in all fields correctly.");
-            alert.showAndWait();
+            showMsg("Error","Error: Please fill in all fields correctly.");
+            return;
+        }
+        try {// Convert age from String to int
+            int agenum = Integer.parseInt(ageTxt.getText());
+            if (agenum <= 0) {
+                showMsg("Error","Error: Age must be a positive number.");
+                return;
+            }
+        } catch (NumberFormatException e1) {
+            showMsg("Error","Error: Please enter a valid age.");
+            return;
+        }
+
+        // Validate that the passwords match
+        if (!password.equals(passwordConfirm)) {
+            showMsg("Error","Error: Passwords do not match.");
+            return;
+        }
+        if (!TeacherDatabase.queryByField("username", username).isEmpty()) {
+            showMsg("Error","Error: Username already exists. Please choose a different one.");
             return;
         }
 
         // Create a new Teacher object
         Teacher newTeacher = new Teacher(username, name, gender, age, position, department, password);
-        TeacherDatabase.addTeacher(newTeacher); // Add to the list of teachers
-        // Here you can add the newTeacher to a list or save it to a database, etc.
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Register Successful");
-        alert.setHeaderText(null);
-        alert.setContentText("Teacher registered: " + newTeacher.getName());
-        alert.showAndWait();
+
+        System.out.println(newTeacher);
+
+        // Add the new student to the database (write to file)
+        TeacherDatabase.add(newTeacher);
+
+        System.out.println("Added");
+
+        List<Teacher> allTeachers = TeacherDatabase.getAll();
+        System.out.println("All teachers after registration:");
+        for (Teacher teacher : allTeachers) {
+            System.out.println(teacher);
+        }
+
+        // Show success message
+        showMsg("Welcome","Teacher registered successfully!");
+
         Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
         stage.close();
     }
