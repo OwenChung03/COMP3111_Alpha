@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="comp3111.examsystem.controller.QuizScreenController"
-            prefHeight="400.0" prefWidth="600.0">
+<AnchorPane prefHeight="533.0" prefWidth="614.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.examsystem.controller.QuizScreenController">
 
     <!-- Quiz title -->
     <Label fx:id="quizTitleLabel" layoutX="200.0" layoutY="20.0" text="Quiz Title" />
@@ -27,14 +24,14 @@
     <Label fx:id="questionLabel" layoutX="200.0" layoutY="100.0" text="Question" />
 
     <!-- Radio buttons for multiple choice answers -->
-    <RadioButton fx:id="optionA" layoutX="200.0" layoutY="140.0" text="Option A" />
-    <RadioButton fx:id="optionB" layoutX="200.0" layoutY="170.0" text="Option B" />
-    <RadioButton fx:id="optionC" layoutX="200.0" layoutY="200.0" text="Option C" />
-    <RadioButton fx:id="optionD" layoutX="200.0" layoutY="230.0" text="Option D" />
+    <RadioButton fx:id="optionA" layoutX="200.0" layoutY="300.0" text="Option A" />
+    <RadioButton fx:id="optionB" layoutX="200.0" layoutY="330.0" text="Option B" />
+    <RadioButton fx:id="optionC" layoutX="200.0" layoutY="360.0" text="Option C" />
+    <RadioButton fx:id="optionD" layoutX="200.0" layoutY="390.0" text="Option D" />
 
     <!-- Navigation buttons -->
-    <Button fx:id="nextButton" layoutX="400.0" layoutY="300.0" text="Next" onAction="#nextQuestion" />
-    <Button fx:id="prevButton" layoutX="300.0" layoutY="300.0" text="Previous" onAction="#prevQuestion" />
-    <Button fx:id="submitButton" layoutX="500.0" layoutY="300.0" text="Submit" onAction="#submitQuiz" />
+    <Button fx:id="nextButton" layoutX="336.0" layoutY="460.0" onAction="#nextQuestion" text="Next" />
+    <Button fx:id="prevButton" layoutX="236.0" layoutY="460.0" onAction="#prevQuestion" text="Previous" />
+    <Button fx:id="submitButton" layoutX="436.0" layoutY="460.0" onAction="#submitQuiz" text="Submit" />
 
 </AnchorPane>

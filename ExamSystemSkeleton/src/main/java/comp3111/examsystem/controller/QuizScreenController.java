@@ -1,14 +1,28 @@
 package comp3111.examsystem.controller;
 
+import comp3111.examsystem.tools.MsgSender;
+import comp3111.examsystem.Main;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
+import javafx.stage.Stage;
+
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
+import java.io.IOException;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class QuizScreenController {
+    @FXML
+    private Button submitButton;
 
     @FXML
     private Label quizTitleLabel;
