@@ -7,21 +7,21 @@ import java.util.List;
 
 public class Exam extends Entity {
     private String ExamName;
-    private String CourseID;
-    private String ExamTime;
-    private String Publish;
-    private List<Question> questions; // List to hold questions for the exam
+    private Long CourseID;
+    private Integer ExamTime;
+    private Boolean Publish;
+    private List<Long> questionKeys; // List to hold questions for the exam
 
         public Exam() {
             super();
         }
 
-        public Exam(String examName, String courseID, String examTime, String publish) {
+        public Exam(String examName, Long courseID, Integer examTime, Boolean publish,List<Long> questionKeys) {
             this.ExamName = examName;
             this.CourseID = courseID;
             this.ExamTime = examTime;
             this.Publish = publish;
-            this.questions = new ArrayList<>(); // Initialize the list
+            this.questionKeys = questionKeys; // Initialize the list
         }
 
         // Getters and setters for other fields
@@ -33,40 +33,35 @@ public class Exam extends Entity {
             this.ExamName = examName;
         }
 
-        public String getCourseID() {
+        public Long getCourseID() {
             return CourseID;
         }
 
-        public void setCourseID(String courseID) {
+        public void setCourseID(Long courseID) {
             this.CourseID = courseID;
         }
 
-        public String getExamTime() {
+        public Integer getExamTime() {
             return ExamTime;
         }
 
-        public void setExamTime(String examTime) {
+        public void setExamTime(Integer examTime) {
             this.ExamTime = examTime;
         }
 
-        public String getPublish() {
+        public Boolean getPublish() {
             return Publish;
         }
 
-        public void setPublish(String publish) {
+        public void setPublish(Boolean publish) {
             this.Publish = publish;
         }
 
-        // Methods to manage questions
-        public void addQuestion(Question question) {
-            questions.add(question);
+        public List<Long> questionKeys() {
+            return questionKeys;
         }
 
-        public List<Question> getQuestions() {
-            return questions;
-        }
-
-        public void setQuestions(List<Question> questions) {
-            this.questions = questions;
+        public void setQuestions(List<Long> questionKeys) {
+            this.questionKeys = questionKeys;
         }
 }

@@ -2,8 +2,6 @@ package comp3111.examsystem.Entity;
 
 import comp3111.examsystem.tools.Entity;
 
-import javax.swing.text.html.Option;
-
 public class Question extends Entity {
     private String QuestionContent;
     private String OptionA;
@@ -45,20 +43,20 @@ public class Question extends Entity {
     public String getType() {return Type;}
     public String getScore() {return Score;}
 
-    public void setQuestionContent() {
+    public void setQuestionContent(String QuestionContent) {
         this.QuestionContent = QuestionContent;
     }
-    public void setOptionA() {
+    public void setOptionA(String OptionA) {
         this.OptionA = OptionA;
     }
-    public void setOptionB() {this.OptionB = OptionB;}
-    public void setOptionC() {
+    public void setOptionB(String OptionB) {this.OptionB = OptionB;}
+    public void setOptionC(String OptionC) {
         this.OptionC = OptionC;
     }
-    public void setOptionD() {
+    public void setOptionD(String OptionD) {
         this.OptionD = OptionD;
     }
-    public void setAnswer() {this.Answer = Answer;}
-    public void setType() {this.Type = Type;}
-    public void setScore() {this.Score = Score;}
+    public void setAnswer(String Answer) {this.Answer = Answer;}
+    public void setType(String Type) {this.Type = Type;}
+    public void setScore(String Score) {this.Score = Score;}
 }

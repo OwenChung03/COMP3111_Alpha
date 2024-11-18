@@ -175,9 +175,116 @@ public class QuestionManageController implements Initializable {
     }
 
     public void deleteQuestion(ActionEvent actionEvent) {
+        Question selectedQuestion = questionTable.getSelectionModel().getSelectedItem();
+
+        // Check if a question is selected
+        if (selectedQuestion == null) {
+            // Show an alert if no question is selected
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("No Selection");
+            alert.setHeaderText(null);
+            alert.setContentText("Please select a question to delete.");
+            alert.showAndWait();
+            return;
+        }
+
+        // Confirm deletion
+        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationAlert.setTitle("Delete Confirmation");
+        confirmationAlert.setHeaderText("Are you sure you want to delete this question?");
+        confirmationAlert.setContentText("Question: " + selectedQuestion.getQuestionContent());
+
+        // Show the confirmation dialog and wait for the user's response
+        confirmationAlert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                // Delete the question from the database
+                QuestionDatabase.delByKey(String.valueOf(selectedQuestion.getId())); // Assuming you have a method to delete by ID
+
+                // Refresh the table to show the updated list of questions
+                refreshQUI(actionEvent);
+            }
+        });
     }
 
-    public void updateQuestion(ActionEvent actionEvent) {
+  public void updateQuestion(ActionEvent actionEvent) {
+        Question selectedQuestion = questionTable.getSelectionModel().getSelectedItem();
+//getSelectedItem
+        // Check if a question is selected
+        if (selectedQuestion == null) {
+            // Show an alert if no question is selected
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("No Selection");
+            alert.setHeaderText(null);
+            alert.setContentText("Please select a question to update.");
+            alert.showAndWait();
+            return;
+        }
+
+        // Retrieve the updated values from the input fields
+        String updatedQuestionContent = newQuestionTextField.getText().trim();
+        String updatedOptionA = optionATextField.getText().trim();
+        String updatedOptionB = optionBTextField.getText().trim();
+        String updatedOptionC = optionCTextField.getText().trim();
+        String updatedOptionD = optionDTextField.getText().trim();
+        String updatedAnswer = AnswerTextField.getText().trim();
+        String updatedType = newTypeComboBox.getValue();
+        String updatedScore = newScoreTextField.getText().trim();
+
+        // Check for changes
+        boolean isChanged = false;
+
+        if (!updatedQuestionContent.equals(selectedQuestion.getQuestionContent())) {
+            selectedQuestion.setQuestionContent(updatedQuestionContent);
+            isChanged = true;
+        }
+
+        if (!updatedOptionA.equals(selectedQuestion.getOptionA())) {
+            selectedQuestion.setOptionA(updatedOptionA);
+            isChanged = true;
+        }
+
+        if (!updatedOptionB.equals(selectedQuestion.getOptionB())) {
+            selectedQuestion.setOptionB(updatedOptionB);
+            isChanged = true;
+        }
+
+        if (!updatedOptionC.equals(selectedQuestion.getOptionC())) {
+            selectedQuestion.setOptionC(updatedOptionC);
+            isChanged = true;
+        }
+
+        if (!updatedOptionD.equals(selectedQuestion.getOptionD())) {
+            selectedQuestion.setOptionD(updatedOptionD);
+            isChanged = true;
+        }
+
+        if (!updatedAnswer.equals(selectedQuestion.getAnswer())) {
+            selectedQuestion.setAnswer(updatedAnswer);
+            isChanged = true;
+        }
+
+        if (!updatedType.equals(selectedQuestion.getType())) {
+            selectedQuestion.setType(updatedType);
+            isChanged = true;
+        }
+
+        if (!updatedScore.equals(selectedQuestion.getScore())) {
+            selectedQuestion.setScore(updatedScore);
+            isChanged = true;
+        }
+
+        // If changes were made, update the database
+        if (isChanged) {
+            QuestionDatabase.update(selectedQuestion); // Assuming you have an update method in your Database class
+            refreshQUI(actionEvent); // Refresh the table to show updated values
+        } else {
+            // Show a reminder message if no changes were made
+            Alert noChangeAlert = new Alert(Alert.AlertType.INFORMATION);
+            noChangeAlert.setTitle("No Changes Made");
+            noChangeAlert.setHeaderText(null);
+            noChangeAlert.setContentText("No changes have been made to the question.");
+            noChangeAlert.showAndWait();
+        }
     }
 
 }
