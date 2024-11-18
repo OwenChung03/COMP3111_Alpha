@@ -1,6 +1,6 @@
 package comp3111.examsystem.controller;
 
-import comp3111.examsystem.Entity.Course;
+import comp3111.examsystem.entity.Course;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

@@ -1,4 +1,4 @@
-package comp3111.examsystem.Entity;
+package comp3111.examsystem.entity;
 
 import comp3111.examsystem.tools.Entity;
 

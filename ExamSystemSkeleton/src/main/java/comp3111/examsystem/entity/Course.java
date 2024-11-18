@@ -1,4 +1,4 @@
-package comp3111.examsystem.Entity;
+package comp3111.examsystem.entity;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
