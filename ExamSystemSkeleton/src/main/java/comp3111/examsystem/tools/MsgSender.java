@@ -4,9 +4,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
 public class MsgSender {
-    static public void showMsg(String msg) {
+    static public void showMsg(String title, String msg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.titleProperty().set("Hint");
+        alert.titleProperty().set(title);
         alert.headerTextProperty().set(msg);
         alert.showAndWait();
     }

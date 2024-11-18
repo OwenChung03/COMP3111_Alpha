@@ -91,4 +91,3 @@ public class Question extends Entity {
         this.score = score;
     }
 }
-

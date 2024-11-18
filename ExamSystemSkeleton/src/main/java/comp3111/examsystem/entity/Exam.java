@@ -2,6 +2,7 @@ package comp3111.examsystem.entity;
 
 import comp3111.examsystem.tools.Entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Exam extends Entity {
@@ -13,9 +14,11 @@ public class Exam extends Entity {
     private List<Long> questionKeys;
 
     // Constructor
+
     public Exam() {
         super();
     }
+
 
     public Exam(String examName, long courseKey, int examTime, boolean publishStatus, List<Long> questionKeys, Long id) {
         super(id); // Call the Entity constructor to set the ID
