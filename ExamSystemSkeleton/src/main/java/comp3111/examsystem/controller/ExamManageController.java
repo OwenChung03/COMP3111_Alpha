@@ -134,7 +134,7 @@ public class ExamManageController implements Initializable {
 
     public void filterExam(ActionEvent actionEvent) {
         String ExamName = examNameTextField.getText().toLowerCase().trim();
-        Long CourseID = CourseIDComboBox.getValue();
+        Long CourseKey = CourseIDComboBox.getValue();
         String Publish = PublishComboBox.getValue();
         // Get all questions from the database
         List<Exam> allExams = ExamDatabase.getAll();
@@ -152,13 +152,13 @@ public class ExamManageController implements Initializable {
             }
 
             // Check if the CourseID matches
-            if (CourseID != null && !exam.getCourseID().equals(CourseID)) {
+            if (CourseKey != null && !(exam.getCourseKey() == CourseKey)) {
                 matches = false;
             }
 
             // Check if the score matches
             boolean publishBoolean = "Yes".equals(Publish); // Convert Publish String to boolean
-            if (!Publish.isEmpty() && exam.getPublish() != publishBoolean) {
+            if (!Publish.isEmpty() && exam.isPublishStatus() != publishBoolean) {
                 matches = false;
             }
 

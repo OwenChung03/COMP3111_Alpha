@@ -45,7 +45,7 @@ public class StudentMainController implements Initializable {
                     exams.stream().map(Exam::getExamName).toList()
             ));
         } catch (Exception e) {
-            showMsg("Error:Failed to load exams.");
+            showMsg("Error","Error:Failed to load exams.");
         }
     }
 
@@ -54,7 +54,7 @@ public class StudentMainController implements Initializable {
         // Get the selected exam name from the ComboBox
         String selectedExamName = examCombox.getValue();
         if (selectedExamName == null) {
-            showMsg("Please select an exam before starting.");
+            showMsg("Error","Please select an exam before starting.");
             return;
         }
 
@@ -79,10 +79,10 @@ public class StudentMainController implements Initializable {
                 stage.show();
             } catch (IOException e) {
                 e.printStackTrace();
-                showMsg("Failed to load quiz screen.");
+                showMsg("Error","Failed to load quiz screen.");
             }
         } else {
-            showMsg("Error: Selected exam not found.");
+            showMsg("Error","Error: Selected exam not found.");
         }
     }
 
