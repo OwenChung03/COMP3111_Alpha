@@ -1,48 +1,52 @@
 package comp3111.examsystem.Entity;
 
-public class Course {
-    private String courseId;
-    private String courseName;
-    private String department;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
-    // Constructor
+public class Course {
+    private final StringProperty courseId;
+    private final StringProperty courseName;
+    private final StringProperty department;
+
     public Course(String courseId, String courseName, String department) {
-        this.courseId = courseId;
-        this.courseName = courseName;
-        this.department = department;
+        this.courseId = new SimpleStringProperty(courseId);
+        this.courseName = new SimpleStringProperty(courseName);
+        this.department = new SimpleStringProperty(department);
     }
 
-    // Getters and Setters
     public String getCourseId() {
-        return courseId;
+        return courseId.get();
     }
 
     public void setCourseId(String courseId) {
-        this.courseId = courseId;
+        this.courseId.set(courseId);
+    }
+
+    public StringProperty courseIdProperty() {
+        return courseId;
     }
 
     public String getCourseName() {
-        return courseName;
+        return courseName.get();
     }
 
     public void setCourseName(String courseName) {
-        this.courseName = courseName;
+        this.courseName.set(courseName);
+    }
+
+    public StringProperty courseNameProperty() {
+        return courseName;
     }
 
     public String getDepartment() {
-        return department;
+        return department.get();
     }
 
     public void setDepartment(String department) {
-        this.department = department;
+        this.department.set(department);
     }
 
-    @Override
-    public String toString() {
-        return "Course{" +
-                "courseId='" + courseId + '\'' +
-                ", courseName='" + courseName + '\'' +
-                ", department='" + department + '\'' +
-                '}';
+    public StringProperty departmentProperty() {
+        return department;
     }
 }

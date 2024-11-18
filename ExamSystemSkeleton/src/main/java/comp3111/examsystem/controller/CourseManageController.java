@@ -5,124 +5,113 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import comp3111.examsystem.tools.Database;
+
 public class CourseManageController {
 
     @FXML
+    private TextField courseIdField, courseNameField, departmentField;
+    @FXML
     private TextField courseIdFilter, courseNameFilter, departmentFilter;
+
     @FXML
     private TableView<Course> courseTable;
     @FXML
-    private TextField newCourseId, newCourseName, newDepartment;
+    private TableColumn<Course, String> courseIdColumn, courseNameColumn, departmentColumn;
 
-    private ObservableList<Course> courseList = FXCollections.observableArrayList();
-    private Database<Course> courseDatabase;
+    private ObservableList<Course> courseData = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        courseDatabase = new Database<>(Course.class);
+        courseIdColumn.setCellValueFactory(cellData -> cellData.getValue().courseIdProperty());
+        courseNameColumn.setCellValueFactory(cellData -> cellData.getValue().courseNameProperty());
+        departmentColumn.setCellValueFactory(cellData -> cellData.getValue().departmentProperty());
 
-        // Set up the table columns
-        TableColumn<Course, String> courseIdColumn = new TableColumn<>("Course ID");
-        courseIdColumn.setCellValueFactory(new PropertyValueFactory<>("courseId"));
-
-        TableColumn<Course, String> courseNameColumn = new TableColumn<>("Course Name");
-        courseNameColumn.setCellValueFactory(new PropertyValueFactory<>("courseName"));
-
-        TableColumn<Course, String> departmentColumn = new TableColumn<>("Department");
-        departmentColumn.setCellValueFactory(new PropertyValueFactory<>("department"));
-
-        courseTable.getColumns().addAll(courseIdColumn, courseNameColumn, departmentColumn);
-        loadCoursesFromDatabase();
-    }
-
-    private void loadCoursesFromDatabase() {
-        courseList.setAll(courseDatabase.getAll());
-        courseTable.setItems(courseList);
+        courseTable.setItems(courseData);
     }
 
     @FXML
-    public void filterCourses() {
-        String courseId = courseIdFilter.getText().toLowerCase();
-        String courseName = courseNameFilter.getText().toLowerCase();
-        String department = departmentFilter.getText().toLowerCase();
-
-        ObservableList<Course> filteredList = FXCollections.observableArrayList();
-
-        for (Course course : courseList) {
-            boolean matches = true;
-            if (!courseId.isEmpty() && !course.getCourseId().toLowerCase().contains(courseId)) {
-                matches = false;
-            }
-            if (!courseName.isEmpty() && !course.getCourseName().toLowerCase().contains(courseName)) {
-                matches = false;
-            }
-            if (!department.isEmpty() && !course.getDepartment().toLowerCase().contains(department)) {
-                matches = false;
-            }
-            if (matches) {
-                filteredList.add(course);
-            }
-        }
-
-        courseTable.setItems(filteredList);
-    }
-
-    @FXML
-    public void resetFilters() {
-        courseIdFilter.clear();
-        courseNameFilter.clear();
-        departmentFilter.clear();
-        courseTable.setItems(courseList);
-    }
-
-    @FXML
-    public void addCourse() {
-        String courseId = newCourseId.getText();
-        String courseName = newCourseName.getText();
-        String department = newDepartment.getText();
+    private void handleAdd() {
+        String courseId = courseIdField.getText();
+        String courseName = courseNameField.getText();
+        String department = departmentField.getText();
 
         if (courseId.isEmpty() || courseName.isEmpty() || department.isEmpty()) {
-            showMsg("Error: All fields are required.");
+            showAlert("Missing Information", "Please complete all fields before adding a course.");
             return;
         }
 
         Course newCourse = new Course(courseId, courseName, department);
-        courseDatabase.add(newCourse);
-        loadCoursesFromDatabase();
+        courseData.add(newCourse);
+        clearForm();
     }
 
     @FXML
-    public void updateCourse() {
+    private void handleUpdate() {
         Course selectedCourse = courseTable.getSelectionModel().getSelectedItem();
         if (selectedCourse != null) {
-            selectedCourse.setCourseId(newCourseId.getText());
-            selectedCourse.setCourseName(newCourseName.getText());
-            selectedCourse.setDepartment(newDepartment.getText());
-            courseDatabase.update(selectedCourse);
-            loadCoursesFromDatabase();
+            selectedCourse.setCourseId(courseIdField.getText());
+            selectedCourse.setCourseName(courseNameField.getText());
+            selectedCourse.setDepartment(departmentField.getText());
+
+            courseTable.refresh();
+            clearForm();
+        } else {
+            showAlert("No course selected", "Please select a course to update.");
         }
     }
 
     @FXML
-    public void deleteCourse() {
+    private void handleDelete() {
         Course selectedCourse = courseTable.getSelectionModel().getSelectedItem();
         if (selectedCourse != null) {
-            courseDatabase.delByFiled("courseId", selectedCourse.getCourseId());
-            loadCoursesFromDatabase();
+            courseData.remove(selectedCourse);
+            clearForm();
+        } else {
+            showAlert("No course selected", "Please select a course to delete.");
         }
     }
 
     @FXML
-    public void refreshCourses() {
-        loadCoursesFromDatabase();
+    private void handleReset() {
+        courseIdFilter.clear();
+        courseNameFilter.clear();
+        departmentFilter.clear();
+        courseTable.setItems(courseData);
     }
 
-    private void showMsg(String message) {
+    @FXML
+    private void handleFilter() {
+        String courseId = courseIdFilter.getText().toLowerCase();
+        String courseName = courseNameFilter.getText().toLowerCase();
+        String department = departmentFilter.getText().toLowerCase();
+
+        ObservableList<Course> filteredData = FXCollections.observableArrayList();
+
+        for (Course course : courseData) {
+            if (course.getCourseId().toLowerCase().contains(courseId) &&
+                    course.getCourseName().toLowerCase().contains(courseName) &&
+                    course.getDepartment().toLowerCase().contains(department)) {
+                filteredData.add(course);
+            }
+        }
+
+        courseTable.setItems(filteredData);
+    }
+
+    @FXML
+    private void handleRefresh() {
+        courseTable.refresh();
+    }
+
+    private void clearForm() {
+        courseIdField.clear();
+        courseNameField.clear();
+        departmentField.clear();
+    }
+
+    private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Information");
-        alert.setHeaderText(null);
+        alert.setTitle(title);
         alert.setContentText(message);
         alert.showAndWait();
     }
