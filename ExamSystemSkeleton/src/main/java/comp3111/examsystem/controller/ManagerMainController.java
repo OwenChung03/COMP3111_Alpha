@@ -1,6 +1,7 @@
 package comp3111.examsystem.controller;
 
 import comp3111.examsystem.Main;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -11,6 +12,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import comp3111.examsystem.controller.StudentManageController;
 
 public class ManagerMainController implements Initializable {
     @FXML
@@ -22,18 +24,18 @@ public class ManagerMainController implements Initializable {
     }
 
     @FXML
-    public void openStudentManageUI() {
-        openNewWindow("StudentManagement.fxml", "Student Management");
+    public void openStudentManageUI(ActionEvent e) {
+        openNewWindow("StudentManageUI.fxml", "Student Management");
     }
 
     @FXML
-    public void openTeacherManageUI() {
-        openNewWindow("TeacherManagement.fxml", "Teacher Management");
+    public void openTeacherManageUI(ActionEvent e) {
+        openNewWindow("TeacherManageUI.fxml", "Teacher Management");
     }
 
     @FXML
-    public void openCourseManageUI() {
-        openNewWindow("CourseManagement.fxml", "Course Management");
+    public void openCourseManageUI(ActionEvent e) {
+        openNewWindow("CourseManageUI.fxml", "Course Management");
     }
 
     @FXML
@@ -43,20 +45,21 @@ public class ManagerMainController implements Initializable {
 
     private void openNewWindow(String fxmlFile, String title) {
         try {
-            // Load the FXML file
-            FXMLLoader loader = new FXMLLoader(Main.class.getResource(fxmlFile));
-            VBox newBox = loader.load();
-
             // Create a new Stage (window)
-            Stage newStage = new Stage();
-            newStage.setTitle(title);
-            newStage.setScene(new Scene(newBox));
-
+            Stage stage = new Stage();
+            // Load the FXML file
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(fxmlFile));
+            // Create a Scene from the loaded FXML
+            Scene scene = new Scene(fxmlLoader.load());
+            // Set the title and scene for the new stage
+            stage.setTitle(title);
+            stage.setScene(scene);
             // Show the new window
-            newStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Optionally show an error dialog
+            stage.show();
+
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            // Optionally, show an error dialog
         }
     }
 }
