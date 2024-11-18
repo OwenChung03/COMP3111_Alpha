@@ -3,6 +3,7 @@ package comp3111.examsystem.entity;
 import comp3111.examsystem.tools.Entity;
 
 public class Question extends Entity {
+
     private String questionContent;
     private String optionA;
     private String optionB;

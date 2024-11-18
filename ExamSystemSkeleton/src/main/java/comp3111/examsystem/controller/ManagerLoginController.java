@@ -18,6 +18,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ManagerLoginController implements Initializable {
+    public static class Teacher{
+
+    }
     @FXML
     private TextField usernameTxt;
     @FXML

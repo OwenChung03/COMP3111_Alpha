@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import static comp3111.examsystem.tools.MsgSender.showMsg;
+
 import comp3111.examsystem.tools.Database;
 
 import comp3111.examsystem.entity.Teacher;
@@ -54,11 +55,12 @@ public class TeacherLoginController implements Initializable {
         String password = passwordTxt.getText();
         List<Teacher> teachers = TeacherDatabase.queryByField("username", username);
         // Assume we have an validation method
-//        if (teachers.isEmpty()) {
-//            showMsg("Error","Login Failed: No user found.");
-//            return;
-//        }
-//        if (ValidLogin(username, password) && teachers.get(0).getPassword().equals(password)) {
+        if (teachers.isEmpty()) {
+            showMsg("Error","Login Failed: No user found.");
+            return;
+        }
+        if (ValidLogin(username, password) && teachers.get(0).getPassword().equals(password)) {
+
         if (true) {
             showMsg("Welcome","Login Successful");
 
@@ -184,3 +186,4 @@ public class TeacherLoginController implements Initializable {
         stage.close();
     }
 }
+
