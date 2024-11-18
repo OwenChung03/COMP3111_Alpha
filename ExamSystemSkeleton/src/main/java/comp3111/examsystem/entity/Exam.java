@@ -1,74 +1,57 @@
 package comp3111.examsystem.entity;
 
-import comp3111.examsystem.tools.Entity;
-
-import java.util.ArrayList;
 import java.util.List;
 
-public class Exam extends Entity {
-    private String ExamName;
-    private String CourseID;
-    private String ExamTime;
-    private String Publish;
-    private List<Question> questions; // List to hold questions for the exam
+public class Exam {
+    private String examName;
+    private long courseKey;
+    private int examTime;
+    private boolean publishStatus;
+    private List<Long> questionKeys;
+    private long examID;
 
-        public Exam() {
-            super();
-        }
+    public Exam(String examName, long courseKey, int examTime, boolean publishStatus, List<Long> questionKeys, long examID) {
+        this.examName = examName;
+        this.courseKey = courseKey;
+        this.examTime = examTime;
+        this.publishStatus = publishStatus;
+        this.questionKeys = questionKeys;
+        this.examID = examID;
+    }
 
-        public Exam(String examName, String courseID, String examTime, String publish) {
-            this.ExamName = examName;
-            this.CourseID = courseID;
-            this.ExamTime = examTime;
-            this.Publish = publish;
-            this.questions = new ArrayList<>(); // Initialize the list
-        }
+    public String getExamName() {
+        return examName;
+    }
 
+    public long getCourseKey() {
+        return courseKey;
+    }
 
+    public int getExamTime() {
+        return examTime;
+    }
 
-    // Getters and setters for other fields
-        public String getExamName() {
-            return ExamName;
-        }
+    public boolean isPublishStatus() {
+        return publishStatus;
+    }
 
-        public void setExamName(String examName) {
-            this.ExamName = examName;
-        }
+    public List<Long> getQuestionKeys() {
+        return questionKeys;
+    }
 
-        public String getCourseID() {
-            return CourseID;
-        }
+    public long getExamID() {
+        return examID;
+    }
 
-        public void setCourseID(String courseID) {
-            this.CourseID = courseID;
-        }
-
-        public String getExamTime() {
-            return ExamTime;
-        }
-
-        public void setExamTime(String examTime) {
-            this.ExamTime = examTime;
-        }
-
-        public String getPublish() {
-            return Publish;
-        }
-
-        public void setPublish(String publish) {
-            this.Publish = publish;
-        }
-
-        // Methods to manage questions
-        public void addQuestion(Question question) {
-            questions.add(question);
-        }
-
-        public List<Question> getQuestions() {
-            return questions;
-        }
-
-        public void setQuestions(List<Question> questions) {
-            this.questions = questions;
-        }
+    @Override
+    public String toString() {
+        return "Exam{" +
+                "examName='" + examName + '\'' +
+                ", courseKey=" + courseKey +
+                ", examTime=" + examTime +
+                ", publishStatus=" + publishStatus +
+                ", questionKeys=" + questionKeys +
+                ", examID=" + examID +
+                '}';
+    }
 }

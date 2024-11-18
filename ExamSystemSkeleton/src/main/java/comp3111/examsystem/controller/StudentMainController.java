@@ -3,6 +3,8 @@ package comp3111.examsystem.controller;
 import comp3111.examsystem.entity.Exam;
 import comp3111.examsystem.tools.MsgSender;
 import comp3111.examsystem.Main;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -35,12 +37,16 @@ public class StudentMainController implements Initializable {
     ComboBox<String> examCombox;
 
     public void initialize(URL location, ResourceBundle resources) {
-        examCombox.getItems().addAll(
-                "COMP3111 Software Engineering | quiz1",
-                "COMP3111 Software Engineering | quiz2",
-                "COMP5111 Software Engineering II | quiz1",
-                "COMP5111 Software Engineering II | quiz2"
-        );
+        ExamLoader examLoader = new ExamLoader();
+        try {
+            exams = examLoader.loadExamsFromFile("path/to/exam.txt");
+            // Populate ComboBox with exam names
+            examCombox.setItems(FXCollections.observableArrayList(
+                    exams.stream().map(Exam::getExamName).toList()
+            ));
+        } catch (IOException e) {
+            showAlert("Error", "Failed to load exams.");
+        }
     }
 
     @FXML
