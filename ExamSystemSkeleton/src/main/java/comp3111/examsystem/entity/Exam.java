@@ -6,67 +6,67 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Exam extends Entity {
-    private String ExamName;
-    private String CourseID;
-    private String ExamTime;
-    private String Publish;
-    private List<Question> questions; // List to hold questions for the exam
+
+    private String examName;
+    private long courseKey;
+    private int examTime;
+    private boolean publishStatus;
+    private List<Long> questionKeys;
+
+    // Constructor
 
     public Exam() {
         super();
     }
 
-    public Exam(String examName, String courseID, String examTime, String publish) {
-        this.ExamName = examName;
-        this.CourseID = courseID;
-        this.ExamTime = examTime;
-        this.Publish = publish;
-        this.questions = new ArrayList<>(); // Initialize the list
+
+    public Exam(String examName, long courseKey, int examTime, boolean publishStatus, List<Long> questionKeys, Long id) {
+        super(id); // Call the Entity constructor to set the ID
+        this.examName = examName;
+        this.courseKey = courseKey;
+        this.examTime = examTime;
+        this.publishStatus = publishStatus;
+        this.questionKeys = questionKeys;
     }
 
-    // Getters and setters for other fields
+    // Getters and setters
     public String getExamName() {
-        return ExamName;
+        return examName;
     }
 
     public void setExamName(String examName) {
-        this.ExamName = examName;
+        this.examName = examName;
     }
 
-    public String getCourseID() {
-        return CourseID;
+    public long getCourseKey() {
+        return courseKey;
     }
 
-    public void setCourseID(String courseID) {
-        this.CourseID = courseID;
+    public void setCourseKey(long courseKey) {
+        this.courseKey = courseKey;
     }
 
-    public String getExamTime() {
-        return ExamTime;
+    public int getExamTime() {
+        return examTime;
     }
 
-    public void setExamTime(String examTime) {
-        this.ExamTime = examTime;
+    public void setExamTime(int examTime) {
+        this.examTime = examTime;
     }
 
-    public String getPublish() {
-        return Publish;
+    public boolean isPublishStatus() {
+        return publishStatus;
     }
 
-    public void setPublish(String publish) {
-        this.Publish = publish;
+    public void setPublishStatus(boolean publishStatus) {
+        this.publishStatus = publishStatus;
     }
 
-    // Methods to manage questions
-    public void addQuestion(Question question) {
-        questions.add(question);
+    public List<Long> getQuestionKeys() {
+        return questionKeys;
     }
 
-    public List<Question> getQuestions() {
-        return questions;
-    }
-
-    public void setQuestions(List<Question> questions) {
-        this.questions = questions;
+    public void setQuestionKeys(List<Long> questionKeys) {
+        this.questionKeys = questionKeys;
     }
 }

@@ -30,11 +30,11 @@
             </columnConstraints>
 
             <Label text="Username:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-            <TextField fx:id="usernameTxt" promptText="Please enter the user ID" GridPane.columnIndex="1"
+            <TextField fx:id="login_usernameTxt" promptText="Please enter the user ID" GridPane.columnIndex="1"
                        GridPane.rowIndex="0"/>
 
             <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-            <PasswordField fx:id="passwordTxt" promptText="Please enter the password" GridPane.columnIndex="1"
+            <PasswordField fx:id="login_passwordTxt" promptText="Please enter the password" GridPane.columnIndex="1"
                            GridPane.rowIndex="1"/>
 
         </GridPane>
