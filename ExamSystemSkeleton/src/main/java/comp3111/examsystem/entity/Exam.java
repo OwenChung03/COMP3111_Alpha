@@ -1,8 +1,7 @@
-package comp3111.examsystem.Entity;
+package comp3111.examsystem.entity;
 
 import comp3111.examsystem.tools.Entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Exam extends Entity {

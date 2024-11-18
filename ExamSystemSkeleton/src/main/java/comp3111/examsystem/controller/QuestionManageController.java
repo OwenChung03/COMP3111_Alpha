@@ -1,24 +1,19 @@
 package comp3111.examsystem.controller;
 
-import comp3111.examsystem.Entity.Teacher;
-import comp3111.examsystem.Main;
 import comp3111.examsystem.tools.Database;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import comp3111.examsystem.Entity.Question;
+import comp3111.examsystem.entity.Question;
 
 public class QuestionManageController implements Initializable {
 
