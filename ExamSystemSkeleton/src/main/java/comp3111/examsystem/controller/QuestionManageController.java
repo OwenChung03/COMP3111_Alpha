@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import comp3111.examsystem.Entity.Question;
@@ -99,11 +100,61 @@ public class QuestionManageController implements Initializable {
     @FXML
 
     public void resetQUI(ActionEvent actionEvent) {
+        // Clear the text field for the question content
+        questionTextField.clear();
+        // Reset the type combo box to its default state (no selection)
+        TypeComboBox.setValue(null);
+        // Clear the text field for the score
+        scoreTextField.clear();
+        // Refresh the question table to show all questions without filters
+        refreshQUI(actionEvent);
     }
 
     public void queryQUI(ActionEvent actionEvent) {
-    }
+        // Get the filter values from the UI components
+        String questionContent = questionTextField.getText().toLowerCase().trim();
+        String selectedType = TypeComboBox.getValue();
+        String scoreText = scoreTextField.getText().trim();
 
+        // Get all questions from the database
+        List<Question> allQuestions = QuestionDatabase.getAll();
+
+        // Create a list to hold the filtered questions
+        List<Question> filteredQuestions = new ArrayList<>();
+
+        // Filter questions based on the inputs
+        for (Question question : allQuestions) {
+            boolean matches = true;
+
+            // Check if question content matches
+            if (!questionContent.isEmpty() && !question.getQuestionContent().toLowerCase().contains(questionContent)) {
+                matches = false;
+            }
+
+            // Check if the type matches
+            if (selectedType != null && !selectedType.isEmpty() && !question.getType().equals(selectedType)) {
+                matches = false;
+            }
+
+            // Check if the score matches
+            if (!scoreText.isEmpty()) {
+                try {
+                    int score = Integer.parseInt(scoreText);
+                    if (question.getScore() == null || Integer.parseInt(question.getScore()) != score) {
+                        matches = false;
+                    }
+                } catch (NumberFormatException e) {
+                    matches = false; // Handle invalid score input
+                }
+            }
+            // If all checks pass, add the question to the filtered list
+            if (matches) {
+                filteredQuestions.add(question);
+            }
+        }
+        // Update the table with the filtered questions
+        questionTable.setItems(FXCollections.observableArrayList(filteredQuestions));
+    }
     public void refreshQUI(ActionEvent actionEvent) {
         List<Question> questions = QuestionDatabase.getAll();
         questionTable.setItems(FXCollections.observableArrayList(questions));
