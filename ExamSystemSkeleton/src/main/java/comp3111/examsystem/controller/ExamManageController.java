@@ -96,22 +96,22 @@ public class ExamManageController implements Initializable {
     }
 
     private void setupQuestionTableColumns() {
-        questionColumn.setCellValueFactory(new PropertyValueFactory<>("QuestionContent")); // Adjust as necessary
-        typeColumn1.setCellValueFactory(new PropertyValueFactory<>("Type"));
-        scoreColumn1.setCellValueFactory(new PropertyValueFactory<>("Score"));
+        questionColumn.setCellValueFactory(new PropertyValueFactory<>("questionContent")); // Adjust as necessary
+        typeColumn1.setCellValueFactory(new PropertyValueFactory<>("type"));
+        scoreColumn1.setCellValueFactory(new PropertyValueFactory<>("score"));
     }
 
     private void setupQuestionInExamTableColumns() {
-        questionInExamColumn.setCellValueFactory(new PropertyValueFactory<>("QuestionContent")); // Adjust as necessary
-        typeColumn1.setCellValueFactory(new PropertyValueFactory<>("Type"));
-        scoreColumn1.setCellValueFactory(new PropertyValueFactory<>("Score"));
+        questionInExamColumn.setCellValueFactory(new PropertyValueFactory<>("questionContent")); // Adjust as necessary
+        typeColumn1.setCellValueFactory(new PropertyValueFactory<>("type"));
+        scoreColumn1.setCellValueFactory(new PropertyValueFactory<>("score"));
     }
 
     private void setupExamTableColumns() {
-        examNameColumn.setCellValueFactory(new PropertyValueFactory<>("ExamName"));
-        courseIDColumn.setCellValueFactory(new PropertyValueFactory<>("CourID"));
-        examTimeColumn.setCellValueFactory(new PropertyValueFactory<>("ExamTime"));
-        PublishColumn.setCellValueFactory(new PropertyValueFactory<>("Publish"));
+        examNameColumn.setCellValueFactory(new PropertyValueFactory<>("examName"));
+        courseIDColumn.setCellValueFactory(new PropertyValueFactory<>("courID"));
+        examTimeColumn.setCellValueFactory(new PropertyValueFactory<>("examTime"));
+        PublishColumn.setCellValueFactory(new PropertyValueFactory<>("publish"));
     }
     //All the QuestionManageUI functions being handled
     public void resetExam(ActionEvent actionEvent) {
@@ -152,13 +152,13 @@ public class ExamManageController implements Initializable {
             }
 
             // Check if the CourseID matches
-            if (CourseID != null && !exam.getCourseID().equals(CourseID)) {
+            if (CourseID != null && !(exam.getCourseKey() == CourseID)) {
                 matches = false;
             }
 
             // Check if the score matches
             boolean publishBoolean = "Yes".equals(Publish); // Convert Publish String to boolean
-            if (!Publish.isEmpty() && exam.getPublish() != publishBoolean) {
+            if (!Publish.isEmpty() && exam.isPublishStatus() != publishBoolean) {
                 matches = false;
             }
 

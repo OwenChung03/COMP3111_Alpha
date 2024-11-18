@@ -52,6 +52,12 @@ public class TeacherLoginController implements Initializable {
     }
     // Method to register a new teacher (to be called in your register method)
     @FXML
+    private boolean ValidLogin(String username, String password) {
+        // Initialize the database
+        boolean username_flag = username.matches(ALLOWED_LOGIN_CHARS);
+        boolean password_flag = password.matches(ALLOWED_PASSWORD_CHARS);
+        return username_flag && password_flag;
+    }
     public void login(ActionEvent e) {
         String username = usernameTxt.getText();
         String password = passwordTxt.getText();
@@ -63,35 +69,27 @@ public class TeacherLoginController implements Initializable {
         }
         if (ValidLogin(username, password) && teachers.get(0).getPassword().equals(password)) {
 
-        if (true) {
-            showMsg("Welcome","Login Successful");
+            if (true) {
+                showMsg("Welcome", "Login Successful");
 
-            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("TeacherMainUI.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Hi " + usernameTxt.getText() + ", Welcome to HKUST Examination System");
-            try {
-                stage.setScene(new Scene(fxmlLoader.load()));
-            } catch (IOException e1) {
-                e1.printStackTrace();
+                FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("TeacherMainUI.fxml"));
+                Stage stage = new Stage();
+                stage.setTitle("Hi " + usernameTxt.getText() + ", Welcome to HKUST Examination System");
+                try {
+                    stage.setScene(new Scene(fxmlLoader.load()));
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                stage.show();
+                ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();
+            } else {
+                showMsg("Error", "Invalid username or password.");
             }
-            stage.show();
-            ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();
         }
-        else {
-            showMsg("Error","Invalid username or password.");
-        }
-
-    }
-
-    private boolean ValidLogin(String username, String password) {
-        // Initialize the database
-        boolean username_flag = username.matches(ALLOWED_LOGIN_CHARS);
-        boolean password_flag = password.matches(ALLOWED_PASSWORD_CHARS);
-        return username_flag && password_flag;
     }
 
 
-    private void showWelcomeMessage(String username) {
+        private void showWelcomeMessage(String username) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Login Successful");
         alert.setHeaderText(null);

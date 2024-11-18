@@ -62,13 +62,13 @@ public class StudentLoginController implements Initializable {
         List<Student> students = studentDatabase.queryByField("username", username);
 
         if (students.isEmpty()) {
-            showMsg("Login Failed: No user found.");
+            showMsg("Error","Login Failed: No user found.");
             return;
         }
 
         // Simple validation for demonstration
         if (isValidLogin(username, password) && students.get(0).getPassword().equals(password)) {
-            showMsg("Login Successful");
+            showMsg("Success","Login Successful");
             //showWelcomeMessage(username);
 
             // Load the Student Main UI
@@ -86,7 +86,7 @@ public class StudentLoginController implements Initializable {
             ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();
         } else {
             //showErrorMessage("Invalid username or password.");
-            showMsg("Login Failed: Invalid username or password.");
+            showMsg("Error","Login Failed: Invalid username or password.");
         }
     }
 
@@ -148,30 +148,30 @@ public class StudentLoginController implements Initializable {
 
         if (username.isEmpty() || name.isEmpty() || gender == null || ageString.isEmpty() || department.isEmpty() ||
                 password.isEmpty() || confirmPassword.isEmpty()) {
-            showMsg("Error: All fields are required.");
+            showMsg("Error","Error: All fields are required.");
             return;
         }
 
         try {
             int age = Integer.parseInt(ageString);   // Convert age from String to int
             if (age <= 0) {
-                showMsg("Error: Age must be a positive number.");
+                showMsg("Error","Error: Age must be a positive number.");
                 return;
             }
         } catch (NumberFormatException e) {
-            showMsg("Error: Please enter a valid age.");
+            showMsg("Error","Error: Please enter a valid age.");
             return;
         }
 
         // Validate that the passwords match
         if (!password.equals(confirmPassword)) {
-            showMsg("Error: Passwords do not match.");
+            showMsg("Error","Error: Passwords do not match.");
             return;
         }
 
         // Check if the username already exists in the database
         if (!studentDatabase.queryByField("username", username).isEmpty()) {
-            showMsg("Error: Username already exists. Please choose a different one.");
+            showMsg("Error","Error: Username already exists. Please choose a different one.");
             return;
         }
 
@@ -192,7 +192,7 @@ public class StudentLoginController implements Initializable {
         }
 
         // Show success message
-        showMsg("Student registered successfully!");
+        showMsg("Success","Student registered successfully!");
 
         // Close the registration window
         Stage stage = (Stage) usernameTxt.getScene().getWindow();

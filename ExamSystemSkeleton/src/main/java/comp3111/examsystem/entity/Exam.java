@@ -70,4 +70,6 @@ public class Exam extends Entity {
     public void setQuestionKeys(List<Long> questionKeys) {
         this.questionKeys = questionKeys;
     }
+
+
 }

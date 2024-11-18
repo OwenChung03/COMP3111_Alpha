@@ -94,12 +94,12 @@ public class ExamScreenController {
                 // Load the first question
                 loadQuestion(currentQuestionIndex);
             } else {
-                showMsg("No questions found for this exam.");
+                showMsg("Error","No questions found for this exam.");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            showMsg("Error: Failed to load quiz questions.");
+            showMsg("Error","Error: Failed to load quiz questions.");
         }
     }
 
@@ -180,7 +180,7 @@ public class ExamScreenController {
             quizTimer.cancel();  // Stop the timer when submitting
         }
 
-        showMsg("xx/xx Correct, the precision is xx%, the score is xx/xx");
+        showMsg("Result","xx/xx Correct, the precision is xx%, the score is xx/xx");
 
         // Close the quiz window after submission
         Stage stage = (Stage) submitButton.getScene().getWindow();
