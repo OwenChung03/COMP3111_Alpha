@@ -20,7 +20,7 @@
             </columnConstraints>
 
             <Label text="Username:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-            <TextField fx:id="usernameTxt" promptText="Please enter your user ID" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="300"/>
+            <TextField fx:id="registernameTxt" promptText="Please enter your user ID" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="300"/>
             <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
             <TextField fx:id="nameTxt" promptText="Please enter your name" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
             <Label text="Gender:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>

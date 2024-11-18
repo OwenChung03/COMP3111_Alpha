@@ -25,6 +25,8 @@ public class TeacherLoginController implements Initializable {
     @FXML
     private TextField usernameTxt;
     @FXML
+    private TextField registernameTxt;
+    @FXML
     private PasswordField passwordTxt;
     @FXML
     private Button loginButton;
@@ -124,7 +126,7 @@ public class TeacherLoginController implements Initializable {
     @FXML
     public void enterinfo(ActionEvent e) {
         // Retrieve data from input fields
-        String username = usernameTxt.getText();
+        String username = registernameTxt.getText();
         String name = nameTxt.getText();
         String age = ageTxt.getText();
         String gender = genderCombo.getValue();
