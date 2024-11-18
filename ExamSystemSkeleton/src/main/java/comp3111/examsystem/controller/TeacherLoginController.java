@@ -14,8 +14,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import static comp3111.examsystem.tools.MsgSender.showMsg;
-
 import comp3111.examsystem.tools.Database;
+
 import comp3111.examsystem.Entity.Teacher;
 
 public class TeacherLoginController implements Initializable {

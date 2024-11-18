@@ -1,13 +1,12 @@
 package comp3111.examsystem.controller;
 
 import comp3111.examsystem.Entity.Student;
-import comp3111.examsystem.tools.Database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-
+import comp3111.examsystem.tools.Database;
 public class StudentManageController {
 
     @FXML
