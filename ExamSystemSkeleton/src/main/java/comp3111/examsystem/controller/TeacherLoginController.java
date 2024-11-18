@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import static comp3111.examsystem.tools.MsgSender.showMsg;
 
 import comp3111.examsystem.tools.Database;
+
 import comp3111.examsystem.entity.Teacher;
 
 public class TeacherLoginController implements Initializable {
@@ -59,6 +60,8 @@ public class TeacherLoginController implements Initializable {
             return;
         }
         if (ValidLogin(username, password) && teachers.get(0).getPassword().equals(password)) {
+
+        if (true) {
             showMsg("Welcome","Login Successful");
 
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("TeacherMainUI.fxml"));
