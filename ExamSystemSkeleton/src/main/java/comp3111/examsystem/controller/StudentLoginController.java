@@ -183,7 +183,7 @@ public class StudentLoginController implements Initializable {
         // Add the new student to the database (write to file)
         studentDatabase.add(newStudent);
 
-        System.out.println("Added");
+
 
         List<Student> allStudents = studentDatabase.getAll();
         System.out.println("All students after registration:");

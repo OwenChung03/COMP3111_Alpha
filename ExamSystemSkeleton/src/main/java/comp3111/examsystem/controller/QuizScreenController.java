@@ -1,6 +1,7 @@
 package comp3111.examsystem.controller;
 
 import comp3111.examsystem.Main;
+import comp3111.examsystem.entity.Question;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +16,8 @@ import java.io.IOException;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static comp3111.examsystem.tools.MsgSender.showMsg;
 
 public class QuizScreenController {
     @FXML
@@ -53,12 +56,16 @@ public class QuizScreenController {
     private int totalQuestions = 4;  // Example with 4 questions
     private Timer quizTimer;
     private int remainingTime = 30;  // Example: 30 seconds for the quiz
-
+    private List<Question> questions;  // List to store the loaded quiz questions
     private List<String> studentAnswers; // To store the selected answers
     //private List<Question> questions;
     // QuestionLoader and ExamLoader instances
 //    private QuestionLoader questionLoader;
 //    private ExamLoader examLoader;
+
+
+
+
 
 
     @FXML
@@ -75,6 +82,23 @@ public class QuizScreenController {
 
         // Start the timer
         startTimer();
+    }
+
+    // Method to load quiz questions from the text file
+    private void loadQuestions() {
+        try {
+            QuizLoader quizLoader = new QuizLoader();
+            questions = quizLoader.loadQuestionsFromFile("/Users/Terry/COMP3111_Alpha/ExamSystemSkeleton/database/question.txt");  // Make sure to provide the correct file path
+            totalQuestionsLabel.setText("Total Questions: " + questions.size());
+
+            // Load the first question
+            if (!questions.isEmpty()) {
+                loadQuestion(currentQuestionIndex);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            showMsg("Error:Failed to load quiz questions.");
+        }
     }
 
     // Set the quiz title and initialize the quiz
@@ -111,13 +135,13 @@ public class QuizScreenController {
 
     // Load the current question based on the index
     private void loadQuestion(int index) {
+        Question currentQuestion = questions.get(index);
         questionLabel.setText("Question " + (index + 1));
-        //questionText.setText(questionsListView.getSelectionModel().getSelectedItem());
-        questionText.setText("What is the answer to this sample question?");
-        optionA.setText("Option A");
-        optionB.setText("Option B");
-        optionC.setText("Option C");
-        optionD.setText("Option D");
+        questionText.setText(currentQuestion.getQuestionContent());
+        optionA.setText(currentQuestion.getOptionA());
+        optionB.setText(currentQuestion.getOptionB());
+        optionC.setText(currentQuestion.getOptionC());
+        optionD.setText(currentQuestion.getOptionD());
 
         // Highlight the current question in the ListView
         questionsListView.getSelectionModel().select(index);
