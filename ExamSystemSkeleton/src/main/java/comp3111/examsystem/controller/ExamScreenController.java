@@ -1,12 +1,9 @@
 package comp3111.examsystem.controller;
 
-import comp3111.examsystem.Main;
 import comp3111.examsystem.entity.Exam;
 import comp3111.examsystem.entity.Question;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.util.List;
@@ -20,7 +17,8 @@ import java.util.TimerTask;
 
 import static comp3111.examsystem.tools.MsgSender.showMsg;
 
-public class QuizScreenController {
+public class ExamScreenController {
+
     @FXML
     private Button submitButton;
 
@@ -31,7 +29,7 @@ public class QuizScreenController {
     private Button prevButton;
 
     @FXML
-    private Label quizTitleLabel;
+    private Label examTitleLabel;
 
     @FXML
     private Label totalQuestionsLabel;
@@ -56,14 +54,11 @@ public class QuizScreenController {
     private int currentQuestionIndex = 0;
     private Timer quizTimer;
     private int remainingTime = 30;  // Example: 30 seconds for the quiz
+    private int totalQuestions;
     private List<Question> questions;  // List to store the loaded quiz questions
     private List<String> studentAnswers; // To store the selected answers
 
     private Exam exam;  // The selected exam object
-
-    @FXML
-    private Label examTitleLabel;
-
 
     @FXML
     public void initialize() {
@@ -74,33 +69,42 @@ public class QuizScreenController {
         optionC.setToggleGroup(answerGroup);
         optionD.setToggleGroup(answerGroup);
 
-//        // Start the timer
-//        startTimer();
+        // The question loading will happen after setting the exam
     }
 
+    // Call this method to set the exam and load the corresponding quiz questions
+    public void setExam(Exam exam) {
+        this.exam = exam;
+        loadExamDetails();
+        loadQuestions();  // Load questions after setting the exam
+    }
 
+    private void loadExamDetails() {
+        // Set the title or other details for the exam on the UI
+        examTitleLabel.setText("Exam: " + exam.getExamName());
+    }
 
     // Method to load quiz questions from the text file
     private void loadQuestions() {
         try {
             QuizLoader quizLoader = new QuizLoader();
-            questions = quizLoader.loadQuestionsFromFile("/Users/Terry/COMP3111_Alpha/ExamSystemSkeleton/database/question.txt");  // Make sure to provide the correct file path
+            questions = quizLoader.loadQuestionsFromFile("/Users/Terry/COMP3111_Alpha/ExamSystemSkeleton/database/question.txt");
+
+            // Set the total number of questions dynamically
             totalQuestionsLabel.setText("Total Questions: " + questions.size());
 
-            // Load the first question
+            // Set totalQuestions variable based on the loaded questions
             if (!questions.isEmpty()) {
-                loadQuestion(currentQuestionIndex);
+                totalQuestions = questions.size();
+                loadQuestion(currentQuestionIndex);  // Load the first question
+            } else {
+                showMsg("No questions found for this quiz.");
             }
+
         } catch (IOException e) {
             e.printStackTrace();
-            showMsg("Error:Failed to load quiz questions.");
+            showMsg("Error: Failed to load quiz questions.");
         }
-    }
-
-    // Set the quiz title and initialize the quiz
-    public void setQuiz(String quizTitle) {
-        quizTitleLabel.setText(quizTitle);
-        totalQuestionsLabel.setText("Total Questions: " + totalQuestions);
     }
 
     // Start the quiz countdown timer
@@ -131,6 +135,10 @@ public class QuizScreenController {
 
     // Load the current question based on the index
     private void loadQuestion(int index) {
+        if (index < 0 || index >= questions.size()) {
+            return;  // Ensure index is within bounds
+        }
+
         Question currentQuestion = questions.get(index);
         questionLabel.setText("Question " + (index + 1));
         questionText.setText(currentQuestion.getQuestionContent());
@@ -146,21 +154,12 @@ public class QuizScreenController {
     }
 
     // Update the visibility of the "Next" and "Previous" buttons
-
     private void updateButtonVisibility() {
         // Hide the "Previous" button if it's the first question
-        if (currentQuestionIndex == 0) {
-            prevButton.setVisible(false);
-        } else {
-            prevButton.setVisible(true);
-        }
+        prevButton.setVisible(currentQuestionIndex > 0);
 
         // Hide the "Next" button if it's the last question
-        if (currentQuestionIndex == totalQuestions - 1) {
-            nextButton.setVisible(false);
-        } else {
-            nextButton.setVisible(true);
-        }
+        nextButton.setVisible(currentQuestionIndex < totalQuestions - 1);
     }
 
     @FXML
@@ -186,12 +185,10 @@ public class QuizScreenController {
         }
 
         showAlert("xx/xx Correct, the precision is xx%, the score is xx/xx");
-//        showConfirm("Notification","Quiz submitted!",);
 
         // Close the quiz window after submission
         Stage stage = (Stage) submitButton.getScene().getWindow();
         stage.close();
-
     }
 
     // Utility method to show alert messages
@@ -200,22 +197,4 @@ public class QuizScreenController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
-    // for accepting exam object
-    @FXML
-    private Label examTitleLabel;
-
-    private Exam exam;
-
-    public void setExam(Exam exam) {
-        this.exam = exam;
-        loadExamDetails();
-    }
-
-    private void loadExamDetails() {
-        // Set the title or other details for the exam on the UI
-        examTitleLabel.setText("Exam: " + exam.getExamName());
-        // You can now use `exam` to load the quiz details, questions, etc.
-    }
-
 }

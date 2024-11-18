@@ -39,7 +39,7 @@ public class StudentMainController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         ExamLoader examLoader = new ExamLoader();
         try {
-            exams = examLoader.loadExamsFromFile("path/to/exam.txt");
+            exams = examLoader.loadExamsFromFile("/Users/Terry/COMP3111_Alpha/ExamSystemSkeleton/database/exam.txt");
             // Populate ComboBox with exam names
             examCombox.setItems(FXCollections.observableArrayList(
                     exams.stream().map(Exam::getExamName).toList()
@@ -67,14 +67,14 @@ public class StudentMainController implements Initializable {
         if (selectedExam != null) {
             // Load the Quiz UI screen
             try {
-                FXMLLoader loader = new FXMLLoader(Main.class.getResource("QuizScreen.fxml"));
+                FXMLLoader loader = new FXMLLoader(Main.class.getResource("ExamScreen.fxml"));
                 Stage stage = new Stage();
                 stage.setTitle("Quiz: " + selectedExamName);
                 stage.setScene(new Scene(loader.load()));
 
                 // Pass the selected exam to the QuizScreenController
-                QuizScreenController quizScreenController = loader.getController();
-                quizScreenController.setExam(selectedExam);  // Pass the `Exam` object
+                ExamScreenController examScreenController = loader.getController();
+                examScreenController.setExam(selectedExam);  // Pass the `Exam` object
 
                 stage.show();
             } catch (IOException e) {
