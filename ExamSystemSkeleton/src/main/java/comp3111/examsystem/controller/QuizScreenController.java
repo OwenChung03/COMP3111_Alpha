@@ -1,6 +1,7 @@
 package comp3111.examsystem.controller;
 
 import comp3111.examsystem.Main;
+import comp3111.examsystem.entity.Exam;
 import comp3111.examsystem.entity.Question;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -53,19 +54,15 @@ public class QuizScreenController {
     private ToggleGroup answerGroup;
 
     private int currentQuestionIndex = 0;
-    private int totalQuestions = 4;  // Example with 4 questions
     private Timer quizTimer;
     private int remainingTime = 30;  // Example: 30 seconds for the quiz
     private List<Question> questions;  // List to store the loaded quiz questions
     private List<String> studentAnswers; // To store the selected answers
-    //private List<Question> questions;
-    // QuestionLoader and ExamLoader instances
-//    private QuestionLoader questionLoader;
-//    private ExamLoader examLoader;
 
+    private Exam exam;  // The selected exam object
 
-
-
+    @FXML
+    private Label examTitleLabel;
 
 
     @FXML
@@ -77,12 +74,11 @@ public class QuizScreenController {
         optionC.setToggleGroup(answerGroup);
         optionD.setToggleGroup(answerGroup);
 
-        // Load the first question
-        loadQuestion(currentQuestionIndex);
-
-        // Start the timer
-        startTimer();
+//        // Start the timer
+//        startTimer();
     }
+
+
 
     // Method to load quiz questions from the text file
     private void loadQuestions() {
@@ -204,4 +200,22 @@ public class QuizScreenController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    // for accepting exam object
+    @FXML
+    private Label examTitleLabel;
+
+    private Exam exam;
+
+    public void setExam(Exam exam) {
+        this.exam = exam;
+        loadExamDetails();
+    }
+
+    private void loadExamDetails() {
+        // Set the title or other details for the exam on the UI
+        examTitleLabel.setText("Exam: " + exam.getExamName());
+        // You can now use `exam` to load the quiz details, questions, etc.
+    }
+
 }

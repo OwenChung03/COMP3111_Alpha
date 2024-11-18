@@ -45,35 +45,47 @@ public class StudentMainController implements Initializable {
                     exams.stream().map(Exam::getExamName).toList()
             ));
         } catch (IOException e) {
-            showAlert("Error", "Failed to load exams.");
+            showMsg("Error:Failed to load exams.");
         }
     }
 
     @FXML
     public void openExamUI(ActionEvent event) {
-        String selectedQuiz = examCombox.getValue();
-        if (selectedQuiz == null) {
+        // Get the selected exam name from the ComboBox
+        String selectedExamName = examCombox.getValue();
+        if (selectedExamName == null) {
             showMsg("Please select an exam before starting.");
             return;
         }
 
-        // Load the Quiz UI screen
-        try {
-            FXMLLoader loader = new FXMLLoader(Main.class.getResource("QuizScreen.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Quiz: " + selectedQuiz);
-            stage.setScene(new Scene(loader.load()));
+        // Find the corresponding Exam object by the selected name
+        Exam selectedExam = exams.stream()
+                .filter(exam -> exam.getExamName().equals(selectedExamName))
+                .findFirst()
+                .orElse(null);
 
-            // Pass the selected quiz to the QuizScreenController
-            QuizScreenController quizScreenController = loader.getController();
-            quizScreenController.setQuiz(selectedQuiz);
+        if (selectedExam != null) {
+            // Load the Quiz UI screen
+            try {
+                FXMLLoader loader = new FXMLLoader(Main.class.getResource("QuizScreen.fxml"));
+                Stage stage = new Stage();
+                stage.setTitle("Quiz: " + selectedExamName);
+                stage.setScene(new Scene(loader.load()));
 
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            showMsg("Failed to load quiz screen.");
+                // Pass the selected exam to the QuizScreenController
+                QuizScreenController quizScreenController = loader.getController();
+                quizScreenController.setExam(selectedExam);  // Pass the `Exam` object
+
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+                showMsg("Failed to load quiz screen.");
+            }
+        } else {
+            showMsg("Error: Selected exam not found.");
         }
     }
+
 
     @FXML
     public void openGradeStatistic(ActionEvent event) {
