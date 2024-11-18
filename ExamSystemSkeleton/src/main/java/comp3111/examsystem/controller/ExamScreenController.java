@@ -75,33 +75,29 @@ public class ExamScreenController {
     // Call this method to set the exam and load the corresponding quiz questions
     public void setExam(Exam exam) {
         this.exam = exam;
-        loadExamDetails();
-        loadQuestions();  // Load questions after setting the exam
+        loadExam();  // Load questions after setting the exam
     }
 
-    private void loadExamDetails() {
-        // Set the title or other details for the exam on the UI
+    
+    // Method to load Exam from the text file
+    private void loadExam() {
         examTitleLabel.setText("Exam: " + exam.getExamName());
-    }
-
-    // Method to load quiz questions from the text file
-    private void loadQuestions() {
         try {
-            QuizLoader quizLoader = new QuizLoader();
-            questions = quizLoader.loadQuestionsFromFile("/Users/Terry/COMP3111_Alpha/ExamSystemSkeleton/database/question.txt");
+            ExamLoader examLoader = new ExamLoader();
+            List<Question> loadedQuestions = examLoader.loadQuestionsForExam(exam);
 
-            // Set the total number of questions dynamically
-            totalQuestionsLabel.setText("Total Questions: " + questions.size());
-
-            // Set totalQuestions variable based on the loaded questions
-            if (!questions.isEmpty()) {
+            if (loadedQuestions != null && !loadedQuestions.isEmpty()) {
+                questions = loadedQuestions;
                 totalQuestions = questions.size();
-                loadQuestion(currentQuestionIndex);  // Load the first question
+                totalQuestionsLabel.setText("Total Questions: " + totalQuestions);
+
+                // Load the first question
+                loadQuestion(currentQuestionIndex);
             } else {
-                showMsg("No questions found for this quiz.");
+                showMsg("No questions found for this exam.");
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             showMsg("Error: Failed to load quiz questions.");
         }
@@ -184,17 +180,11 @@ public class ExamScreenController {
             quizTimer.cancel();  // Stop the timer when submitting
         }
 
-        showAlert("xx/xx Correct, the precision is xx%, the score is xx/xx");
+        showMsg("xx/xx Correct, the precision is xx%, the score is xx/xx");
 
         // Close the quiz window after submission
         Stage stage = (Stage) submitButton.getScene().getWindow();
         stage.close();
     }
 
-    // Utility method to show alert messages
-    private void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
 }

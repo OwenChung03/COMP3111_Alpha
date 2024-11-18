@@ -39,12 +39,12 @@ public class StudentMainController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         ExamLoader examLoader = new ExamLoader();
         try {
-            exams = examLoader.loadExamsFromFile("/Users/Terry/COMP3111_Alpha/ExamSystemSkeleton/database/exam.txt");
+            exams = examLoader.loadExamsFromDatabase();
             // Populate ComboBox with exam names
             examCombox.setItems(FXCollections.observableArrayList(
                     exams.stream().map(Exam::getExamName).toList()
             ));
-        } catch (IOException e) {
+        } catch (Exception e) {
             showMsg("Error:Failed to load exams.");
         }
     }
