@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static comp3111.examsystem.tools.MsgSender.showMsg;
+
 public class QuestionManageController implements Initializable {
 
     @FXML
@@ -55,7 +57,12 @@ public class QuestionManageController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         QuestionDatabase = new Database<>(Question.class);
         setupTableColumns();
-        refreshQUI(null); // Load initial data
+        refreshQUI(null);
+        questionTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                populateFields(newValue);
+            }
+        });// Load initial data
     }
 
     private void setupTableColumns() {
@@ -134,17 +141,81 @@ public class QuestionManageController implements Initializable {
     }
 
     public void addQuestion(ActionEvent actionEvent) {
-        String questionContent = newQuestionTextField.getText();
-        String optionA = optionATextField.getText();
-        String optionB = optionBTextField.getText();
-        String optionC = optionCTextField.getText();
-        String optionD = optionDTextField.getText();
-        String answer = AnswerTextField.getText();
+        String questionContent = newQuestionTextField.getText().trim();
+        String optionA = optionATextField.getText().trim();
+        String optionB = optionBTextField.getText().trim();
+        String optionC = optionCTextField.getText().trim();
+        String optionD = optionDTextField.getText().trim();
+        String answer = AnswerTextField.getText().trim();
         String type = newTypeComboBox.getValue();
-        String score = newScoreTextField.getText();
+        String score = newScoreTextField.getText().trim();
+
+        // Validate inputs
+        if (questionContent.isEmpty() || optionA.isEmpty() || optionB.isEmpty() ||
+                optionC.isEmpty() || optionD.isEmpty() || score.isEmpty()) {
+            showMsg("Error","Error: All fields must be filled.");
+            return;// Early exit on validation failure
+        }
+
+        if ("Single".equals(type)) {
+            // Validate single choice answer
+            if (!isValidSingleAnswer(answer)) {
+                showMsg("Error","Error: For single type, answer must be one of: A, B, C, D.");
+                return; // Early exit on validation failure
+            }
+        } else if ("Multiple".equals(type)) {
+            // Validate multiple choice answer
+            if (!isValidMultipleAnswer(answer)) {
+                showMsg("Error","Error: For multiple type, answer must be a combination of letters A, B, C, D.");
+                return; // Early exit on validation failure
+            }
+        } else {
+            showMsg("Error","Error: Invalid question type selected.");
+            return; // Early exit on validation failure// Early exit on validation failure
+        }
+
+        // Create a new Question object and add it to the database
         Question newQuestion = new Question(questionContent, optionA, optionB, optionC, optionD, answer, type, score);
         QuestionDatabase.add(newQuestion); // Assuming add method in Database class
         refreshQUI(null);
+    }
+
+    // Helper method to validate single answer
+    private boolean isValidSingleAnswer(String answer) {
+        return "A".equals(answer) || "B".equals(answer) || "C".equals(answer) || "D".equals(answer);
+    }
+
+    // Helper method to validate multiple answers
+    private boolean isValidMultipleAnswer(String answer) {
+        // Check if the answer contains only valid characters and has no duplicates
+        // Check that the answer is not longer than 4 characters
+        if (answer.length() > 4) {
+            return false;
+        }
+
+        // Check for valid characters and ensure they are in order
+        String validOptions = "ABCD";
+        for (char c : answer.toCharArray()) {
+            if (validOptions.indexOf(c) == -1) {
+                return false; // Invalid character found
+            }
+        }
+        // Check for duplicates
+        for (int i = 0; i < answer.length(); i++) {
+            for (int j = i + 1; j < answer.length(); j++) {
+                if (answer.charAt(i) == answer.charAt(j)) {
+                    return false; // Duplicate character found
+                }
+            }
+        }
+        // Ensure the answer is in the order of appearance in "ABCD"
+        for (int i = 0; i < answer.length() - 1; i++) {
+            if (answer.charAt(i) > answer.charAt(i + 1)) {
+                return false; // Not in order
+            }
+        }
+
+        return true; // All checks passed
     }
 
     public void deleteQuestion(ActionEvent actionEvent) {
@@ -179,8 +250,61 @@ public class QuestionManageController implements Initializable {
         });
     }
 
-  public void updateQuestion(ActionEvent actionEvent) {
-
+    private void populateFields(Question question) {
+        newQuestionTextField.setText(question.getQuestionContent());
+        optionATextField.setText(question.getOptionA());
+        optionBTextField.setText(question.getOptionB());
+        optionCTextField.setText(question.getOptionC());
+        optionDTextField.setText(question.getOptionD());
+        AnswerTextField.setText(question.getAnswer());
+        newTypeComboBox.setValue(question.getType());
+        newScoreTextField.setText(String.valueOf(question.getScore()));
     }
+  public void updateQuestion(ActionEvent actionEvent) {
+      Question selectedQuestion = questionTable.getSelectionModel().getSelectedItem();
 
+      if (newQuestionTextField.getText().trim().isEmpty() || optionATextField.getText().trim().isEmpty() || optionBTextField.getText().trim().isEmpty() ||
+              optionCTextField.getText().trim().isEmpty() || optionDTextField.getText().trim().isEmpty() || newScoreTextField.getText().trim().isEmpty()) {
+          showMsg("Error","Error: All fields must be filled.");
+          return;// Early exit on validation failure
+      }
+
+      if ("Single".equals(newTypeComboBox.getValue())) {
+          // Validate single choice answer
+          if (!isValidSingleAnswer(AnswerTextField.getText().trim())) {
+              showMsg("Error","Error: For single type, answer must be one of: A, B, C, D.");
+              return; // Early exit on validation failure
+          }
+      } else if ("Multiple".equals(newTypeComboBox.getValue())) {
+          // Validate multiple choice answer
+          if (!isValidMultipleAnswer(AnswerTextField.getText().trim())) {
+              showMsg("Error","Error: For multiple type, answer must be a combination of letters A, B, C, D.");
+              return; // Early exit on validation failure
+          }
+      } else {
+          showMsg("Error","Error: Invalid question type selected.");
+          return; // Early exit on validation failure// Early exit on validation failure
+      }
+
+      if (selectedQuestion != null) {
+          // Update the question's fields with values from the text fields
+          selectedQuestion.setQuestionContent(newQuestionTextField.getText().trim());
+          selectedQuestion.setOptionA(optionATextField.getText().trim());
+          selectedQuestion.setOptionB(optionBTextField.getText().trim());
+          selectedQuestion.setOptionC(optionCTextField.getText().trim());
+          selectedQuestion.setOptionD(optionDTextField.getText().trim());
+          selectedQuestion.setAnswer(AnswerTextField.getText().trim());
+          selectedQuestion.setType(newTypeComboBox.getValue());
+          selectedQuestion.setScore(newScoreTextField.getText().trim());
+
+          // Refresh the TableView to show updated data
+          questionTable.refresh();
+
+          // Optionally, show a confirmation message
+          showMsg("Notice","Question updated successfully!");
+      } else {
+          showMsg("Notice","No question selected for update.");
+      }
+  }
 }
+

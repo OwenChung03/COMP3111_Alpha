@@ -1,3 +1,3 @@
 questionContent:How is the weather today,optionA:Sunny,optionB:Windy,optionC:Cloudy,optionD:Raining,answer:A,type:Single,score:10,id:1731942468887,
-questionContent:How is the weather tomorrow,optionA:Sunny,optionB:Windy,optionC:Cloudy,optionD:Raining,answer:B,type:Multiple,score:20,id:1731942486295,
+questionContent:How is the weather tomorrow,optionA:Sunny,optionB:Windy,optionC:Cloudy,optionD:Raining,answer:BD,type:Multiple,score:20,id:1731942486295,
 questionContent:Is COMP3111 hard,optionA:no,optionB:yes,optionC:idk,optionD:well,answer:C,type:Single,score:50,id:1731943633454,
