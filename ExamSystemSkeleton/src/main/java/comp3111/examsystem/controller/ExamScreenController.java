@@ -1,9 +1,6 @@
 package comp3111.examsystem.controller;
 
-import comp3111.examsystem.entity.Exam;
-import comp3111.examsystem.entity.Question;
-import comp3111.examsystem.entity.Student;
-import comp3111.examsystem.entity.StudentExamGrade;
+import comp3111.examsystem.entity.*;
 import comp3111.examsystem.tools.Database;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -17,6 +14,9 @@ import javafx.event.ActionEvent;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 
 import static comp3111.examsystem.tools.MsgSender.showMsg;
 
@@ -59,6 +59,8 @@ public class ExamScreenController {
 
     private int currentQuestionIndex = 0;
     private Timer examTimer;
+    private LocalDateTime examStartTime;
+    private LocalDateTime examEndTime;
     private int remainingTime = 30;  // Example: 30 seconds for the quiz
     private int totalQuestions;
     private List<Question> questions;  // List to store the loaded quiz questions
@@ -113,6 +115,8 @@ public class ExamScreenController {
 
     // Start the quiz countdown timer
     private void startTimer() {
+        examStartTime = LocalDateTime.now();
+
         examTimer = new Timer();
         examTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -272,14 +276,23 @@ public class ExamScreenController {
 
     @FXML
     public void submitQuiz(ActionEvent event) {
-        if (examTimer != null) {
-            examTimer.cancel();
+        try {
+            if (examTimer != null) {
+                examTimer.cancel();
+            }
+            // Rest of the submit logic...
+        } catch (Exception e) {
+            e.printStackTrace();
+            showMsg("An error occurred while submitting the quiz.");
         }
+
 
         saveCurrentAnswer();
 
         // Calculate the score
-        int totalScore = calculateScore();
+        int[] result = calculateScore();
+        int totalScore = result[0];
+        int fullScore = result[1];
 
         // Get the logged-in student from the StudentLoginController
         Student loggedInStudent = StudentLoginController.getLoggedInStudent();
@@ -288,14 +301,19 @@ public class ExamScreenController {
             // Create a StudentExamGrade object for saving
 
             String studentIdStr = String.valueOf(loggedInStudent.getId());  // Convert student ID to String
-            String examIdStr = String.valueOf(exam.getId());                // Convert exam ID to String
-            String totalScoreStr = String.valueOf(totalScore);              // Convert total score to String
+            String courseIdStr = String.valueOf(exam.getCourseKey());
+            String examNameStr = String.valueOf(exam.getExamName());                // Convert exam ID to String
+            String totalScoreStr = String.valueOf(totalScore);           // Convert total score to String
+            String fullScoreStr = String.valueOf(fullScore);
+            String timeSpentStr = String.format("%d min %d sec", 5, 5);
 
-            StudentExamGrade studentExamGrade = new StudentExamGrade(studentIdStr, examIdStr, totalScoreStr);
+            StudentGradeData studentGradeData = new StudentGradeData(studentIdStr,courseIdStr, examNameStr,
+                    totalScoreStr,fullScoreStr,timeSpentStr);
 
             try {
-                Database<StudentExamGrade> database = new Database<>(StudentExamGrade.class);
-                database.add(studentExamGrade);  // Save the grade to the database
+                Database<StudentGradeData> database = new Database<>(StudentGradeData.class);
+                database.add(studentGradeData);  // Save the grade to the database
+                System.out.println("Grade saved successfully");
             } catch (Exception e) {
                 e.printStackTrace();
                 showMsg("Error: Could not save grade to the database.");
@@ -309,7 +327,7 @@ public class ExamScreenController {
         stage.close();
     }
 
-    private int calculateScore() {
+    private int[] calculateScore() {
         int correctAnswerCount = 0;
         int totalScore = 0;  // The student's total score
         int fullScore = 0;    // The total possible score (full mark)
@@ -349,7 +367,7 @@ public class ExamScreenController {
 
         showMsg(message);
 
-        return totalScore;  // Return the student's total score
+        return new int[] { totalScore, fullScore };  // Return an integer array with total score and full score
     }
 
 }

@@ -1,5 +1,6 @@
 package comp3111.examsystem.controller;
 
+import comp3111.examsystem.entity.StudentGradeData;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -15,128 +16,149 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class StudentGradeStatController implements Initializable {
-    public static class GradeExampleClass {
-
-        private String courseNum;
-        private String examName;
-        private String score;
-        private String fullScore;
-        private String timeSpend;
-
-        // Constructor
-        public GradeExampleClass(String courseNum, String examName, String score, String fullScore, String timeSpend) {
-            this.courseNum = courseNum;
-            this.examName = examName;
-            this.score = score;
-            this.fullScore = fullScore;
-            this.timeSpend = timeSpend;
-        }
-
-        // Getters
-
-        public String getCourseNum() { return courseNum; }
-        public String getExamName() { return examName; }
-        public String getScore() { return score; }
-        public String getFullScore() { return fullScore; }
-        public String getTimeSpend() { return timeSpend; }
-    }
 
     @FXML
     private ChoiceBox<String> courseCombox;
-    @FXML
-    private TableView<GradeExampleClass> gradeTable;
-    @FXML
-    private TableColumn<GradeExampleClass, String> courseColumn;
-    @FXML
-    private TableColumn<GradeExampleClass, String> examColumn;
-    @FXML
-    private TableColumn<GradeExampleClass, String> scoreColumn;
-    @FXML
-    private TableColumn<GradeExampleClass, String> fullScoreColumn;
-    @FXML
-    private TableColumn<GradeExampleClass, String> timeSpendColumn;
-    @FXML
-    BarChart<String, Number> barChart;
-    @FXML
-    CategoryAxis categoryAxisBar;
-    @FXML
-    NumberAxis numberAxisBar;
 
+    @FXML
+    private TableView<StudentGradeData> gradeTable;
 
-    private final ObservableList<GradeExampleClass> gradeList = FXCollections.observableArrayList();
-    private List<String> courses = List.of("COMP3111", "COMP3112", "COMP3113"); // Example courses
-    private List<String> exams = List.of("Midterm", "Final", "Quiz 1"); // Example exams
-    private List<String> students = List.of("Alice", "Bob", "Charlie"); // Example students
+    @FXML
+    private TableColumn<StudentGradeData, String> courseColumn;
+
+    @FXML
+    private TableColumn<StudentGradeData, String> examColumn;
+
+    @FXML
+    private TableColumn<StudentGradeData, Integer> scoreColumn;
+
+    @FXML
+    private TableColumn<StudentGradeData, Integer> fullScoreColumn;
+
+    @FXML
+    private TableColumn<StudentGradeData, String> timeSpentColumn;
+
+    @FXML
+    private BarChart<String, Number> barChart;
+
+    @FXML
+    private CategoryAxis categoryAxisBar;
+
+    @FXML
+    private NumberAxis numberAxisBar;
+
+    // Observable list to hold student grade data
+    private final ObservableList<StudentGradeData> gradeList = FXCollections.observableArrayList();
+
+    // Example course data for demonstration
+    private final List<String> courses = List.of("COMP3111", "COMP3112", "COMP3113");
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Set up the choice boxes
+        // Initialize choice box with courses
         courseCombox.setItems(FXCollections.observableArrayList(courses));
 
-
         // Set up table columns
-        courseColumn.setCellValueFactory(new PropertyValueFactory<>("courseNum"));
+        courseColumn.setCellValueFactory(new PropertyValueFactory<>("courseId"));
         examColumn.setCellValueFactory(new PropertyValueFactory<>("examName"));
-        scoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
+        scoreColumn.setCellValueFactory(new PropertyValueFactory<>("totalScore"));
         fullScoreColumn.setCellValueFactory(new PropertyValueFactory<>("fullScore"));
-        timeSpendColumn.setCellValueFactory(new PropertyValueFactory<>("timeSpend"));
+        timeSpentColumn.setCellValueFactory(new PropertyValueFactory<>("timeSpent"));
 
-        // Load initial data
+        // Load initial data into the table and chart
         loadGradeData();
         loadChart();
     }
 
+    // Load student grade data (this would typically come from a database)
     private void loadGradeData() {
-        // Example data - in a real application, this would come from a database or an API
-        gradeList.clear();
-        gradeList.add(new GradeExampleClass( "COMP3111", "Midterm", "85", "100", "50"));
-        gradeList.add(new GradeExampleClass( "COMP3111", "Final", "90", "100", "60"));
-        gradeList.add(new GradeExampleClass( "COMP3112", "Quiz 1", "75", "80", "30"));
+        gradeList.clear();  // Clear current data
 
-        gradeTable.setItems(gradeList);
+        // Example data (in a real application, this would come from a database or API)
+        gradeList.add(new StudentGradeData("1", "COMP3111", "Midterm", "85", "100", "30 minutes 50 seconds"));
+        gradeList.add(new StudentGradeData("1", "COMP3111", "Final", "90", "100", "40 minutes 20 seconds"));
+        gradeList.add(new StudentGradeData("1", "COMP3112", "Quiz 1", "75", "80", "25 minutes 30 seconds"));
+        gradeList.add(new StudentGradeData("2", "COMP3113", "Quiz 1", "70", "80", "20 minutes 10 seconds"));
+
+        gradeTable.setItems(gradeList);  // Populate the table with data
     }
 
+    // Refresh the table and chart when the user performs an action
     @FXML
     public void refresh() {
-        loadGradeData(); // Reload data on refresh
-        loadChart(); // Reload charts on refresh
+        loadGradeData();  // Reload data
+        loadChart();      // Reload chart data
     }
 
+    // Load bar chart data based on the average scores per course
     private void loadChart() {
-        // Clear existing data
-        barChart.getData().clear();
+        barChart.getData().clear();  // Clear existing chart data
 
-        // Example Bar Chart Data
+        // Calculate average scores per course
+        Map<String, Double> averageScores = calculateAverageScoresPerCourse();
+
+        // Create new chart series
         XYChart.Series<String, Number> seriesBar = new XYChart.Series<>();
         seriesBar.setName("Average Scores");
-        for (String course : courses) {
-            seriesBar.getData().add(new XYChart.Data<>(course, Math.random() * 100)); // Replace with actual average scores
-        }
-        barChart.getData().add(seriesBar);
 
+        // Populate the series with the average scores
+        for (Map.Entry<String, Double> entry : averageScores.entrySet()) {
+            seriesBar.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+        }
+
+        // Add the series to the bar chart
+        barChart.getData().add(seriesBar);
     }
 
+    // Calculate the average score for each course
+    private Map<String, Double> calculateAverageScoresPerCourse() {
+        Map<String, Double> averageScores = new HashMap<>();
+        Map<String, Integer> courseTotalScores = new HashMap<>();
+        Map<String, Integer> courseFullScores = new HashMap<>();
+
+        // Sum the total and full scores for each course
+        for (StudentGradeData grade : gradeList) {
+            String courseId = grade.getCourseId();
+            int totalScore = Integer.parseInt(grade.getTotalScore());
+            int fullScore = Integer.parseInt(grade.getFullScore());
+
+            courseTotalScores.put(courseId, courseTotalScores.getOrDefault(courseId, 0) + totalScore);
+            courseFullScores.put(courseId, courseFullScores.getOrDefault(courseId, 0) + fullScore);
+        }
+
+        // Calculate average score as a percentage for each course
+        for (String courseId : courseTotalScores.keySet()) {
+            double average = (double) courseTotalScores.get(courseId) / courseFullScores.get(courseId) * 100;
+            averageScores.put(courseId, average);
+        }
+
+        return averageScores;
+    }
+
+    // Reset filters and reload data
     @FXML
     public void reset() {
-        courseCombox.setValue(null);
-        refresh(); // Refresh data to show all
+        courseCombox.setValue(null);  // Clear the course filter
+        refresh();  // Reload data without filters
     }
 
+    // Filter the table and chart based on the selected course
     @FXML
     public void query() {
-        // Implement filtering based on selected values
-        String selectedCourse = courseCombox.getValue();
+        String selectedCourse = courseCombox.getValue();  // Get selected course
 
+        // Filter the grade list based on the selected course
+        ObservableList<StudentGradeData> filteredList = gradeList.stream()
+                .filter(grade -> selectedCourse == null || grade.getCourseId().equals(selectedCourse))
+                .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
-        ObservableList<GradeExampleClass> filteredList = FXCollections.observableArrayList();
-        for (GradeExampleClass grade : gradeList) {
-            if ((selectedCourse == null || grade.getCourseNum().equals(selectedCourse))){
-                filteredList.add(grade);
-            }
-        }
+        // Update the table with the filtered data
         gradeTable.setItems(filteredList);
-        loadChart(); // Update charts based on filters
+
+        // Reload the chart to reflect the filtered data
+        loadChart();
     }
 }
