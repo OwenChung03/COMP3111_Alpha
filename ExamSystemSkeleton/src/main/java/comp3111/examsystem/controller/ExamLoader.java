@@ -22,13 +22,13 @@ public class ExamLoader {
     }
 
     // Get all questions for a specific exam
-    public List<Question> loadQuestionsForExam(Exam exam) {
-        List<Long> questionKeys = exam.getQuestionKeys(); // questionKeys are stored as Long
-        List<String> questionKeyStrings = convertToStringList(questionKeys); // Convert to List<String>
-
-        QuestionLoader questionLoader = new QuestionLoader();
-        return questionLoader.loadQuestionsByIds(questionKeyStrings);
-    }
+//    public List<Question> loadQuestionsForExam(Exam exam) {
+//        String questionKeys = exam.queryByKeys(); // questionKeys are stored as Long
+//        List<String> questionKeyStrings = convertToStringList(questionKeys); // Convert to List<String>
+//
+//        QuestionLoader questionLoader = new QuestionLoader();
+//        return questionLoader.loadQuestionsByIds(questionKeyStrings);
+//    }
 
     // Helper method to convert List<Long> to List<String>
     private List<String> convertToStringList(List<Long> longList) {

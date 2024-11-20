@@ -73,35 +73,35 @@ public class ExamScreenController {
     }
 
     // Call this method to set the exam and load the corresponding quiz questions
-    public void setExam(Exam exam) {
-        this.exam = exam;
-        loadExam();  // Load questions after setting the exam
-    }
+//    public void setExam(Exam exam) {
+//        this.exam = exam;
+//        loadExam();  // Load questions after setting the exam
+//    }
 
     
     // Method to load Exam from the text file
-    private void loadExam() {
-        examTitleLabel.setText("Exam: " + exam.getExamName());
-        try {
-            ExamLoader examLoader = new ExamLoader();
-            List<Question> loadedQuestions = examLoader.loadQuestionsForExam(exam);
-
-            if (loadedQuestions != null && !loadedQuestions.isEmpty()) {
-                questions = loadedQuestions;
-                totalQuestions = questions.size();
-                totalQuestionsLabel.setText("Total Questions: " + totalQuestions);
-
-                // Load the first question
-                loadQuestion(currentQuestionIndex);
-            } else {
-                showMsg("Error","No questions found for this exam.");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            showMsg("Error","Error: Failed to load quiz questions.");
-        }
-    }
+//    private void loadExam() {
+//        examTitleLabel.setText("Exam: " + exam.getExamName());
+//        try {
+//            ExamLoader examLoader = new ExamLoader();
+//            List<Question> loadedQuestions = examLoader.loadQuestionsForExam(exam);
+//
+//            if (loadedQuestions != null && !loadedQuestions.isEmpty()) {
+//                questions = loadedQuestions;
+//                totalQuestions = questions.size();
+//                totalQuestionsLabel.setText("Total Questions: " + totalQuestions);
+//
+//                // Load the first question
+//                loadQuestion(currentQuestionIndex);
+//            } else {
+//                showMsg("Error","No questions found for this exam.");
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            showMsg("Error","Error: Failed to load quiz questions.");
+//        }
+//    }
 
     // Start the quiz countdown timer
     private void startTimer() {

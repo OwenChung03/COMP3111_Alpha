@@ -10,10 +10,10 @@ import java.util.List;
 public class Exam extends Entity {
 
     private String examName;
-    private long courseKey;
-    private int examTime;
-    private boolean publishStatus;
-    private List<Long> questionKeys;
+    private String courseKey;
+    private String examTime;
+    private String publish;
+    private String questionKeys;
 
     // Constructor
 
@@ -22,11 +22,11 @@ public class Exam extends Entity {
     }
 
 
-    public Exam(String examName, long courseKey, int examTime, boolean publishStatus, List<Long> questionKeys) {
+    public Exam(String examName, String courseKey, String examTime, String publish, String questionKeys) {
          this.examName = examName;
         this.courseKey = courseKey;
         this.examTime = examTime;
-        this.publishStatus = publishStatus;
+        this.publish = publish;
         this.questionKeys = questionKeys;
     }
 
@@ -39,35 +39,35 @@ public class Exam extends Entity {
         this.examName = examName;
     }
 
-    public long getCourseKey() {
+    public String getCourseKey() {
         return courseKey;
     }
 
-    public void setCourseKey(long courseKey) {
+    public void setCourseKey(String courseKey) {
         this.courseKey = courseKey;
     }
 
-    public int getExamTime() {
+    public String getExamTime() {
         return examTime;
     }
 
-    public void setExamTime(int examTime) {
+    public void setExamTime(String examTime) {
         this.examTime = examTime;
     }
 
-    public boolean isPublishStatus() {
-        return publishStatus;
+    public String getPublish() {
+        return publish;
     }
 
-    public void setPublishStatus(boolean publishStatus) {
-        this.publishStatus = publishStatus;
+    public void setPublish(String publish) {
+        this.publish = publish;
     }
 
-    public List<Long> getQuestionKeys() {
+    public String getQuestionKeys() {
         return questionKeys;
     }
 
-    public void setQuestionKeys(List<Long> questionKeys) {
+    public void setQuestionKeys(String questionKeys) {
         this.questionKeys = questionKeys;
     }
 

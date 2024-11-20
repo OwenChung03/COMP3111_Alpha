@@ -3,7 +3,6 @@ package comp3111.examsystem.entity;
 import comp3111.examsystem.tools.Entity;
 
 public class Question extends Entity {
-
     private String questionContent;
     private String optionA;
     private String optionB;
@@ -12,9 +11,23 @@ public class Question extends Entity {
     private String answer;
     private String type;
     private String score;
+    private String referID;
 
     public Question() {
         super();
+    }
+    public Question(String questionContent, String optionA, String optionB, String optionC, String optionD, String answer, String type, String score, String referID) {
+        //super(id); // Call the superclass constructor to set the id
+        this.referID = referID;
+        this.questionContent = questionContent;
+        this.optionA = optionA;
+        this.optionB = optionB;
+        this.optionC = optionC;
+        this.optionD = optionD;
+        this.answer = answer;
+        this.type = type;
+        this.score = score;
+        this.referID = referID;
     }
     public Question(String questionContent, String optionA, String optionB, String optionC, String optionD, String answer, String type, String score) {
         this.questionContent = questionContent;
@@ -25,8 +38,8 @@ public class Question extends Entity {
         this.answer = answer;
         this.type = type;
         this.score = score;
+        this.referID = "0";
     }
-
     // Getters and setters
     public String getQuestionContent() {
         return questionContent;
@@ -90,5 +103,11 @@ public class Question extends Entity {
 
     public void setScore(String score) {
         this.score = score;
+    }
+
+    public String getreferID() { return referID;
+    }
+    public void setreferID(String referID) {
+        this.referID = referID;
     }
 }

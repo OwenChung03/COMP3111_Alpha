@@ -24,6 +24,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
+<?import java.lang.Long?>
 <VBox fx:id="MainBox2" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600" prefWidth="1023.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.examsystem.controller.ExamManageController">
 
     <HBox spacing="10.0" VBox.vgrow="NEVER">
@@ -34,12 +35,7 @@
         <Label text="Exam Name:" />
         <TextField fx:id="examNameTextField" prefWidth="80.0" />
         <ComboBox fx:id="CourseIDComboBox" promptText="Course ID" prefWidth="80">
-            <items>
-                <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="Single"/>
-                    <String fx:value="Multiple"/>
-                </FXCollections>
-            </items>
+            <!-- Items will be populated programmatically -->
         </ComboBox>
         <ComboBox fx:id="PublishComboBox" promptText="Publish" prefWidth="80">
             <items>
@@ -91,7 +87,7 @@
                     <TableColumn fx:id="examNameColumn" text="Exam Name" prefWidth="90.0" />
                     <TableColumn fx:id="courseIDColumn" text="Course ID" prefWidth="90.0" />
                     <TableColumn fx:id="examTimeColumn" text="Exam Time" prefWidth="90.0" />
-                    <TableColumn fx:id="PublishColumn" text="Publish" prefWidth="90.0" />
+                    <TableColumn fx:id="publishColumn" text="Publish" prefWidth="90.0" />
                 </columns>
             </TableView>
 
@@ -110,13 +106,8 @@
                     <Label text="Exam Name:" />
                     <TextField fx:id="newexamNameTextField" promptText="Exam Name" prefWidth="450"/>
                     <Label text="Course ID"/>
-                    <ComboBox fx:id="CourseIDCombo" promptText="Course ID" prefWidth="200">
-                        <items>
-                            <FXCollections fx:factory="observableArrayList">
-                                <String fx:value="Lecturer"/>
-                                <String fx:value="Assistant Professor"/>
-                            </FXCollections>
-                        </items>
+                    <ComboBox fx:id="newCourseIDComboBox" promptText="Course ID" prefWidth="80">
+                        <!-- Items will be populated programmatically -->
                     </ComboBox>
                 </VBox>
                 <VBox spacing="10.0">

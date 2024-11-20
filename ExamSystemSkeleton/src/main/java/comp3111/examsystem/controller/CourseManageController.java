@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class CourseManageController {
 
@@ -22,10 +23,9 @@ public class CourseManageController {
 
     @FXML
     public void initialize() {
-        courseIdColumn.setCellValueFactory(cellData -> cellData.getValue().courseIdProperty());
-        courseNameColumn.setCellValueFactory(cellData -> cellData.getValue().courseNameProperty());
-        departmentColumn.setCellValueFactory(cellData -> cellData.getValue().departmentProperty());
-
+        courseIdColumn.setCellValueFactory(new PropertyValueFactory<>("courseId")); // Adjust as necessary
+        courseNameColumn.setCellValueFactory(new PropertyValueFactory<>("courseName"));
+        departmentColumn.setCellValueFactory(new PropertyValueFactory<>("department"));
         courseTable.setItems(courseData);
     }
 
