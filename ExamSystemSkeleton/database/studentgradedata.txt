@@ -1,0 +1,1 @@
+studentId:1731855262445,courseId:COMP2011,examName:Quiz 101,totalScore:40,fullScore:40,timeSpent:5 min 5 sec,id:1732114651622,
