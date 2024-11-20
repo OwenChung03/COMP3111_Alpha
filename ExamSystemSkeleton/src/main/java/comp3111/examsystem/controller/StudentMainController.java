@@ -92,7 +92,7 @@ public class StudentMainController implements Initializable {
                 stage.setTitle("Quiz: " + selectedExamName);
                 stage.setScene(new Scene(loader.load()));
 
-                // Pass the selected exam to the QuizScreenController
+                // Pass the selected exam to the ExamScreenController
                 ExamScreenController examScreenController = loader.getController();
                 examScreenController.setExam(selectedExam);  // Pass the `Exam` object
 

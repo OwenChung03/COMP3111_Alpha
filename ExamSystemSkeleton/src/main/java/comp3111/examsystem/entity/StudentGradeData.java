@@ -10,6 +10,10 @@ public class StudentGradeData extends Entity{
     private String fullScore;
     private String timeSpent;  // New field to store the time spent
 
+    public StudentGradeData() {
+        super();
+    }
+
     // Constructor
     public StudentGradeData(String studentId, String courseId, String examName, String totalScore, String fullScore, String timeSpent) {
         this.studentId = studentId;

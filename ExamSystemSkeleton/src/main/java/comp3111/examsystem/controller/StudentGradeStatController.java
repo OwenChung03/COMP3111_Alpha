@@ -1,6 +1,10 @@
 package comp3111.examsystem.controller;
 
+import comp3111.examsystem.entity.Course;
+import comp3111.examsystem.entity.Exam;
+import comp3111.examsystem.entity.Student;
 import comp3111.examsystem.entity.StudentGradeData;
+import comp3111.examsystem.tools.Database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,10 +16,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class StudentGradeStatController implements Initializable {
@@ -56,86 +57,97 @@ public class StudentGradeStatController implements Initializable {
     // Example course data for demonstration
     private final List<String> courses = List.of("COMP3111", "COMP3112", "COMP3113");
 
+    // Database instance to load StudentGradeData
+    private Database<StudentGradeData> studentGradeDatabase;
+    private Database<Course> courseDatabase;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Initialize choice box with courses
-        courseCombox.setItems(FXCollections.observableArrayList(courses));
+        // Initialize database for StudentGradeData
+        studentGradeDatabase = new Database<>(StudentGradeData.class);
+        courseDatabase = new Database<>(Course.class);
 
-        // Set up table columns
+        loadCourses();
+        setupTableColumns();
+        loadGradeData();
+        loadChart(gradeList);
+    }
+
+    private void setupTableColumns() {
         courseColumn.setCellValueFactory(new PropertyValueFactory<>("courseId"));
         examColumn.setCellValueFactory(new PropertyValueFactory<>("examName"));
         scoreColumn.setCellValueFactory(new PropertyValueFactory<>("totalScore"));
         fullScoreColumn.setCellValueFactory(new PropertyValueFactory<>("fullScore"));
         timeSpentColumn.setCellValueFactory(new PropertyValueFactory<>("timeSpent"));
+    }
 
-        // Load initial data into the table and chart
-        loadGradeData();
-        loadChart();
+    private void loadCourses() {
+        List<Course> coursesFromFile = courseDatabase.getAll();
+        List<String> courseNames = coursesFromFile.stream()
+                .map(Course::getCourseId)  // Extract courseId from each Course entity
+                .collect(Collectors.toList());
+
+        // Populate the course choice box with course names
+        courseCombox.setItems(FXCollections.observableArrayList(courseNames));
     }
 
     // Load student grade data (this would typically come from a database)
     private void loadGradeData() {
         gradeList.clear();  // Clear current data
 
-        // Example data (in a real application, this would come from a database or API)
-        gradeList.add(new StudentGradeData("1", "COMP3111", "Midterm", "85", "100", "30 minutes 50 seconds"));
-        gradeList.add(new StudentGradeData("1", "COMP3111", "Final", "90", "100", "40 minutes 20 seconds"));
-        gradeList.add(new StudentGradeData("1", "COMP3112", "Quiz 1", "75", "80", "25 minutes 30 seconds"));
-        gradeList.add(new StudentGradeData("2", "COMP3113", "Quiz 1", "70", "80", "20 minutes 10 seconds"));
+        Student loggedInStudent = StudentLoginController.getLoggedInStudent();
 
-        gradeTable.setItems(gradeList);  // Populate the table with data
+        String studentIdStr = String.valueOf(loggedInStudent.getId());
+
+            // Retrieve all student grade data from the database
+        List<StudentGradeData> studentGradeData = studentGradeDatabase.queryByField("studentId", studentIdStr);
+
+        // Add the filtered data to the gradeList
+        gradeList.addAll(studentGradeData);
+
+        // Set the items in the TableView
+        gradeTable.setItems(gradeList);
     }
 
     // Refresh the table and chart when the user performs an action
     @FXML
     public void refresh() {
         loadGradeData();  // Reload data
-        loadChart();      // Reload chart data
+        loadChart(gradeList);      // Reload chart data
     }
 
-    // Load bar chart data based on the average scores per course
-    private void loadChart() {
+    // Load bar chart data based on the filtered grade data
+    private void loadChart(ObservableList<StudentGradeData> data) {
         barChart.getData().clear();  // Clear existing chart data
 
-        // Calculate average scores per course
-        Map<String, Double> averageScores = calculateAverageScoresPerCourse();
+        // Ensure no overlapping data by completely clearing the chart
+        for (XYChart.Series<String, Number> series : barChart.getData()) {
+            series.getData().clear();
+        }
 
-        // Create new chart series
+        // Create a new series for the chart
         XYChart.Series<String, Number> seriesBar = new XYChart.Series<>();
-        seriesBar.setName("Average Scores");
+        seriesBar.setName("Exam Scores");
 
-        // Populate the series with the average scores
-        for (Map.Entry<String, Double> entry : averageScores.entrySet()) {
-            seriesBar.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+        // Populate the series with the actual scores for each exam
+        for (StudentGradeData grade : data) {
+            try {
+                // Convert totalScore from String to Integer
+                int totalScore = Integer.parseInt(grade.getTotalScore());
+
+                // Create a unique label by combining course name and exam name
+                String examLabel = grade.getCourseId() + " - " + grade.getExamName();
+
+                // Add data to the series with the combined label
+                seriesBar.getData().add(new XYChart.Data<>(examLabel, totalScore));
+            } catch (NumberFormatException e) {
+                // Handle any potential parsing errors
+                System.err.println("Failed to parse totalScore for exam: " + grade.getExamName());
+            }
         }
 
         // Add the series to the bar chart
         barChart.getData().add(seriesBar);
-    }
-
-    // Calculate the average score for each course
-    private Map<String, Double> calculateAverageScoresPerCourse() {
-        Map<String, Double> averageScores = new HashMap<>();
-        Map<String, Integer> courseTotalScores = new HashMap<>();
-        Map<String, Integer> courseFullScores = new HashMap<>();
-
-        // Sum the total and full scores for each course
-        for (StudentGradeData grade : gradeList) {
-            String courseId = grade.getCourseId();
-            int totalScore = Integer.parseInt(grade.getTotalScore());
-            int fullScore = Integer.parseInt(grade.getFullScore());
-
-            courseTotalScores.put(courseId, courseTotalScores.getOrDefault(courseId, 0) + totalScore);
-            courseFullScores.put(courseId, courseFullScores.getOrDefault(courseId, 0) + fullScore);
-        }
-
-        // Calculate average score as a percentage for each course
-        for (String courseId : courseTotalScores.keySet()) {
-            double average = (double) courseTotalScores.get(courseId) / courseFullScores.get(courseId) * 100;
-            averageScores.put(courseId, average);
-        }
-
-        return averageScores;
     }
 
     // Reset filters and reload data
@@ -159,6 +171,6 @@ public class StudentGradeStatController implements Initializable {
         gradeTable.setItems(filteredList);
 
         // Reload the chart to reflect the filtered data
-        loadChart();
+        loadChart(filteredList);
     }
 }

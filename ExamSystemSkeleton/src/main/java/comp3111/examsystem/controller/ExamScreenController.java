@@ -71,6 +71,7 @@ public class ExamScreenController {
     @FXML
     public void initialize() {
         // Initialize the ToggleGroup for the radio buttons
+
         answerGroup = new ToggleGroup();
         studentAnswers = new ArrayList<>();  // To store the selected answers
 
@@ -78,6 +79,8 @@ public class ExamScreenController {
         optionB.setToggleGroup(answerGroup);
         optionC.setToggleGroup(answerGroup);
         optionD.setToggleGroup(answerGroup);
+
+        startTimer();
 
         // The question loading will happen after setting the exam
     }
@@ -280,12 +283,16 @@ public class ExamScreenController {
             if (examTimer != null) {
                 examTimer.cancel();
             }
-            // Rest of the submit logic...
         } catch (Exception e) {
             e.printStackTrace();
-            showMsg("An error occurred while submitting the quiz.");
+            showMsg("Exam Timer Error");
         }
 
+        examEndTime = LocalDateTime.now();  // Record the end time of the exam
+        Duration timeSpent = Duration.between(examStartTime, examEndTime);  // Calculate the time spent
+
+        long minutesSpent = timeSpent.toMinutes();  // Total minutes spent on the exam
+        long secondsSpent = timeSpent.getSeconds() % 60;  // Seconds part
 
         saveCurrentAnswer();
 
@@ -305,7 +312,7 @@ public class ExamScreenController {
             String examNameStr = String.valueOf(exam.getExamName());                // Convert exam ID to String
             String totalScoreStr = String.valueOf(totalScore);           // Convert total score to String
             String fullScoreStr = String.valueOf(fullScore);
-            String timeSpentStr = String.format("%d min %d sec", 5, 5);
+            String timeSpentStr = String.format("%d min %d sec", minutesSpent, secondsSpent);
 
             StudentGradeData studentGradeData = new StudentGradeData(studentIdStr,courseIdStr, examNameStr,
                     totalScoreStr,fullScoreStr,timeSpentStr);
@@ -313,7 +320,7 @@ public class ExamScreenController {
             try {
                 Database<StudentGradeData> database = new Database<>(StudentGradeData.class);
                 database.add(studentGradeData);  // Save the grade to the database
-                System.out.println("Grade saved successfully");
+
             } catch (Exception e) {
                 e.printStackTrace();
                 showMsg("Error: Could not save grade to the database.");
