@@ -14,7 +14,6 @@ import java.util.List;
 
 import javafx.scene.control.*;
 import javafx.event.ActionEvent;
-import java.io.IOException;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -282,8 +281,6 @@ public class ExamScreenController {
         // Calculate the score
         int totalScore = calculateScore();
 
-        showMsg("Quiz Submitted. Your score: " + totalScore);
-
         // Get the logged-in student from the StudentLoginController
         Student loggedInStudent = StudentLoginController.getLoggedInStudent();
 
@@ -313,8 +310,9 @@ public class ExamScreenController {
     }
 
     private int calculateScore() {
+        int correctAnswerCount = 0;
         int totalScore = 0;  // The student's total score
-        int fullMark = 0;    // The total possible score (full mark)
+        int fullScore = 0;    // The total possible score (full mark)
 
         // Loop through all the questions and calculate the score
         for (int i = 0; i < questions.size(); i++) {
@@ -332,18 +330,24 @@ public class ExamScreenController {
             }
 
             // Add the score of the current question to the full mark
-            fullMark += questionScore;
+            fullScore += questionScore;
 
             // Compare student's answer with the correct answer
             if (studentAnswer != null && studentAnswer.equals(correctAnswer)) {
                 // If the answer is correct, add the question's score to totalScore
                 totalScore += questionScore;
+                correctAnswerCount += 1;
 
             }
         }
 
-        // Output the total score and full mark for debugging
-        System.out.println("Total Score: " + totalScore + "/" + fullMark);
+        double precision = ((double)totalScore / fullScore) * 100;
+
+        // Format the message to be displayed in the alert
+        String message = String.format("%d/%d Correct, the precision is %.2f%%, the score is %d/%d",
+                correctAnswerCount, totalQuestions, precision, totalScore, fullScore);
+
+        showMsg(message);
 
         return totalScore;  // Return the student's total score
     }
