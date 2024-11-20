@@ -8,6 +8,10 @@ public class StudentExamGrade extends Entity {
     private String examId;
     private String grade;
 
+    public StudentExamGrade() {
+        super();
+    }
+
     // Constructor
     public StudentExamGrade(String studentId, String examId, String grade) {
         this.studentId = studentId;

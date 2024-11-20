@@ -55,6 +55,14 @@ public class StudentLoginController implements Initializable {
 
     }
 
+    // Static field to store the logged-in student
+    private static Student loggedInStudent;
+
+    // Getter for the logged-in student
+    public static Student getLoggedInStudent() {
+        return loggedInStudent;
+    }
+
     @FXML
     public void login(ActionEvent e) {
         String username = login_usernameTxt.getText();
@@ -68,6 +76,7 @@ public class StudentLoginController implements Initializable {
 
         // Simple validation for demonstration
         if (isValidLogin(username, password) && students.get(0).getPassword().equals(password)) {
+            loggedInStudent = students.get(0);
             showMsg("Login Successful");
             //showWelcomeMessage(username);
 

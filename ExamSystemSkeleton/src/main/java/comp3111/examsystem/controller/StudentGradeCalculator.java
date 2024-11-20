@@ -6,6 +6,8 @@ import comp3111.examsystem.tools.Database;
 
 import java.util.List;
 
+import static comp3111.examsystem.tools.MsgSender.showMsg;
+
 public class StudentGradeCalculator {
 
     // Calculate the grade for a student based on their answers
@@ -35,6 +37,7 @@ public class StudentGradeCalculator {
             return studentAnswer.equals(correctAnswer);
         } else if (question.getType().equals("Multiple")) {
             // Multiple answer type: check if all correct answers are selected
+
             return studentAnswer.equals(correctAnswer);  // You can add more complex logic here if needed
         }
 

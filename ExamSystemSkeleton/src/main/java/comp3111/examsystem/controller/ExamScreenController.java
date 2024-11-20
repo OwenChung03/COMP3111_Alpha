@@ -2,6 +2,7 @@ package comp3111.examsystem.controller;
 
 import comp3111.examsystem.entity.Exam;
 import comp3111.examsystem.entity.Question;
+import comp3111.examsystem.entity.Student;
 import comp3111.examsystem.entity.StudentExamGrade;
 import comp3111.examsystem.tools.Database;
 import javafx.application.Platform;
@@ -273,45 +274,78 @@ public class ExamScreenController {
     @FXML
     public void submitQuiz(ActionEvent event) {
         if (examTimer != null) {
-            examTimer.cancel();  // Stop the timer when submitting
+            examTimer.cancel();
         }
 
-        saveCurrentAnswer();  // Save the answer for the final question
+        saveCurrentAnswer();
 
         // Calculate the score
-        StudentGradeCalculator gradeCalculator = new StudentGradeCalculator();
-        int totalScore = gradeCalculator.calculateGrade(exam, studentAnswers, questions);
+        int totalScore = calculateScore();
 
-        // Calculate the number of correct answers and precision
-        int correctAnswers = 0;
+        showMsg("Quiz Submitted. Your score: " + totalScore);
+
+        // Get the logged-in student from the StudentLoginController
+        Student loggedInStudent = StudentLoginController.getLoggedInStudent();
+
+        if (loggedInStudent != null) {
+            // Create a StudentExamGrade object for saving
+
+            String studentIdStr = String.valueOf(loggedInStudent.getId());  // Convert student ID to String
+            String examIdStr = String.valueOf(exam.getId());                // Convert exam ID to String
+            String totalScoreStr = String.valueOf(totalScore);              // Convert total score to String
+
+            StudentExamGrade studentExamGrade = new StudentExamGrade(studentIdStr, examIdStr, totalScoreStr);
+
+            try {
+                Database<StudentExamGrade> database = new Database<>(StudentExamGrade.class);
+                database.add(studentExamGrade);  // Save the grade to the database
+            } catch (Exception e) {
+                e.printStackTrace();
+                showMsg("Error: Could not save grade to the database.");
+            }
+        } else {
+            showMsg("Error: No logged-in student found.");
+        }
+
+        // Close the exam screen
+        Stage stage = (Stage) submitButton.getScene().getWindow();
+        stage.close();
+    }
+
+    private int calculateScore() {
+        int totalScore = 0;  // The student's total score
+        int fullMark = 0;    // The total possible score (full mark)
+
+        // Loop through all the questions and calculate the score
         for (int i = 0; i < questions.size(); i++) {
-            if (gradeCalculator.isAnswerCorrect(questions.get(i), studentAnswers.get(i), questions.get(i).getAnswer())) {
-                correctAnswers++;
+            Question question = questions.get(i);
+            String correctAnswer = question.getAnswer();  // Get the correct answer from the question
+            String studentAnswer = studentAnswers.size() > i ? studentAnswers.get(i) : null;  // Get student's answer if available
+
+            // Convert the score from String to Integer
+            int questionScore;
+            try {
+                questionScore = Integer.parseInt(question.getScore());  // Assuming score is stored as a string
+            } catch (NumberFormatException e) {
+                System.out.println("Error: Invalid score format for question: " + question.getQuestionContent());
+                continue;  // Skip this question if the score can't be parsed
+            }
+
+            // Add the score of the current question to the full mark
+            fullMark += questionScore;
+
+            // Compare student's answer with the correct answer
+            if (studentAnswer != null && studentAnswer.equals(correctAnswer)) {
+                // If the answer is correct, add the question's score to totalScore
+                totalScore += questionScore;
+
             }
         }
 
-        int totalQuestions = questions.size();
-        double precision = (double) correctAnswers / totalQuestions * 100;  // Precision in percentage
+        // Output the total score and full mark for debugging
+        System.out.println("Total Score: " + totalScore + "/" + fullMark);
 
-        // Show the results
-        showMsg(correctAnswers + "/" + totalQuestions + " correct, the precision is " + String.format("%.2f", precision) +
-                "%, the score is " + totalScore + "/" + (totalQuestions * 10));  // Assuming each question is worth 10 points
-
-        // Create a StudentExamGrade object
-        StudentExamGrade studentExamGrade = new StudentExamGrade(exam.getStudentId(), exam.getId(), totalScore);
-
-        // Save the grade using the Database class
-        try {
-            Database database = new Database();
-            database.add(studentExamGrade);  // Assuming Database.java has a method `persist()` or `saveEntity()`
-        } catch (Exception e) {
-            e.printStackTrace();
-            showMsg("Error: Could not save grade to the database.");
-        }
-
-        // Close the quiz window after submission
-        Stage stage = (Stage) submitButton.getScene().getWindow();
-        stage.close();
+        return totalScore;  // Return the student's total score
     }
 
 }
