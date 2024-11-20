@@ -178,18 +178,9 @@ public class StudentLoginController implements Initializable {
         // Create a new Student object
         Student newStudent = new Student(null, username,name, gender, ageString, department, password);
 
-        System.out.println(newStudent);
-
         // Add the new student to the database (write to file)
         studentDatabase.add(newStudent);
 
-
-
-        List<Student> allStudents = studentDatabase.getAll();
-        System.out.println("All students after registration:");
-        for (Student student : allStudents) {
-            System.out.println(student);
-        }
 
         // Show success message
         showMsg("Student registered successfully!");
