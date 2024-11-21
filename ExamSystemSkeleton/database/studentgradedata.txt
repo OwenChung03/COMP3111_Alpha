@@ -1,2 +1,4 @@
 studentId:1731855262445,courseId:COMP1021,examName:Quiz 1,totalScore:10,fullScore:30,timeSpent:0 min 2 sec,id:1732172740119,
 studentId:1731855262445,courseId:COMP1021,examName:Quiz 1,totalScore:10,fullScore:30,timeSpent:0 min 11 sec,id:1732172832000,
+studentId:1731855262445,courseId:COMP1021,examName:Quiz 1,totalScore:0,fullScore:30,timeSpent:0 min 31 sec,id:1732175537561,
+studentId:1731855262445,courseId:COMP1021,examName:Quiz 1,totalScore:0,fullScore:30,timeSpent:0 min 2 sec,id:1732176744918,
