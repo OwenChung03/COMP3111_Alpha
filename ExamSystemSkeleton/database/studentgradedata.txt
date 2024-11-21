@@ -6,3 +6,8 @@ studentId:1731855262445,courseId:COMP1021,examName:Quiz 1,totalScore:0,fullScore
 studentId:1731855262445,courseId:COMP2011,examName:Quiz 104,totalScore:0,fullScore:40,timeSpent:0 min 31 sec,id:1732117092602,
 studentId:1731855262445,courseId:MATH1013,examName:Quiz 102,totalScore:20,fullScore:40,timeSpent:0 min 5 sec,id:1732119067121,
 studentId:1731855262445,courseId:MATH1013,examName:Quiz 101,totalScore:0,fullScore:40,timeSpent:0 min 31 sec,id:1732120174271,
+studentId:1731839357286,courseId:COMP1021,examName:Quiz 102,totalScore:30,fullScore:40,timeSpent:0 min 5 sec,id:1732153913721,
+studentId:1731839357286,courseId:MATH1013,examName:Quiz 101,totalScore:40,fullScore:40,timeSpent:0 min 7 sec,id:1732153925596,
+studentId:1731855262445,courseId:COMP1021,examName:Quiz 102,totalScore:40,fullScore:40,timeSpent:0 min 4 sec,id:1732155510883,
+studentId:1731855262445,courseId:MATH1013,examName:Quiz 101,totalScore:40,fullScore:40,timeSpent:0 min 5 sec,id:1732167285416,
+studentId:1731855262445,courseId:COMP1021,examName:Quiz 102,totalScore:40,fullScore:40,timeSpent:0 min 7 sec,id:1732167470061,

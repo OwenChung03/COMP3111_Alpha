@@ -54,9 +54,6 @@ public class StudentGradeStatController implements Initializable {
     // Observable list to hold student grade data
     private final ObservableList<StudentGradeData> gradeList = FXCollections.observableArrayList();
 
-    // Example course data for demonstration
-    private final List<String> courses = List.of("COMP3111", "COMP3112", "COMP3113");
-
     // Database instance to load StudentGradeData
     private Database<StudentGradeData> studentGradeDatabase;
     private Database<Course> courseDatabase;
@@ -118,16 +115,16 @@ public class StudentGradeStatController implements Initializable {
 
     // Load bar chart data based on the filtered grade data
     private void loadChart(ObservableList<StudentGradeData> data) {
-        barChart.getData().clear();  // Clear existing chart data
-
-        // Ensure no overlapping data by completely clearing the chart
-        for (XYChart.Series<String, Number> series : barChart.getData()) {
-            series.getData().clear();
-        }
+        // Clear the BarChart data and categories
+        barChart.getData().clear();
+        categoryAxisBar.getCategories().clear();
 
         // Create a new series for the chart
         XYChart.Series<String, Number> seriesBar = new XYChart.Series<>();
         seriesBar.setName("Exam Scores");
+
+        // Use a Set to track unique categories (to avoid duplicates)
+        Set<String> uniqueCategories = new LinkedHashSet<>();
 
         // Populate the series with the actual scores for each exam
         for (StudentGradeData grade : data) {
@@ -138,23 +135,37 @@ public class StudentGradeStatController implements Initializable {
                 // Create a unique label by combining course name and exam name
                 String examLabel = grade.getCourseId() + " - " + grade.getExamName();
 
+                // Add the category to the Set
+                uniqueCategories.add(examLabel);
+
                 // Add data to the series with the combined label
                 seriesBar.getData().add(new XYChart.Data<>(examLabel, totalScore));
+
             } catch (NumberFormatException e) {
                 // Handle any potential parsing errors
                 System.err.println("Failed to parse totalScore for exam: " + grade.getExamName());
             }
         }
 
+        // Add the unique categories to the CategoryAxis
+        categoryAxisBar.getCategories().addAll(uniqueCategories);
+
         // Add the series to the bar chart
         barChart.getData().add(seriesBar);
+
+        // Adjust X-axis labels to avoid overlap (rotate by 45 degrees)
+        categoryAxisBar.setTickLabelRotation(45);
+
+        // Force the BarChart to layout again with the updated data
+        barChart.applyCss(); // Forces CSS to reapply
+        barChart.layout();   // Forces JavaFX to recalculate layout
     }
 
     // Reset filters and reload data
     @FXML
     public void reset() {
         courseCombox.setValue(null);  // Clear the course filter
-        refresh();  // Reload data without filters
+        refresh();  // First call updates the data
     }
 
     // Filter the table and chart based on the selected course
@@ -171,6 +182,6 @@ public class StudentGradeStatController implements Initializable {
         gradeTable.setItems(filteredList);
 
         // Reload the chart to reflect the filtered data
-        loadChart(filteredList);
+        loadChart(filteredList);  // First call
     }
 }
