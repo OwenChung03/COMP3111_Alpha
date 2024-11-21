@@ -1,3 +1,4 @@
+
 package comp3111.examsystem.controller;
 
 import comp3111.examsystem.entity.Exam;
@@ -45,13 +46,13 @@ public class StudentMainController implements Initializable {
             // Debugging: Check if the exams list is null or empty
             if (exams == null) {
                 System.out.println("Debug: exams object is null.");
-                showMsg("Error: Failed to load exams. No exams data available.");
+                showMsg("Error","Error: Failed to load exams. No exams data available.");
                 return;
             }
 
             if (exams.isEmpty()) {
                 System.out.println("Debug: exams list is empty.");
-                showMsg("Error: Failed to load exams. No exams found in the database.");
+                showMsg("Error","Error: Failed to load exams. No exams found in the database.");
                 return;
             }
 
@@ -65,7 +66,7 @@ public class StudentMainController implements Initializable {
 
         } catch (Exception e) {
             e.printStackTrace(); // Print stack trace for debugging
-            showMsg("Error: Failed to load exams due to an exception.");
+            showMsg("Error","Error: Failed to load exams due to an exception.");
 
         }
     }

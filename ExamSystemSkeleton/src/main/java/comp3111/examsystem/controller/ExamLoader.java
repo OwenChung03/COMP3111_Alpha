@@ -18,10 +18,12 @@ public class ExamLoader {
         try {
             exams = examDatabase.getAll();  // Load all exams from the exam.txt file
             if (exams.isEmpty()) {
-                showMsg("Error: Failed to load exams. No exams found in the database.");
+
+                showMsg("Error","Error: Failed to load exams. No exams found in the database.");
             }
         } catch (Exception e) {
-            showMsg("Error: Failed to load exams due to an exception.(loadExamsFromDatabase)");
+            showMsg("Error","Error: Failed to load exams due to an exception.(loadExamsFromDatabase)");
+
             e.printStackTrace();  // Log the exception for debugging
         }
 
@@ -37,10 +39,12 @@ public class ExamLoader {
         try {
             exam = examDatabase.queryByKey(examId.toString());  // Query exam by ID
             if (exam == null) {
-                showMsg("Error: Failed to load exam with ID: " + examId);
+
+                showMsg("Error","Error: Failed to load exam with ID: " + examId);
             }
         } catch (Exception e) {
-            showMsg("Error: Failed to load exam due to an exception.(loadExamById)");
+            showMsg("Error","Error: Failed to load exam due to an exception.(loadExamById)");
+
             e.printStackTrace();
         }
 
@@ -58,7 +62,9 @@ public class ExamLoader {
 
         // Check if questionKeys is not null or empty
         if (questionKeys == null || questionKeys.isEmpty()) {
-            showMsg("No questions found for this exam.");
+
+            showMsg("Error","No questions found for this exam.");
+
             return questions;  // Return empty list if no question keys
         }
 
@@ -74,10 +80,11 @@ public class ExamLoader {
                 if (question != null) {
                     questions.add(question);  // Add the question to the list if found
                 } else {
-                    showMsg("Warning: Question with key " + key + " not found.");
+
+                    showMsg("Error","Warning: Question with key " + key + " not found.");
                 }
             } catch (Exception e) {
-                showMsg("Error: Failed to load question with key: " + key);
+                showMsg("Error","Error: Failed to load question with key: " + key);
                 e.printStackTrace();  // Log the exception for debugging
             }
         }

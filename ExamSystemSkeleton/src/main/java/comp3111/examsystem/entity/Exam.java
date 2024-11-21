@@ -12,7 +12,7 @@ public class Exam extends Entity {
     private String examName;
     private String courseKey;
     private String examTime;
-    private String publishStatus;
+    private String publish;
     private String questionKeys;
 
     // Constructor
@@ -22,11 +22,11 @@ public class Exam extends Entity {
     }
 
 
-    public Exam(String examName, String courseKey, String examTime, String publishStatus, String questionKeys) {
-        this.examName = examName;
+    public Exam(String examName, String courseKey, String examTime, String publish, String questionKeys) {
+         this.examName = examName;
         this.courseKey = courseKey;
         this.examTime = examTime;
-        this.publishStatus = publishStatus;
+        this.publish = publish;
         this.questionKeys = questionKeys;
     }
 
@@ -55,12 +55,13 @@ public class Exam extends Entity {
         this.examTime = examTime;
     }
 
-    public String isPublishStatus() {
-        return publishStatus;
+
+    public String getPublish() {
+        return publish;
     }
 
-    public void setPublishStatus(String publishStatus) {
-        this.publishStatus = publishStatus;
+    public void setPublish(String publish) {
+        this.publish = publish;
     }
 
     public String getQuestionKeys() {
@@ -70,4 +71,6 @@ public class Exam extends Entity {
     public void setQuestionKeys(String questionKeys) {
         this.questionKeys = questionKeys;
     }
+
+
 }

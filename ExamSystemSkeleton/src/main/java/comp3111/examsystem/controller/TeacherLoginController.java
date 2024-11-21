@@ -26,6 +26,8 @@ public class TeacherLoginController implements Initializable {
     @FXML
     private TextField usernameTxt;
     @FXML
+    private TextField registernameTxt;
+    @FXML
     private PasswordField passwordTxt;
     @FXML
     private Button loginButton;
@@ -58,6 +60,12 @@ public class TeacherLoginController implements Initializable {
     }
 
     @FXML
+    private boolean ValidLogin(String username, String password) {
+        // Initialize the database
+        boolean username_flag = username.matches(ALLOWED_LOGIN_CHARS);
+        boolean password_flag = password.matches(ALLOWED_PASSWORD_CHARS);
+        return username_flag && password_flag;
+    }
     public void login(ActionEvent e) {
         String username = usernameTxt.getText();
         String password = passwordTxt.getText();
@@ -67,7 +75,6 @@ public class TeacherLoginController implements Initializable {
             showMsg("Error", "Login Failed: No user found.");
             return;
         }
-
 
         if (ValidLogin(username, password) && teachers.get(0).getPassword().equals(password)) {
 
@@ -87,25 +94,8 @@ public class TeacherLoginController implements Initializable {
             } else {
                 showMsg("Error", "Invalid username or password.");
             }
-
         }
     }
-
-        private void showWelcomeMessage(String username){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Login Successful");
-            alert.setHeaderText(null);
-            alert.setContentText("Hi " + username + ", Welcome to HKUST Examination System!");
-            alert.showAndWait();
-        }
-
-        private void showErrorMessage(String message){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Login Failed");
-            alert.setHeaderText(null);
-            alert.setContentText(message);
-            alert.showAndWait();
-        }
 
         @FXML
         public void register (ActionEvent e){

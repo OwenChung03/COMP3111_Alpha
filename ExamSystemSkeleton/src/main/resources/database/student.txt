@@ -1,3 +1,0 @@
-username:terryaykc,name:terry,gender:Male,age:12,department:fe,password:1234,id:1731839240482,
-username:student,name:terry,gender:Male,age:15,department:sf,password:1234,id:1731839357286,
-username:abc,name:abc,gender:Female,age:20,department:fad,password:123,id:1731855262445,

@@ -91,7 +91,7 @@ public class ExamScreenController {
         loadExam();  // Load questions after setting the exam
     }
 
-    
+
     // Method to load Exam from the text file
     private void loadExam() {
         examTitleLabel.setText("Exam: " + exam.getExamName());
@@ -107,12 +107,12 @@ public class ExamScreenController {
                 // Load the first question
                 loadQuestion(currentQuestionIndex);
             } else {
-                showMsg("No questions found for this exam.");
+                showMsg("Error","No questions found for this exam.");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            showMsg("Error: Failed to load quiz questions.");
+            showMsg("Error","Error: Failed to load quiz questions.");
         }
     }
 
@@ -285,7 +285,9 @@ public class ExamScreenController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            showMsg("Exam Timer Error");
+
+            showMsg("Error","Exam Timer Error");
+
         }
 
         examEndTime = LocalDateTime.now();  // Record the end time of the exam
@@ -300,6 +302,7 @@ public class ExamScreenController {
         int[] result = calculateScore();
         int totalScore = result[0];
         int fullScore = result[1];
+
 
         // Get the logged-in student from the StudentLoginController
         Student loggedInStudent = StudentLoginController.getLoggedInStudent();
@@ -323,10 +326,10 @@ public class ExamScreenController {
 
             } catch (Exception e) {
                 e.printStackTrace();
-                showMsg("Error: Could not save grade to the database.");
+                showMsg("Error","Error: Could not save grade to the database.");
             }
         } else {
-            showMsg("Error: No logged-in student found.");
+            showMsg("Error","Error: No logged-in student found.");
         }
 
         // Close the exam screen
@@ -372,7 +375,8 @@ public class ExamScreenController {
         String message = String.format("%d/%d Correct, the precision is %.2f%%, the score is %d/%d",
                 correctAnswerCount, totalQuestions, precision, totalScore, fullScore);
 
-        showMsg(message);
+        showMsg("Result",message);
+
 
         return new int[] { totalScore, fullScore };  // Return an integer array with total score and full score
     }

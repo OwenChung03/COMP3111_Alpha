@@ -1,5 +1,6 @@
 package comp3111.examsystem.controller;
 
+import comp3111.examsystem.entity.Course;
 import comp3111.examsystem.entity.Exam;
 import comp3111.examsystem.entity.Question;
 import comp3111.examsystem.tools.Database;
@@ -15,6 +16,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+
+import static comp3111.examsystem.tools.MsgSender.showMsg;
 
 public class ExamManageController implements Initializable {
 
@@ -24,7 +28,7 @@ public class ExamManageController implements Initializable {
     @FXML
     public TextField examNameTextField;
     @FXML
-    public ComboBox<Long> CourseIDComboBox;
+    public ComboBox<String> CourseIDComboBox;
     @FXML
     public ComboBox<String> PublishComboBox;
     @FXML
@@ -42,7 +46,7 @@ public class ExamManageController implements Initializable {
     @FXML
     public TableColumn<Exam, String> examTimeColumn;
     @FXML
-    public TableColumn<Exam, String> PublishColumn;
+    public TableColumn<Exam, String> publishColumn;
     @FXML
     public TableView<Question> questionInExamTable;
     @FXML
@@ -55,8 +59,6 @@ public class ExamManageController implements Initializable {
     public Button deletefromleftButton;
     @FXML
     public TextField newexamNameTextField;
-    @FXML
-    public ComboBox<String> CourseIDCombo;
     @FXML
     public Button addtoleftButton;
     @FXML
@@ -78,41 +80,93 @@ public class ExamManageController implements Initializable {
     public TableColumn<Question, String> scoreColumn;
     public Button refreshButton;
     public Button updateButton;
+    public ComboBox<String> newCourseIDComboBox;
     private Database<Question> QuestionDatabase;
-    private Database<Question> QuestionInExamDatabase;
     private Database<Exam> ExamDatabase;
+    private Database<Course> CourseDatabase;
 
     public void initialize(URL location, ResourceBundle resources) {
         QuestionDatabase = new Database<>(Question.class); // Initialize the Question database
-        ExamDatabase = new Database<>(Exam.class); // Initialize the Question database
+        ExamDatabase = new Database<>(Exam.class); // Initialize the Exam database
+        CourseDatabase = new Database<>(Course.class); // Initialize the Course database
         setupExamTableColumns();
+        setupQuestionInExamTableColumns();
         setupQuestionTableColumns();
-
         refreshExam(null); // Refresh exam table// Refresh questionInExam table
         refreshQuestionTable(null); // Refresh question table
+        List<String> courseIDs = fetchCourseIDs(); // Implement this method to get Course IDs
+        CourseIDComboBox.setItems(FXCollections.observableArrayList(courseIDs));
+        newCourseIDComboBox.setItems(FXCollections.observableArrayList(courseIDs));
+        // Add listener to load questions when an exam is selected
+        ExamTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                loadQuestionsForExam(newValue);
+                populateExamDetails(newValue); // New method to populate details
+            }
+        });
     }
 
-    private void refreshQuestionTable() {
+    private void loadQuestionsForExam(Exam selectedExam) {
+        // Clear the current questions in the QuestionInExam table
+        questionInExamTable.getItems().clear();
+
+        // Get the question keys from the selected exam
+        String questionKeys = selectedExam.getQuestionKeys(); // Ensure this method exists
+
+        // Split the keys into an array
+        String[] keys = questionKeys.split("/");
+
+        // Fetch questions based on IDs
+        List<Question> questions = new ArrayList<>();
+        for (String key : keys) {
+            Question question = QuestionDatabase.queryByKey(key); // Fetch question by ID
+            if (question != null) {
+                questions.add(question);
+            }
+        }
+
+        // Populate the QuestionInExam table
+        questionInExamTable.setItems(FXCollections.observableArrayList(questions));
+    }
+
+    private void populateExamDetails(Exam selectedExam) {
+        // Populate text fields and combo boxes with selected exam details
+        newexamNameTextField.setText(selectedExam.getExamName());
+        newCourseIDComboBox.setValue(selectedExam.getCourseKey());
+        newexamTimeTextField.setText(selectedExam.getExamTime());
+        PublishCombo.setValue(selectedExam.getPublish());
+    }
+    private List<String> fetchCourseIDs() {
+        // Replace this with actual data fetching logic
+        List<Course> allCourses = CourseDatabase.getAll();
+
+        // Extract CourseIDs from the Course objects
+        List<String> courseIDs = allCourses.stream()
+                .map(Course::getCourseId) // Assuming getCourseID() returns the Course ID as a String
+                .collect(Collectors.toList());
+
+        return courseIDs;// Sample Course IDs
     }
 
     private void setupQuestionTableColumns() {
-        questionColumn.setCellValueFactory(new PropertyValueFactory<>("QuestionContent")); // Adjust as necessary
-        typeColumn1.setCellValueFactory(new PropertyValueFactory<>("Type"));
-        scoreColumn1.setCellValueFactory(new PropertyValueFactory<>("Score"));
+        questionColumn.setCellValueFactory(new PropertyValueFactory<>("questionContent")); // Adjust as necessary
+        typeColumn1.setCellValueFactory(new PropertyValueFactory<>("type"));
+        scoreColumn1.setCellValueFactory(new PropertyValueFactory<>("score"));
     }
 
     private void setupQuestionInExamTableColumns() {
-        questionInExamColumn.setCellValueFactory(new PropertyValueFactory<>("QuestionContent")); // Adjust as necessary
-        typeColumn1.setCellValueFactory(new PropertyValueFactory<>("Type"));
-        scoreColumn1.setCellValueFactory(new PropertyValueFactory<>("Score"));
+        questionInExamColumn.setCellValueFactory(new PropertyValueFactory<>("questionContent")); // Adjust as necessary
+        typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+        scoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
     }
 
     private void setupExamTableColumns() {
-        examNameColumn.setCellValueFactory(new PropertyValueFactory<>("ExamName"));
-        courseIDColumn.setCellValueFactory(new PropertyValueFactory<>("CourID"));
-        examTimeColumn.setCellValueFactory(new PropertyValueFactory<>("ExamTime"));
-        PublishColumn.setCellValueFactory(new PropertyValueFactory<>("Publish"));
+        examNameColumn.setCellValueFactory(new PropertyValueFactory<>("examName"));
+        courseIDColumn.setCellValueFactory(new PropertyValueFactory<>("courseKey"));
+        examTimeColumn.setCellValueFactory(new PropertyValueFactory<>("examTime"));
+        publishColumn.setCellValueFactory(new PropertyValueFactory<>("publish"));
     }
+
     //All the QuestionManageUI functions being handled
     public void resetExam(ActionEvent actionEvent) {
         examNameTextField.clear();
@@ -123,18 +177,134 @@ public class ExamManageController implements Initializable {
         // Refresh the question table to show all questions without filters
         refreshExam(actionEvent);
     }
+
     public void deleteExam(ActionEvent actionEvent) {
+        Exam selectedExam = ExamTable.getSelectionModel().getSelectedItem();
+
+        // Check if a question is selected
+        if (selectedExam == null) {
+            // Show an alert if no question is selected
+            showMsg("No Selection", "Please select an exam to delete.");
+            return;
+        }
+
+        // Confirm deletion
+        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationAlert.setTitle("Delete Confirmation");
+        confirmationAlert.setHeaderText("Are you sure you want to delete this exam?");
+        confirmationAlert.setContentText("Exam: " + selectedExam.getExamName());
+
+        // Show the confirmation dialog and wait for the user's response
+        confirmationAlert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                // Delete the question from the database
+                ExamDatabase.delByKey(String.valueOf(selectedExam.getId())); // Assuming you have a method to delete by ID
+
+                // Refresh the table to show the updated list of questions
+                refreshExam(actionEvent);
+            }
+        });
     }
 
     public void addExam(ActionEvent actionEvent) {
+        String examName = newexamNameTextField.getText().trim();
+        String courseID = newCourseIDComboBox.getValue();
+        String examTimeText = newexamTimeTextField.getText().trim();
+        String publishStatusText = PublishCombo.getValue();
+
+        // Validate input
+        if (examName.isEmpty() || courseID == null || examTimeText.isEmpty() || publishStatusText == null) {
+            showMsg("Error", "Please fill in all required fields.");
+            return;
+        }
+
+        int examTime;
+        try {
+            examTime = Integer.parseInt(examTimeText);
+            if (examTime <= 0) {
+                showMsg("Error", "Exam time must be a positive number.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            showMsg("Error", "Exam time must be a valid number.");
+            return;
+        }
+
+        // Collect question IDs from the questionInExamTable
+        StringBuilder questionKeysBuilder = new StringBuilder();
+        for (Question question : questionInExamTable.getItems()) {
+            if (questionKeysBuilder.length() > 0) {
+                questionKeysBuilder.append("/"); // Append separator before adding the next ID
+            }
+            questionKeysBuilder.append(question.getreferID()); // Assuming you have a method getId() in your Question class
+        }
+        String questionKeys = questionKeysBuilder.toString(); // Convert to string
+
+        // Create a new Exam object
+        Exam newExam = new Exam(examName, courseID, examTimeText, publishStatusText, questionKeys);
+
+        // Add the new exam to the database
+        ExamDatabase.add(newExam); // Assuming add method exists in your Database class
+
+        // Refresh the exam table to show the new exam
+        refreshExam(actionEvent);
     }
 
     public void updateExam(ActionEvent actionEvent) {
+        Exam selectedExam = ExamTable.getSelectionModel().getSelectedItem();
+        if (selectedExam == null) {
+            showMsg("No Selection", "Please select an exam to update.");
+            return;
+        }
+
+        // Retrieve updated values from the UI components
+        String newExamName = newexamNameTextField.getText().trim();
+        String newCourseID = newCourseIDComboBox.getValue();
+        String newExamTimeText = newexamTimeTextField.getText().trim();
+        String newPublishStatus = PublishCombo.getValue();
+
+        // Validate input
+        if (newExamName.isEmpty() || newCourseID == null || newExamTimeText.isEmpty() || newPublishStatus == null) {
+            showMsg("Error", "Please fill in all required fields.");
+            return;
+        }
+
+        int newExamTime;
+        try {
+            newExamTime = Integer.parseInt(newExamTimeText);
+            if (newExamTime <= 0) {
+                showMsg("Error", "Exam time must be a positive number.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            showMsg("Error", "Exam time must be a valid number.");
+            return;
+        }
+
+        // Collect question IDs from the questionInExamTable
+        String questionKeys = questionInExamTable.getItems().stream()
+                .map(question -> String.valueOf(question.getId())) // Convert long to String
+                .collect(Collectors.joining("/"));
+
+        // Update the selected exam
+        selectedExam.setExamName(newExamName);
+        selectedExam.setCourseKey(newCourseID); // Assuming setCourseKey() exists
+        selectedExam.setExamTime(String.valueOf(newExamTime)); // Assuming setExamTime() accepts a String
+        selectedExam.setPublish(newPublishStatus); // Assuming setPublish() exists
+        selectedExam.setQuestionKeys(questionKeys); // Assuming setQuestionKeys() exists
+
+        // Update the exam in the database
+        ExamDatabase.update(selectedExam); // Assuming update method exists in your Database class
+
+        // Refresh the exam table to show the updated exam
+        refreshExam(actionEvent);
+        showMsg("Success", "Exam updated successfully.");
     }
 
     public void filterExam(ActionEvent actionEvent) {
         String ExamName = examNameTextField.getText().toLowerCase().trim();
-        Long CourseKey = CourseIDComboBox.getValue();
+
+        String CourseID = CourseIDComboBox.getValue();
         String Publish = PublishComboBox.getValue();
         // Get all questions from the database
         List<Exam> allExams = ExamDatabase.getAll();
@@ -152,13 +322,14 @@ public class ExamManageController implements Initializable {
             }
 
             // Check if the CourseID matches
-            if (CourseKey != null && !(exam.getCourseKey() == CourseKey)) {
+
+            if (CourseID != null && !CourseID.equals(String.valueOf(exam.getCourseKey()))) {
                 matches = false;
             }
 
             // Check if the score matches
-            boolean publishBoolean = "Yes".equals(Publish); // Convert Publish String to boolean
-            if (!Publish.isEmpty() && exam.isPublishStatus() != publishBoolean) {
+
+            if (!Publish.isEmpty() && !(exam.getPublish().equals(Publish))) {
                 matches = false;
             }
 
@@ -227,10 +398,40 @@ public class ExamManageController implements Initializable {
     }
 
     public void Deletefromleft(ActionEvent actionEvent) {
+        Question selectedQuestion = questionInExamTable.getSelectionModel().getSelectedItem();
 
+        if (selectedQuestion != null) {
+            // Remove the selected question from the questionInExamTable
+            questionInExamTable.getItems().remove(selectedQuestion);
+
+        } else {
+            showMsg("Error", "Please select a question to delete.");
+        }
     }
 
     public void Addtoleft(ActionEvent actionEvent) {
+        Question selectedQuestion = questionTable.getSelectionModel().getSelectedItem();
+
+        if (selectedQuestion != null) {
+            // Create a full copy of the selected question
+            Question copiedQuestion = new Question(
+                    selectedQuestion.getQuestionContent(),
+                    selectedQuestion.getOptionA(),
+                    selectedQuestion.getOptionB(),
+                    selectedQuestion.getOptionC(),
+                    selectedQuestion.getOptionD(),
+                    selectedQuestion.getAnswer(),
+                    selectedQuestion.getType(),
+                    selectedQuestion.getScore(),
+                    String.valueOf(selectedQuestion.getId())
+            );
+            //
+            // Add the copied question to the questionInExamTable
+            questionInExamTable.getItems().add(copiedQuestion);
+
+        } else {
+            showMsg("Error", "Please select a question to add.");
+        }
     }
 
     public void refreshExam(ActionEvent actionEvent) {
