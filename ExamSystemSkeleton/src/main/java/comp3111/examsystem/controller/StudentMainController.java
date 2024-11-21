@@ -37,15 +37,36 @@ public class StudentMainController implements Initializable {
     ComboBox<String> examCombox;
 
     public void initialize(URL location, ResourceBundle resources) {
-        ExamLoader examLoader = new ExamLoader();
+        ExamLoader examLoader = new ExamLoader(); // Create an instance of ExamLoader
         try {
+            // Attempt to load exams from the database
             exams = examLoader.loadExamsFromDatabase();
-            // Populate ComboBox with exam names
-            examCombox.setItems(FXCollections.observableArrayList(
-                    exams.stream().map(Exam::getExamName).toList()
-            ));
+
+            // Debugging: Check if the exams list is null or empty
+            if (exams == null) {
+                System.out.println("Debug: exams object is null.");
+                showMsg("Error: Failed to load exams. No exams data available.");
+                return;
+            }
+
+            if (exams.isEmpty()) {
+                System.out.println("Debug: exams list is empty.");
+                showMsg("Error: Failed to load exams. No exams found in the database.");
+                return;
+            }
+
+            // Populate ComboBox with exam names if exams are successfully loaded
+            List<String> examNames = exams.stream()
+                    .map(Exam::getExamName)
+                    .toList();
+            
+            // Update ComboBox with the list of exam names
+            examCombox.setItems(FXCollections.observableArrayList(examNames));
+
         } catch (Exception e) {
-            showMsg("Error","Error:Failed to load exams.");
+            e.printStackTrace(); // Print stack trace for debugging
+            showMsg("Error: Failed to load exams due to an exception.");
+
         }
     }
 
@@ -72,7 +93,7 @@ public class StudentMainController implements Initializable {
                 stage.setTitle("Quiz: " + selectedExamName);
                 stage.setScene(new Scene(loader.load()));
 
-                // Pass the selected exam to the QuizScreenController
+                // Pass the selected exam to the ExamScreenController
                 ExamScreenController examScreenController = loader.getController();
                 examScreenController.setExam(selectedExam);  // Pass the `Exam` object
 

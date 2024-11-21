@@ -55,7 +55,7 @@
                 <TableColumn fx:id="examColumn" prefWidth="93.0" text="Exam" />
                   <TableColumn fx:id="scoreColumn" prefWidth="62.0" text="Score" />
                   <TableColumn fx:id="fullScoreColumn" prefWidth="64.0" text="Full Score" />
-                  <TableColumn fx:id="timeSpendColumn" prefWidth="103.0" text="Time Spent (min)" />
+                  <TableColumn fx:id="timeSpentColumn" prefWidth="103.0" text="Time Spent (min)" />
               </columns>
                <padding>
                   <Insets top="1.0" />
@@ -63,10 +63,10 @@
             </TableView>
             <BarChart fx:id="barChart" prefHeight="349.0" prefWidth="432.0">
                 <xAxis>
-                    <CategoryAxis fx:id="categoryAxisBar" side="BOTTOM" />
+                    <CategoryAxis fx:id="categoryAxisBar" label="Exam" side="BOTTOM" />
                 </xAxis>
                 <yAxis>
-                    <NumberAxis fx:id="numberAxisBar" side="LEFT" />
+                    <NumberAxis fx:id="numberAxisBar" label="Score" side="LEFT" />
                 </yAxis>
             </BarChart>
          </children>
