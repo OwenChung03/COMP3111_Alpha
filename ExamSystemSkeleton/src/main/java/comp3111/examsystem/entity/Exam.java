@@ -2,6 +2,9 @@ package comp3111.examsystem.entity;
 
 import comp3111.examsystem.tools.Entity;
 
+
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Exam extends Entity {
@@ -13,9 +16,11 @@ public class Exam extends Entity {
     private String questionKeys;
 
     // Constructor
+
     public Exam() {
         super();
     }
+
 
     public Exam(String examName, String courseKey, String examTime, String publishStatus, String questionKeys) {
         this.examName = examName;

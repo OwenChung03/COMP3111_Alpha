@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
+      fx:controller="comp3111.examsystem.controller.CourseManageController">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <!-- Filter Section -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <TextField fx:id="courseIdFilter" promptText="Course ID"/>
+        <TextField fx:id="courseNameFilter" promptText="Course Name"/>
+        <TextField fx:id="departmentFilter" promptText="Department"/>
+        <Button text="Reset" onAction="#handleReset"/>
+        <Button text="Filter" onAction="#handleFilter"/>
+    </HBox>
+
+    <!-- Table Section -->
+    <TableView fx:id="courseTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="courseIdColumn" text="Course ID" prefWidth="150"/>
+            <TableColumn fx:id="courseNameColumn" text="Course Name" prefWidth="200"/>
+            <TableColumn fx:id="departmentColumn" text="Department" prefWidth="150"/>
+        </columns>
+    </TableView>
+
+    <!-- Form Section -->
+    <GridPane hgap="10" vgap="5">
+        <columnConstraints>
+            <ColumnConstraints hgrow="NEVER" minWidth="100"/>
+            <ColumnConstraints hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <Label text="Course ID:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="courseIdField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Course Name:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <TextField fx:id="courseNameField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Department:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <TextField fx:id="departmentField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    </GridPane>
+
+    <!-- Button Section -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Delete" onAction="#handleDelete"/>
+        <Button text="Refresh" onAction="#handleRefresh"/>
+        <Button text="Add" onAction="#handleAdd"/>
+        <Button text="Modify" onAction="#handleUpdate"/>
+    </HBox>
+</VBox>

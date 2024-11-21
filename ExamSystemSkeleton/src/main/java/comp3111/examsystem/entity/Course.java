@@ -1,5 +1,6 @@
 package comp3111.examsystem.entity;
 
+
 import comp3111.examsystem.tools.Entity;
 
 public class Course extends Entity {
@@ -42,6 +43,5 @@ public class Course extends Entity {
     public void setDepartment(String department) {
         this.department = department;
     }
-
 
 }

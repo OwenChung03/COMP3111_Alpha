@@ -65,7 +65,8 @@ public class StudentMainController implements Initializable {
 
         } catch (Exception e) {
             e.printStackTrace(); // Print stack trace for debugging
-            showMsg("Error: Failed to load exams due to an exception.123");
+            showMsg("Error: Failed to load exams due to an exception.");
+
         }
     }
 
@@ -74,7 +75,7 @@ public class StudentMainController implements Initializable {
         // Get the selected exam name from the ComboBox
         String selectedExamName = examCombox.getValue();
         if (selectedExamName == null) {
-            showMsg("Please select an exam before starting.");
+            showMsg("Error","Please select an exam before starting.");
             return;
         }
 
@@ -99,10 +100,10 @@ public class StudentMainController implements Initializable {
                 stage.show();
             } catch (IOException e) {
                 e.printStackTrace();
-                showMsg("Failed to load quiz screen.");
+                showMsg("Error","Failed to load quiz screen.");
             }
         } else {
-            showMsg("Error: Selected exam not found.");
+            showMsg("Error","Error: Selected exam not found.");
         }
     }
 
