@@ -1,52 +1,56 @@
 package comp3111.examsystem.entity;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import comp3111.examsystem.tools.Entity;
 
-public class Course {
-    private final StringProperty courseId;
-    private final StringProperty courseName;
-    private final StringProperty department;
+public class Course extends Entity {
+    private String courseId;
+    private String courseName;
+    private String department;
 
+    // Default constructor
+    public Course() {
+        super();
+    }
+
+    // Constructor with parameters
     public Course(String courseId, String courseName, String department) {
-        this.courseId = new SimpleStringProperty(courseId);
-        this.courseName = new SimpleStringProperty(courseName);
-        this.department = new SimpleStringProperty(department);
+        this.courseId = courseId;
+        this.courseName = courseName;
+        this.department = department;
     }
 
+    // Getters and setters
     public String getCourseId() {
-        return courseId.get();
-    }
-
-    public void setCourseId(String courseId) {
-        this.courseId.set(courseId);
-    }
-
-    public StringProperty courseIdProperty() {
         return courseId;
     }
 
+    public void setCourseId(String courseId) {
+        this.courseId = courseId;
+    }
+
     public String getCourseName() {
-        return courseName.get();
-    }
-
-    public void setCourseName(String courseName) {
-        this.courseName.set(courseName);
-    }
-
-    public StringProperty courseNameProperty() {
         return courseName;
     }
 
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
     public String getDepartment() {
-        return department.get();
+        return department;
     }
 
     public void setDepartment(String department) {
-        this.department.set(department);
+        this.department = department;
+    }
+    @Override
+    public String toString() {
+        return "Course{" +
+                "courseID='" + courseId + '\'' +
+                ", courseName='" + courseName + '\'' +
+                ", courseDepartment='" + department + '\'' +
+                ", id=" + id +
+                '}';
     }
 
-    public StringProperty departmentProperty() {
-        return department;
-    }
 }
