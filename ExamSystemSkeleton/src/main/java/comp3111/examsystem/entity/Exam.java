@@ -55,6 +55,7 @@ public class Exam extends Entity {
         this.examTime = examTime;
     }
 
+
     public String getPublish() {
         return publish;
     }

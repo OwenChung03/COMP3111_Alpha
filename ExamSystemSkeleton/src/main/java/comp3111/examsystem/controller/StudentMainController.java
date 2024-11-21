@@ -1,3 +1,4 @@
+
 package comp3111.examsystem.controller;
 
 import comp3111.examsystem.entity.Exam;
@@ -59,7 +60,7 @@ public class StudentMainController implements Initializable {
             List<String> examNames = exams.stream()
                     .map(Exam::getExamName)
                     .toList();
-
+            
             // Update ComboBox with the list of exam names
             examCombox.setItems(FXCollections.observableArrayList(examNames));
 

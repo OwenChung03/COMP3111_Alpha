@@ -74,6 +74,23 @@
             <Font name="Arial" size="13.0" />
         </font></CheckBox>
 
+    <CheckBox fx:id="optionA_CB" layoutX="200.0" layoutY="300.0" text="Option A" visible="false">
+      <font>
+         <Font name="Arial" size="13.0" />
+      </font></CheckBox>
+    <CheckBox fx:id="optionB_CB" layoutX="200.0" layoutY="330.0" text="Option B" visible="false">
+      <font>
+         <Font name="Arial" size="13.0" />
+      </font></CheckBox>
+    <CheckBox fx:id="optionC_CB" layoutX="200.0" layoutY="360.0" text="Option C" visible="false">
+      <font>
+         <Font name="Arial" size="13.0" />
+      </font></CheckBox>
+    <CheckBox fx:id="optionD_CB" layoutX="200.0" layoutY="390.0" text="Option D" visible="false">
+      <font>
+         <Font name="Arial" size="13.0" />
+      </font></CheckBox>
+
     <!-- Navigation buttons -->
     <Button fx:id="nextButton" layoutX="354.0" layoutY="468.0" onAction="#nextQuestion" prefHeight="26.0" prefWidth="64.0" text="Next">
         <font>

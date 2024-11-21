@@ -96,7 +96,9 @@ public class StudentGradeStatController implements Initializable {
 
         String studentIdStr = String.valueOf(loggedInStudent.getId());
 
+
         // Retrieve all student grade data from the database
+
         List<StudentGradeData> studentGradeData = studentGradeDatabase.queryByField("studentId", studentIdStr);
 
         // Add the filtered data to the gradeList

@@ -11,4 +11,4 @@ studentId:1731839357286,courseId:MATH1013,examName:Quiz 101,totalScore:40,fullSc
 studentId:1731855262445,courseId:COMP1021,examName:Quiz 102,totalScore:40,fullScore:40,timeSpent:0 min 4 sec,id:1732155510883,
 studentId:1731855262445,courseId:MATH1013,examName:Quiz 101,totalScore:40,fullScore:40,timeSpent:0 min 5 sec,id:1732167285416,
 studentId:1731855262445,courseId:COMP1021,examName:Quiz 102,totalScore:40,fullScore:40,timeSpent:0 min 7 sec,id:1732167470061,
-studentId:1731855262445,courseId:COMP2211,examName:Quiz 1,totalScore:0,fullScore:20,timeSpent:0 min 18 sec,id:1732170336836,
+

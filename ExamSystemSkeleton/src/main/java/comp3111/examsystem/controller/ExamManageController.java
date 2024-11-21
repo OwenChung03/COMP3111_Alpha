@@ -303,6 +303,7 @@ public class ExamManageController implements Initializable {
 
     public void filterExam(ActionEvent actionEvent) {
         String ExamName = examNameTextField.getText().toLowerCase().trim();
+
         String CourseID = CourseIDComboBox.getValue();
         String Publish = PublishComboBox.getValue();
         // Get all questions from the database
@@ -321,11 +322,13 @@ public class ExamManageController implements Initializable {
             }
 
             // Check if the CourseID matches
+
             if (CourseID != null && !CourseID.equals(String.valueOf(exam.getCourseKey()))) {
                 matches = false;
             }
 
             // Check if the score matches
+
             if (!Publish.isEmpty() && !(exam.getPublish().equals(Publish))) {
                 matches = false;
             }

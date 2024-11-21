@@ -285,7 +285,9 @@ public class ExamScreenController {
             }
         } catch (Exception e) {
             e.printStackTrace();
+
             showMsg("Error","Exam Timer Error");
+
         }
 
         examEndTime = LocalDateTime.now();  // Record the end time of the exam
@@ -300,6 +302,7 @@ public class ExamScreenController {
         int[] result = calculateScore();
         int totalScore = result[0];
         int fullScore = result[1];
+
 
         // Get the logged-in student from the StudentLoginController
         Student loggedInStudent = StudentLoginController.getLoggedInStudent();
@@ -373,6 +376,7 @@ public class ExamScreenController {
                 correctAnswerCount, totalQuestions, precision, totalScore, fullScore);
 
         showMsg("Result",message);
+
 
         return new int[] { totalScore, fullScore };  // Return an integer array with total score and full score
     }
