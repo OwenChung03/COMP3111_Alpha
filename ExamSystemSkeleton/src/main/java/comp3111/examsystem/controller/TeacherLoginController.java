@@ -60,7 +60,6 @@ public class TeacherLoginController implements Initializable {
     }
 
     @FXML
-
     public void login(ActionEvent e) {
         String username = usernameTxt.getText();
         String password = passwordTxt.getText();
@@ -92,85 +91,84 @@ public class TeacherLoginController implements Initializable {
         }
     }
 
-        @FXML
-        public void register (ActionEvent e){
-            try {
-                Stage stage = new Stage();
-                FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("TeacherRegisterUI.fxml"));
-                Scene scene = new Scene(fxmlLoader.load());
-                stage.setTitle("Teacher Register");
-                stage.setScene(scene);
-                stage.show();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        }
-        @FXML
-        public void close (ActionEvent e){
-            // Get the current stage (window) and close it
-            Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-            stage.close();
-        }
-        @FXML
-        public void enterinfo (ActionEvent e){
-            // Retrieve data from input fields
-            String username = usernameTxt.getText();
-            String name = nameTxt.getText();
-            String age = ageTxt.getText();
-            String gender = genderCombo.getValue();
-            String position = PositionCombo.getValue();
-            String department = departmentTxt.getText();
-            String password = passwordTxt.getText();
-            String passwordConfirm = passwordconfirmTxt.getText();
-
-            // Basic validation (you can expand this as needed)
-            if (username.isEmpty() || name.isEmpty() || gender == null || age.isEmpty() || position == null || department.isEmpty() || password.isEmpty() || passwordConfirm.isEmpty()) {
-                // Show an error message (you can use an Alert dialog for this)
-                showMsg("Error", "Error: Please fill in all fields correctly.");
-                return;
-            }
-            try {// Convert age from String to int
-                int agenum = Integer.parseInt(ageTxt.getText());
-                if (agenum <= 0) {
-                    showMsg("Error", "Error: Age must be a positive number.");
-                    return;
-                }
-            } catch (NumberFormatException e1) {
-                showMsg("Error", "Error: Please enter a valid age.");
-                return;
-            }
-
-            // Validate that the passwords match
-            if (!password.equals(passwordConfirm)) {
-                showMsg("Error", "Error: Passwords do not match.");
-                return;
-            }
-            if (!TeacherDatabase.queryByField("username", username).isEmpty()) {
-                showMsg("Error", "Error: Username already exists. Please choose a different one.");
-                return;
-            }
-
-            // Create a new Teacher object
-            Teacher newTeacher = new Teacher(username, name, gender, age, position, department, password);
-
-            System.out.println(newTeacher);
-
-            // Add the new student to the database (write to file)
-            TeacherDatabase.add(newTeacher);
-
-            System.out.println("Added");
-
-            List<Teacher> allTeachers = TeacherDatabase.getAll();
-            System.out.println("All teachers after registration:");
-            for (Teacher teacher : allTeachers) {
-                System.out.println(teacher);
-            }
-
-            // Show success message
-            showMsg("Welcome", "Teacher registered successfully!");
-
-            Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-            stage.close();
+    @FXML
+    public void register (ActionEvent e){
+        try {
+            Stage stage = new Stage();
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("TeacherRegisterUI.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+            stage.setTitle("Teacher Register");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e1) {
+            e1.printStackTrace();
         }
     }
+    @FXML
+    public void close (ActionEvent e){
+        // Get the current stage (window) and close it
+        Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+        stage.close();
+    }
+    @FXML
+    public void enterinfo (ActionEvent e){
+        // Retrieve data from input fields
+        String username = usernameTxt.getText();
+        String name = nameTxt.getText();
+        String age = ageTxt.getText();
+        String gender = genderCombo.getValue();
+        String position = PositionCombo.getValue();
+        String department = departmentTxt.getText();
+        String password = passwordTxt.getText();
+        String passwordConfirm = passwordconfirmTxt.getText();
 
+        // Basic validation (you can expand this as needed)
+        if (username.isEmpty() || name.isEmpty() || gender == null || age.isEmpty() || position == null || department.isEmpty() || password.isEmpty() || passwordConfirm.isEmpty()) {
+            // Show an error message (you can use an Alert dialog for this)
+            showMsg("Error", "Error: Please fill in all fields correctly.");
+            return;
+        }
+        try {// Convert age from String to int
+            int agenum = Integer.parseInt(ageTxt.getText());
+            if (agenum <= 0) {
+                showMsg("Error", "Error: Age must be a positive number.");
+                return;
+            }
+        } catch (NumberFormatException e1) {
+            showMsg("Error", "Error: Please enter a valid age.");
+            return;
+        }
+
+        // Validate that the passwords match
+        if (!password.equals(passwordConfirm)) {
+            showMsg("Error", "Error: Passwords do not match.");
+            return;
+        }
+        if (!TeacherDatabase.queryByField("username", username).isEmpty()) {
+            showMsg("Error", "Error: Username already exists. Please choose a different one.");
+            return;
+        }
+
+        // Create a new Teacher object
+        Teacher newTeacher = new Teacher(username, name, gender, age, position, department, password);
+
+        System.out.println(newTeacher);
+
+        // Add the new student to the database (write to file)
+        TeacherDatabase.add(newTeacher);
+
+        System.out.println("Added");
+
+        List<Teacher> allTeachers = TeacherDatabase.getAll();
+        System.out.println("All teachers after registration:");
+        for (Teacher teacher : allTeachers) {
+            System.out.println(teacher);
+        }
+
+        // Show success message
+        showMsg("Welcome", "Teacher registered successfully!");
+
+        Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+        stage.close();
+    }
+}

@@ -20,8 +20,8 @@ public class Database<T> {
         tableName = entitySample.getSimpleName().toLowerCase();
 
 
-        jsonFile = Paths.get("C:","Users","jerry","IdeaProjects","COMP3111_Alpha","ExamSystemSkeleton","database", tableName + ".txt").toString();
-        //jsonFile = Paths.get("/Users","Terry","COMP3111_Alpha","ExamSystemSkeleton","database", tableName + ".txt").toString();
+//        jsonFile = Paths.get("C:","Users","jerry","IdeaProjects","COMP3111_Alpha","ExamSystemSkeleton","src","main","resources","database", tableName + ".txt").toString();
+        jsonFile = Paths.get("/Users","Terry","COMP3111_Alpha","ExamSystemSkeleton","database", tableName + ".txt").toString();
 
         File file = new File(jsonFile);
         if (!file.exists()) {
