@@ -13,9 +13,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static comp3111.examsystem.tools.MsgSender.showMsg;
@@ -262,7 +260,7 @@ public class ExamManageController implements Initializable {
         String newCourseID = newCourseIDComboBox.getValue();
         String newExamTimeText = newexamTimeTextField.getText().trim();
         String newPublishStatus = PublishCombo.getValue();
-
+        String oldquestionKeys = selectedExam.getQuestionKeys();
         // Validate input
         if (newExamName.isEmpty() || newCourseID == null || newExamTimeText.isEmpty() || newPublishStatus == null) {
             showMsg("Error", "Please fill in all required fields.");
@@ -281,11 +279,15 @@ public class ExamManageController implements Initializable {
             return;
         }
 
-        // Collect question IDs from the questionInExamTable
+        // Retrieve existing question keys from the selected exam
+        // Retrieve existing question keys from the selected exam
         String questionKeys = questionInExamTable.getItems().stream()
-                .map(question -> String.valueOf(question.getId())) // Convert long to String
+                .map(question -> {
+                    long id = question.getId();
+                    return (id == 0) ? question.getreferID() : String.valueOf(id);
+                })
                 .collect(Collectors.joining("/"));
-
+        //String combinedKeys = String.join("/", oldquestionKeys, questionKeys);
         // Update the selected exam
         selectedExam.setExamName(newExamName);
         selectedExam.setCourseKey(newCourseID); // Assuming setCourseKey() exists
@@ -428,9 +430,19 @@ public class ExamManageController implements Initializable {
             //
             // Add the copied question to the questionInExamTable
             questionInExamTable.getItems().add(copiedQuestion);
+            printReferIDs();
 
         } else {
             showMsg("Error", "Please select a question to add.");
+        }
+    }
+
+    private void printReferIDs() {
+        System.out.println("Refer IDs in questionInExamTable:");
+        for (Question question : questionInExamTable.getItems()) {
+            // Assuming getreferID() returns the referID of the question
+            String referID = question.getreferID();
+            System.out.println(referID);
         }
     }
 
