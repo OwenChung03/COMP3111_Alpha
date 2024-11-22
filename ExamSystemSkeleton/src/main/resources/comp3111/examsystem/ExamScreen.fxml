@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
+<?import java.lang.String?>
 <AnchorPane prefHeight="533.0" prefWidth="614.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.examsystem.controller.ExamScreenController">
 
     <!-- Quiz title -->
@@ -31,7 +32,8 @@
         </font></Label>
 
     <!-- List of questions on the left side -->
-    <ListView fx:id="questionsListView" layoutX="20.0" layoutY="100.0" prefWidth="150.0" />
+    <ListView fx:id="questionsListView" layoutX="20.0" layoutY="100.0" prefWidth="150.0" prefHeight="300.0"
+              style="-fx-hbar-policy: always;" />
 
     <!-- Question label -->
     <Label fx:id="questionLabel" layoutX="198.0" layoutY="100.0" prefHeight="27.0" prefWidth="64.0" text="Question" wrapText="true">
