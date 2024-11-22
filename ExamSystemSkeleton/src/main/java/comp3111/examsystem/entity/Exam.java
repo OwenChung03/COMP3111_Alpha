@@ -23,7 +23,7 @@ public class Exam extends Entity {
 
 
     public Exam(String examName, String courseKey, String examTime, String publish, String questionKeys) {
-         this.examName = examName;
+        this.examName = examName;
         this.courseKey = courseKey;
         this.examTime = examTime;
         this.publish = publish;

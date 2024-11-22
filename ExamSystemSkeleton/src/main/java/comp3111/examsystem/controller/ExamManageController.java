@@ -234,7 +234,7 @@ public class ExamManageController implements Initializable {
             if (questionKeysBuilder.length() > 0) {
                 questionKeysBuilder.append("/"); // Append separator before adding the next ID
             }
-            questionKeysBuilder.append(question.getreferID()); // Assuming you have a method getId() in your Question class
+            questionKeysBuilder.append(question.getId()); // Assuming you have a method getId() in your Question class
         }
         String questionKeys = questionKeysBuilder.toString(); // Convert to string
 
