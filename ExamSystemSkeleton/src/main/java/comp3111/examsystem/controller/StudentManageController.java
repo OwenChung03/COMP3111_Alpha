@@ -109,16 +109,59 @@ public class StudentManageController {
     public void updateStudent() {
         Student selectedStudent = studentTable.getSelectionModel().getSelectedItem();
         if (selectedStudent != null) {
-            selectedStudent.setUsername(usernameField.getText());
-            selectedStudent.setName(nameField.getText());
-            selectedStudent.setAge(ageField.getText());
-            selectedStudent.setGender(genderComboBox.getValue());
-            selectedStudent.setDepartment(departmentField.getText());
-            selectedStudent.setPassword(passwordField.getText());
+            boolean isModified = false;
 
-            // Update the student in the database
-            studentDatabase.update(selectedStudent);
-            loadStudentsFromDatabase();
+            // Check for modifications in each field
+            String newUsername = usernameField.getText().trim();
+            String newName = nameField.getText().trim();
+            String newAge = ageField.getText().trim();
+            String newGender = genderComboBox.getValue();
+            String newDepartment = departmentField.getText().trim();
+            String newPassword = passwordField.getText().trim();
+
+            // Update fields only if they are changed
+            if (!newUsername.isEmpty() && !newUsername.equals(selectedStudent.getUsername())) {
+                selectedStudent.setUsername(newUsername);
+                isModified = true;
+            }
+
+            if (!newName.isEmpty() && !newName.equals(selectedStudent.getName())) {
+                selectedStudent.setName(newName);
+                isModified = true;
+            }
+
+            if (!newAge.isEmpty() && !newAge.equals(selectedStudent.getAge())) {
+                selectedStudent.setAge(newAge);
+                isModified = true;
+            }
+
+            if (newGender != null && !newGender.equals(selectedStudent.getGender())) {
+                selectedStudent.setGender(newGender);
+                isModified = true;
+            }
+
+            if (!newDepartment.isEmpty() && !newDepartment.equals(selectedStudent.getDepartment())) {
+                selectedStudent.setDepartment(newDepartment);
+                isModified = true;
+            }
+
+            // Only allow password update if at least one other field is modified
+            if (!newPassword.isEmpty()) {
+                if (isModified) {
+                    selectedStudent.setPassword(newPassword);
+                } else {
+                    showMsg("Error: You must change at least one other field to update the password.");
+                    return;
+                }
+            }
+
+            // If any modification occurs, update the database
+            if (isModified || !newPassword.isEmpty()) {
+                studentDatabase.update(selectedStudent); // Update the student in the database
+                loadStudentsFromDatabase(); // Refresh the table
+            } else {
+                showMsg("Error: No changes made.");
+            }
         } else {
             showMsg("Error: No student selected.");
         }

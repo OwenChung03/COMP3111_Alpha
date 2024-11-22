@@ -59,22 +59,46 @@ public class CourseManageController {
         clearForm();
     }
 
+
     @FXML
     private void handleUpdate() {
         Course selectedCourse = courseTable.getSelectionModel().getSelectedItem();
         if (selectedCourse != null) {
-            selectedCourse.setCourseId(courseIdField.getText());
-            selectedCourse.setCourseName(courseNameField.getText());
-            selectedCourse.setDepartment(departmentField.getText());
+            boolean modified = false; // Track if any modifications were made
 
-            courseDatabase.update(selectedCourse); // Update the course in the database
-            courseTable.refresh();
-            clearForm();
+            // Update courseId if changed
+            String newCourseId = courseIdField.getText().trim();
+            if (!newCourseId.isEmpty() && !newCourseId.equals(selectedCourse.getCourseId())) {
+                selectedCourse.setCourseId(newCourseId);
+                modified = true;
+            }
+
+            // Update courseName if changed
+            String newCourseName = courseNameField.getText().trim();
+            if (!newCourseName.isEmpty() && !newCourseName.equals(selectedCourse.getCourseName())) {
+                selectedCourse.setCourseName(newCourseName);
+                modified = true;
+            }
+
+            // Update department if changed
+            String newDepartment = departmentField.getText().trim();
+            if (!newDepartment.isEmpty() && !newDepartment.equals(selectedCourse.getDepartment())) {
+                selectedCourse.setDepartment(newDepartment);
+                modified = true;
+            }
+
+            // Only update the database if any modifications were made
+            if (modified) {
+                courseDatabase.update(selectedCourse); // Update the course in the database
+                courseTable.refresh();
+                clearForm();
+            } else {
+                showAlert("No changes made", "Please modify at least one field to update the course.");
+            }
         } else {
             showAlert("No course selected", "Please select a course to update.");
         }
     }
-
     @FXML
     private void handleDelete() {
         Course selectedCourse = courseTable.getSelectionModel().getSelectedItem();

@@ -104,15 +104,61 @@ public class TeacherManageController {
     public void updateTeacher() {
         Teacher selectedTeacher = teacherTable.getSelectionModel().getSelectedItem();
         if (selectedTeacher != null) {
-            selectedTeacher.setUsername(usernameField.getText());
-            selectedTeacher.setName(nameField.getText());
-            selectedTeacher.setAge(ageField.getText());
-            selectedTeacher.setGender(genderComboBox.getValue());
-            selectedTeacher.setDepartment(departmentField.getText());
-            selectedTeacher.setPassword(passwordField.getText());
+            boolean isModified = false;
 
-            teacherDatabase.update(selectedTeacher);
-            loadTeachersFromDatabase();
+            // Check for modifications in each field
+            String newUsername = usernameField.getText().trim();
+            String newName = nameField.getText().trim();
+            String newAge = ageField.getText().trim();
+            String newGender = genderComboBox.getValue();
+            String newDepartment = departmentField.getText().trim();
+            String newPassword = passwordField.getText().trim();
+
+            // Update fields only if they are changed
+            if (!newUsername.isEmpty() && !newUsername.equals(selectedTeacher.getUsername())) {
+                selectedTeacher.setUsername(newUsername);
+                isModified = true;
+            }
+
+            if (!newName.isEmpty() && !newName.equals(selectedTeacher.getName())) {
+                selectedTeacher.setName(newName);
+                isModified = true;
+            }
+
+            if (!newAge.isEmpty() && !newAge.equals(selectedTeacher.getAge())) {
+                selectedTeacher.setAge(newAge);
+                isModified = true;
+            }
+
+            if (newGender != null && !newGender.equals(selectedTeacher.getGender())) {
+                selectedTeacher.setGender(newGender);
+                isModified = true;
+            }
+
+            if (!newDepartment.isEmpty() && !newDepartment.equals(selectedTeacher.getDepartment())) {
+                selectedTeacher.setDepartment(newDepartment);
+                isModified = true;
+            }
+
+            // Only allow password update if at least one other field is modified
+            if (!newPassword.isEmpty()) {
+                if (isModified) {
+                    selectedTeacher.setPassword(newPassword);
+                } else {
+                    showMsg("Error: You must change at least one other field to update the password.");
+                    return;
+                }
+            }
+
+            // If any modification occurs, update the database
+            if (isModified || !newPassword.isEmpty()) {
+                teacherDatabase.update(selectedTeacher); // Update the teacher in the database
+                loadTeachersFromDatabase(); // Refresh the table
+            } else {
+                showMsg("Error: No changes made.");
+            }
+        } else {
+            showMsg("Error: No teacher selected.");
         }
     }
 
