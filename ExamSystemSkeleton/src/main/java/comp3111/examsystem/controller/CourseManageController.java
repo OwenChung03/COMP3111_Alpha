@@ -1,6 +1,7 @@
 package comp3111.examsystem.controller;
 
 import comp3111.examsystem.entity.Course;
+import comp3111.examsystem.tools.Database; // Ensure you have this import
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,13 +21,25 @@ public class CourseManageController {
     private TableColumn<Course, String> courseIdColumn, courseNameColumn, departmentColumn;
 
     private ObservableList<Course> courseData = FXCollections.observableArrayList();
+    private Database<Course> courseDatabase; // Database instance
 
     @FXML
     public void initialize() {
-        courseIdColumn.setCellValueFactory(new PropertyValueFactory<>("courseId")); // Adjust as necessary
+        courseDatabase = new Database<>(Course.class); // Initialize the database
+        setupColumns(); // Set up the columns for the table
+        loadCoursesFromDatabase(); // Load the initial data
+    }
+
+    private void setupColumns() {
+        courseIdColumn.setCellValueFactory(new PropertyValueFactory<>("courseId"));
         courseNameColumn.setCellValueFactory(new PropertyValueFactory<>("courseName"));
         departmentColumn.setCellValueFactory(new PropertyValueFactory<>("department"));
         courseTable.setItems(courseData);
+    }
+
+    private void loadCoursesFromDatabase() {
+        courseData.setAll(courseDatabase.getAll()); // Load all courses from the database
+        courseTable.setItems(courseData); // Set the loaded data to the table
     }
 
     @FXML
@@ -42,6 +55,7 @@ public class CourseManageController {
 
         Course newCourse = new Course(courseId, courseName, department);
         courseData.add(newCourse);
+        courseDatabase.add(newCourse); // Add the new course to the database
         clearForm();
     }
 
@@ -53,6 +67,7 @@ public class CourseManageController {
             selectedCourse.setCourseName(courseNameField.getText());
             selectedCourse.setDepartment(departmentField.getText());
 
+            courseDatabase.update(selectedCourse); // Update the course in the database
             courseTable.refresh();
             clearForm();
         } else {
@@ -64,7 +79,9 @@ public class CourseManageController {
     private void handleDelete() {
         Course selectedCourse = courseTable.getSelectionModel().getSelectedItem();
         if (selectedCourse != null) {
+            String courseId = selectedCourse.getCourseId(); // Use courseId for deletion
             courseData.remove(selectedCourse);
+            courseDatabase.delByFiled("courseId", courseId); // Delete from database by courseId
             clearForm();
         } else {
             showAlert("No course selected", "Please select a course to delete.");
@@ -100,7 +117,7 @@ public class CourseManageController {
 
     @FXML
     private void handleRefresh() {
-        courseTable.refresh();
+        loadCoursesFromDatabase(); // Reload courses from the database
     }
 
     private void clearForm() {

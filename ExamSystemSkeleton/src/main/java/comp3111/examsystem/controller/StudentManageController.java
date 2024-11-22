@@ -1,18 +1,21 @@
 package comp3111.examsystem.controller;
 
 import comp3111.examsystem.entity.Student;
+import comp3111.examsystem.tools.Database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import comp3111.examsystem.tools.Database;
+
 public class StudentManageController {
 
     @FXML
     private TextField usernameFilter, nameFilter, departmentFilter;
     @FXML
     private TableView<Student> studentTable;
+    @FXML
+    private TableColumn<Student, String> usernameColumn, nameColumn, ageColumn, genderColumn, departmentColumn, passwordColumn;
     @FXML
     private TextField usernameField, nameField, ageField, departmentField, passwordField;
     @FXML
@@ -23,28 +26,15 @@ public class StudentManageController {
 
     @FXML
     public void initialize() {
-        studentDatabase = new Database<>(Student.class); // Initialize database
+        studentDatabase = new Database<>(Student.class); // Initialize the database
 
-        // Set up the table columns
-        TableColumn<Student, String> usernameColumn = new TableColumn<>("Username");
+        // Set up the cell value factories for each column
         usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
-
-        TableColumn<Student, String> nameColumn = new TableColumn<>("Name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-
-        TableColumn<Student, String> ageColumn = new TableColumn<>("Age");
         ageColumn.setCellValueFactory(new PropertyValueFactory<>("age"));
-
-        TableColumn<Student, String> genderColumn = new TableColumn<>("Gender");
         genderColumn.setCellValueFactory(new PropertyValueFactory<>("gender"));
-
-        TableColumn<Student, String> departmentColumn = new TableColumn<>("Department");
         departmentColumn.setCellValueFactory(new PropertyValueFactory<>("department"));
-
-        TableColumn<Student, String> passwordColumn = new TableColumn<>("Password");
         passwordColumn.setCellValueFactory(new PropertyValueFactory<>("password"));
-
-        studentTable.getColumns().addAll(usernameColumn, nameColumn, ageColumn, genderColumn, departmentColumn, passwordColumn);
 
         // Initialize ComboBox items
         genderComboBox.setItems(FXCollections.observableArrayList("Male", "Female", "Other"));
@@ -129,6 +119,8 @@ public class StudentManageController {
             // Update the student in the database
             studentDatabase.update(selectedStudent);
             loadStudentsFromDatabase();
+        } else {
+            showMsg("Error: No student selected.");
         }
     }
 
@@ -139,6 +131,8 @@ public class StudentManageController {
             String username = selectedStudent.getUsername();
             studentDatabase.delByFiled("username", username);
             loadStudentsFromDatabase();
+        } else {
+            showMsg("Error: No student selected.");
         }
     }
 
