@@ -10,8 +10,8 @@ public class Question extends Entity {
     private String optionD;
     private String answer;
     private String type;
-    private String referID;
     private String score;
+
 
     public Question() {
         super();
