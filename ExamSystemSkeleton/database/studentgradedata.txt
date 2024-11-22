@@ -8,3 +8,4 @@ studentId:1731855262445,courseId:COMP2011,examName:final exam,totalScore:10,full
 studentId:1731855262445,courseId:COMP1021,examName:Quiz 1,totalScore:10,fullScore:30,timeSpent:0 min 12 sec,id:1732246493298,
 studentId:1731855262445,courseId:COMP1021,examName:Quiz 1,totalScore:20,fullScore:30,timeSpent:0 min 6 sec,id:1732246617193,
 studentId:1731855262445,courseId:COMP2011,examName:final exam,totalScore:20,fullScore:30,timeSpent:0 min 28 sec,id:1732249521258,
+studentId:1731855262445,courseId:COMP1021,examName:Quiz 1,totalScore:0,fullScore:50,timeSpent:0 min 17 sec,id:1732253602623,
