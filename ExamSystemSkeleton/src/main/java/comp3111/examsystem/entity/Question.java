@@ -11,6 +11,7 @@ public class Question extends Entity {
     private String answer;
     private String type;
     private String score;
+    private String referID;
 
 
     public Question() {

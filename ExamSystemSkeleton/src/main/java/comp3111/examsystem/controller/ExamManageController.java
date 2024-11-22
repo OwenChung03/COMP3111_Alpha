@@ -430,7 +430,6 @@ public class ExamManageController implements Initializable {
             //
             // Add the copied question to the questionInExamTable
             questionInExamTable.getItems().add(copiedQuestion);
-            printReferIDs();
 
         } else {
             showMsg("Error", "Please select a question to add.");
