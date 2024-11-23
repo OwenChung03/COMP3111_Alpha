@@ -40,6 +40,8 @@ public class Question extends Entity {
         this.score = score;
         this.referID = "0";
     }
+
+
     // Getters and setters
     public String getQuestionContent() {
         return questionContent;

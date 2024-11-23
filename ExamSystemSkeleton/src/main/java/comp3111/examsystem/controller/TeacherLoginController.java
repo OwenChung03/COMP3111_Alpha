@@ -116,12 +116,19 @@ public class TeacherLoginController implements Initializable {
     public void enterinfo (ActionEvent e){
         // Retrieve data from input fields
         String username = registernameTxt.getText();
+
         String name = nameTxt.getText();
+
         String age = ageTxt.getText();
+
         String gender = genderCombo.getValue();
+
         String position = PositionCombo.getValue();
+
         String department = departmentTxt.getText();
+
         String password = passwordTxt.getText();
+
         String passwordConfirm = passwordconfirmTxt.getText();
 
         // Basic validation (you can expand this as needed)
@@ -134,10 +141,12 @@ public class TeacherLoginController implements Initializable {
             return;
         }
         if(!checkPassword(password, passwordConfirm)) {
+
             showMsg("Error", "Error: Passwords do not match.");
             return;
         }
         if(checkUser(username)) {
+
             showMsg("Error", "Error: Username already exists. Please choose a different one.");
             return;
         }
@@ -164,8 +173,7 @@ public class TeacherLoginController implements Initializable {
         stage.close();
     }
     static boolean CheckRegister(String username, String name, String gender, String age, String position, String department, String password, String passwordConfirm) {
-        if (username.isEmpty() || name.isEmpty() || gender == null || age.isEmpty() || position == null || department.isEmpty() || password.isEmpty() || passwordConfirm.isEmpty()) {
-            // Show an error message (you can use an Alert dialog for this)
+        if (username.isEmpty()||name.isEmpty() || gender == null || age.isEmpty() || position == null || department.isEmpty() || password.isEmpty() || passwordConfirm.isEmpty()){
             return false;
         }
         return true;

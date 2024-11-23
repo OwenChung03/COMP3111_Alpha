@@ -81,6 +81,90 @@ class TeacherLoginControllerTest {
         assertEquals(false,CheckRegister(username, name, gender, age, position, department, password, passwordConfirm));
     }
     @Test
+    void WrongRegister2(){
+        String username = "";
+        String name = "a";
+        String age = "20";
+        String gender = "Male";
+        String position = "Professor";
+        String department = "CSE";
+        String password = "a";
+        String passwordConfirm = "a";
+        assertEquals(false,CheckRegister(username, name, gender, age, position, department, password, passwordConfirm));
+    }
+    @Test
+    void WrongRegister3(){
+        String username = "a";
+        String name = "";
+        String age = "20";
+        String gender = "Male";
+        String position = "Professor";
+        String department = "CSE";
+        String password = "a";
+        String passwordConfirm = "a";
+        assertEquals(false,CheckRegister(username, name, gender, age, position, department, password, passwordConfirm));
+    }
+    @Test
+    void WrongRegister4(){
+        String username = "a";
+        String name = "a";
+        String age = "";
+        String gender = "Male";
+        String position = "Professor";
+        String department = "CSE";
+        String password = "a";
+        String passwordConfirm = "a";
+        assertEquals(false,CheckRegister(username, name, gender, age, position, department, password, passwordConfirm));
+    }
+    @Test
+    void WrongRegister5(){
+        String username = "a";
+        String name = "a";
+        String age = "20";
+        String gender = null;
+        String position = "Professor";
+        String department = "CSE";
+        String password = "a";
+        String passwordConfirm = "a";
+        assertEquals(false,CheckRegister(username, name, gender, age, position, department, password, passwordConfirm));
+    }
+    @Test
+    void WrongRegister6(){
+        String username = "a";
+        String name = "a";
+        String age = "20";
+        String gender = "Male";
+        String position = null;
+        String department = "CSE";
+        String password = "a";
+        String passwordConfirm = "a";
+        assertEquals(false,CheckRegister(username, name, gender, age, position, department, password, passwordConfirm));
+    }
+    @Test
+    void WrongRegister7(){
+        String username = "a";
+        String name = "a";
+        String age = "20";
+        String gender = "Male";
+        String position = "Professor";
+        String department = "";
+        String password = "a";
+        String passwordConfirm = "a";
+        assertEquals(false,CheckRegister(username, name, gender, age, position, department, password, passwordConfirm));
+    }
+    @Test
+    void WrongRegister8(){
+        String username = "a";
+        String name = "a";
+        String age = "20";
+        String gender = "Male";
+        String position = "Professor";
+        String department = "CSE";
+        String password = "";
+        String passwordConfirm = "a";
+        assertEquals(false,CheckRegister(username, name, gender, age, position, department, password, passwordConfirm));
+    }
+    @Test
     void RightRegister(){
         String username = "a";
         String name = "a";
