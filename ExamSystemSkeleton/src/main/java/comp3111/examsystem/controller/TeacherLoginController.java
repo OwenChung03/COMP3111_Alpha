@@ -25,7 +25,9 @@ public class TeacherLoginController implements Initializable {
     private static final String ALLOWED_PASSWORD_CHARS = "^[a-zA-Z0-9!@#\\$%\\^&\\*\\(\\)_\\+\\-=\\[\\]\\{\\}\\|;:'\",<.>/?]+$";
     @FXML
     private TextField usernameTxt;
+    @FXML
     private TextField registernameTxt;
+    @FXML
     private PasswordField passwordTxt;
     private Button loginButton;
     private Button registerButton;
