@@ -214,5 +214,21 @@ class ExamManageControllerTest {
 
         assertEquals(false,Validation(examName,courseID,examTime,publish));
     }
+    @Test
+    void NullExam(){
+        Exam exam = null;
+        assertEquals(true,CheckNull(exam));
+    }
+    @Test
+    void Non_NullExam(){
+        String examName = "";
+        String courseKey = "COMP2211";
+        String examTime = "20";
+        String publish = "Yes";
+        String questionKeys = "0";
+        Exam exam = new Exam("Quiz1", courseKey, examTime, publish, questionKeys);;
+        assertEquals(false,CheckNull(exam));
+    }
+
 
 }

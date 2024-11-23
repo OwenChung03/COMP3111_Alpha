@@ -97,7 +97,7 @@ public class ExamManageController implements Initializable {
         newCourseIDComboBox.setItems(FXCollections.observableArrayList(courseIDs));
         // Add listener to load questions when an exam is selected
         ExamTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
+            if (!CheckNull(newValue)) {
                 loadQuestionsForExam(newValue);
                 populateExamDetails(newValue); // New method to populate details
             }
@@ -118,7 +118,7 @@ public class ExamManageController implements Initializable {
         List<Question> questions = new ArrayList<>();
         for (String key : keys) {
             Question question = QuestionDatabase.queryByKey(key); // Fetch question by ID
-            if (question != null) {
+            if (!CheckNull(question)) {
                 questions.add(question);
             }
         }
@@ -171,12 +171,17 @@ public class ExamManageController implements Initializable {
         // Refresh the question table to show all questions without filters
         refreshExam(actionEvent);
     }
-
+    static <T> boolean CheckNull(T exam){
+        if(exam == null){
+            return true;
+        }
+        return false;
+    }
     public void deleteExam(ActionEvent actionEvent) {
         Exam selectedExam = ExamTable.getSelectionModel().getSelectedItem();
 
         // Check if a question is selected
-        if (selectedExam == null) {
+        if (CheckNull(selectedExam)) {
             // Show an alert if no question is selected
             showMsg("No Selection", "Please select an exam to delete.");
             return;
@@ -301,9 +306,11 @@ public class ExamManageController implements Initializable {
         refreshExam(actionEvent);
     }
 
+    // Method to get question keys as a joined string
+
     public void updateExam(ActionEvent actionEvent) {
         Exam selectedExam = ExamTable.getSelectionModel().getSelectedItem();
-        if (selectedExam == null) {
+        if (CheckNull(selectedExam)) {
             showMsg("No Selection", "Please select an exam to update.");
             return;
         }
@@ -401,7 +408,7 @@ public class ExamManageController implements Initializable {
     public void Deletefromleft(ActionEvent actionEvent) {
         Question selectedQuestion = questionInExamTable.getSelectionModel().getSelectedItem();
 
-        if (selectedQuestion != null) {
+        if (!CheckNull(selectedQuestion)) {
             // Remove the selected question from the questionInExamTable
             questionInExamTable.getItems().remove(selectedQuestion);
 
@@ -413,7 +420,7 @@ public class ExamManageController implements Initializable {
     public void Addtoleft(ActionEvent actionEvent) {
         Question selectedQuestion = questionTable.getSelectionModel().getSelectedItem();
 
-        if (selectedQuestion != null) {
+        if (!CheckNull(selectedQuestion)) {
             // Create a full copy of the selected question
             Question copiedQuestion = new Question(
                     selectedQuestion.getQuestionContent(),

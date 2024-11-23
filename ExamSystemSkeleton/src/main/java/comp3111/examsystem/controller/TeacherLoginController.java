@@ -158,15 +158,6 @@ public class TeacherLoginController implements Initializable {
         // Add the new student to the database (write to file)
         TeacherDatabase.add(newTeacher);
 
-        //System.out.println("Added");
-
-        //List<Teacher> allTeachers = TeacherDatabase.getAll();
-        //System.out.println("All teachers after registration:");
-        //for (Teacher teacher : allTeachers) {
-        //    System.out.println(teacher);
-        //}
-
-        // Show success message
         showMsg("Welcome", "Teacher registered successfully!");
 
         Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();

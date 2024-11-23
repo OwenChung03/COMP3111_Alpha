@@ -92,7 +92,10 @@ public class QuestionManageController implements Initializable {
 
     static boolean QuestionChecking(Question question, String questionContent, String selectedType, String scoreText) {
         // Check if question content matches
-        if (!(questionContent.isEmpty()||question.getQuestionContent().toLowerCase().contains(questionContent))){
+        if (!questionContent.isEmpty()){
+            return false;
+        }
+        if(!question.getQuestionContent().toLowerCase().contains(questionContent)){
             return false;
         }
         // Check if the type matches
