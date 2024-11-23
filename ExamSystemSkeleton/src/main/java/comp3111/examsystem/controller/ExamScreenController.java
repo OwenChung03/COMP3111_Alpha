@@ -131,7 +131,7 @@ public class ExamScreenController {
 
             if (loadedQuestions != null && !loadedQuestions.isEmpty()) {
                 questions = loadedQuestions;
-                System.out.println("Questions loaded: " + questions.size()); // Debugging
+
                 totalQuestions = questions.size();
                 totalQuestionsLabel.setText("Total Questions: " + totalQuestions);
 
@@ -156,13 +156,6 @@ public class ExamScreenController {
 
         for (int i = 0; i < questions.size(); i++) {
             String questionContent = questions.get(i).getQuestionContent();
-            System.out.println("Adding question to ListView: " + questionContent); // Debugging
-
-            // Check for null or empty questionContent
-            if (questionContent == null || questionContent.trim().isEmpty()) {
-                System.out.println("Warning: Question content is null or empty for question " + (i + 1));
-            }
-
             questionsListView.getItems().add("Q" + (i + 1) + ": " + questionContent);
         }
     }
