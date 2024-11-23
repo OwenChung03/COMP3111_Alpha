@@ -127,7 +127,18 @@ public class TeacherLoginController implements Initializable {
             showMsg("Error", "Error: Please fill in all fields correctly.");
             return;
         }
-
+        if(!CheckAge(age)) {
+            showMsg("Error", "Error: Please enter a valid age.");
+            return;
+        }
+        if(!checkPassword(password, passwordConfirm)) {
+            showMsg("Error", "Error: Passwords do not match.");
+            return;
+        }
+        if(checkUser(username)) {
+            showMsg("Error", "Error: Username already exists. Please choose a different one.");
+            return;
+        }
         // Create a new Teacher object
         Teacher newTeacher = new Teacher(username, name, gender, age, position, department, password);
 
@@ -150,30 +161,34 @@ public class TeacherLoginController implements Initializable {
         Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
         stage.close();
     }
-    static boolean CheckRegister(String username, String name, String gender, String age, String position, String department, String password, String passwordConfirm){
+    static boolean CheckRegister(String username, String name, String gender, String age, String position, String department, String password, String passwordConfirm) {
         if (username.isEmpty() || name.isEmpty() || gender == null || age.isEmpty() || position == null || department.isEmpty() || password.isEmpty() || passwordConfirm.isEmpty()) {
             // Show an error message (you can use an Alert dialog for this)
             return false;
         }
+        return true;
+    }
+    static boolean CheckAge(String age) {
         try {// Convert age from String to int
             int agenum = Integer.parseInt(age);
             if (agenum <= 0) {
-                showMsg("Error", "Error: Age must be a positive number.");
                 return false;
             }
         } catch (NumberFormatException e1) {
-            showMsg("Error", "Error: Please enter a valid age.");
             return false;
         }
-
+        return true;
+    }
+    static boolean checkPassword(String password, String passwordConfirm) {
         // Validate that the passwords match
         if (!password.equals(passwordConfirm)) {
-            showMsg("Error", "Error: Passwords do not match.");
             return false;
         }
-        if (!TeacherDatabase.queryByField("username", username).isEmpty()) {
-            showMsg("Error", "Error: Username already exists. Please choose a different one.");
-            return false;
+        return true;
+    }
+    static boolean checkUser(String username){
+        if (TeacherDatabase.queryByField("username", username).isEmpty()) {
+             return false;
         }
         return true;
     }
