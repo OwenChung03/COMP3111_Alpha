@@ -11,12 +11,12 @@ public class Question extends Entity {
     private String answer;
     private String type;
     private String score;
-    private String referID;
 
 
     public Question() {
         super();
     }
+
     public Question(String questionContent, String optionA, String optionB, String optionC, String optionD, String answer, String type, String score, String referID) {
         //super(id); // Call the superclass constructor to set the id
         this.questionContent = questionContent;

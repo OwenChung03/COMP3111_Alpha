@@ -55,13 +55,14 @@ public class ExamScreenController {
     @FXML
     private CheckBox optionA_CB, optionB_CB, optionC_CB, optionD_CB;
 
+
     private ToggleGroup answerGroup;
 
     private int currentQuestionIndex = 0;
     private Timer examTimer;
     private LocalDateTime examStartTime;
     private LocalDateTime examEndTime;
-    private int remainingTime = 30;  // Example: 30 seconds for the quiz
+    private int remainingTime;  // Example: 30 seconds for the quiz
     private int totalQuestions;
     private List<Question> questions;  // List to store the loaded quiz questions
     private List<String> studentAnswers; // To store the selected answers
@@ -80,7 +81,34 @@ public class ExamScreenController {
         optionC.setToggleGroup(answerGroup);
         optionD.setToggleGroup(answerGroup);
 
-        startTimer();
+        // Add a listener to handle question selection in the ListView
+        questionsListView.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                int selectedIndex = newValue.intValue();
+                if (selectedIndex >= 0 && selectedIndex < questions.size()) {
+                    saveCurrentAnswer(); // Save the current answer before switching
+                    currentQuestionIndex = selectedIndex;
+                    loadQuestion(selectedIndex); // Load the selected question
+                }
+            }
+        });
+
+        // Enable horizontal scrolling for the ListView
+        questionsListView.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null); // Clear text for empty cells
+                } else {
+                    setText(item); // Set the text for non-empty cells
+                }
+            }
+        });
+
+        // The question loading will happen after setting the exam
+
+
 
         // The question loading will happen after setting the exam
     }
@@ -89,6 +117,8 @@ public class ExamScreenController {
     public void setExam(Exam exam) {
         this.exam = exam;
         loadExam();  // Load questions after setting the exam
+        remainingTime = Integer.parseInt(exam.getExamTime()) * 60;
+        startTimer();
     }
 
 
@@ -101,20 +131,43 @@ public class ExamScreenController {
 
             if (loadedQuestions != null && !loadedQuestions.isEmpty()) {
                 questions = loadedQuestions;
+                System.out.println("Questions loaded: " + questions.size()); // Debugging
                 totalQuestions = questions.size();
                 totalQuestionsLabel.setText("Total Questions: " + totalQuestions);
+
+                // Populate the ListView with question content
+                populateQuestionsListView();
 
                 // Load the first question
                 loadQuestion(currentQuestionIndex);
             } else {
-                showMsg("Error","No questions found for this exam.");
+                showMsg("Error", "No questions found for this exam.");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            showMsg("Error","Error: Failed to load quiz questions.");
+            showMsg("Error", "Error: Failed to load quiz questions.");
         }
     }
+
+    // Populate the ListView with question content
+    private void populateQuestionsListView() {
+        questionsListView.getItems().clear(); // Clear any existing items for safety
+
+        for (int i = 0; i < questions.size(); i++) {
+            String questionContent = questions.get(i).getQuestionContent();
+            System.out.println("Adding question to ListView: " + questionContent); // Debugging
+
+            // Check for null or empty questionContent
+            if (questionContent == null || questionContent.trim().isEmpty()) {
+                System.out.println("Warning: Question content is null or empty for question " + (i + 1));
+            }
+
+            questionsListView.getItems().add("Q" + (i + 1) + ": " + questionContent);
+        }
+    }
+
+
 
     // Start the quiz countdown timer
     private void startTimer() {
