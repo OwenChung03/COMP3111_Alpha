@@ -90,6 +90,30 @@ public class QuestionManageController implements Initializable {
         refreshQUI(actionEvent);
     }
 
+    static boolean QuestionChecking(Question question, String questionContent, String selectedType, String scoreText) {
+        // Check if question content matches
+        if (!questionContent.isEmpty() && !question.getQuestionContent().toLowerCase().contains(questionContent)) {
+            return false;
+        }
+
+        // Check if the type matches
+        if (selectedType != null && !selectedType.isEmpty() && !question.getType().equals(selectedType)) {
+            return false;
+        }
+
+        // Check if the score matches
+        if (!scoreText.isEmpty()) {
+            try {
+                int score = Integer.parseInt(scoreText);
+                if (question.getScore() == null || Integer.parseInt(question.getScore()) != score) {
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                return false; // Handle invalid score input
+            }
+        }
+        return true;
+    }
     public void queryQUI(ActionEvent actionEvent) {
         // Get the filter values from the UI components
         String questionContent = teacherquestionTextField.getText().toLowerCase().trim();
@@ -104,31 +128,8 @@ public class QuestionManageController implements Initializable {
 
         // Filter questions based on the inputs
         for (Question question : allQuestions) {
-            boolean matches = true;
-
-            // Check if question content matches
-            if (!questionContent.isEmpty() && !question.getQuestionContent().toLowerCase().contains(questionContent)) {
-                matches = false;
-            }
-
-            // Check if the type matches
-            if (selectedType != null && !selectedType.isEmpty() && !question.getType().equals(selectedType)) {
-                matches = false;
-            }
-
-            // Check if the score matches
-            if (!scoreText.isEmpty()) {
-                try {
-                    int score = Integer.parseInt(scoreText);
-                    if (question.getScore() == null || Integer.parseInt(question.getScore()) != score) {
-                        matches = false;
-                    }
-                } catch (NumberFormatException e) {
-                    matches = false; // Handle invalid score input
-                }
-            }
             // If all checks pass, add the question to the filtered list
-            if (matches) {
+            if (QuestionChecking(question, questionContent, selectedType, scoreText)) {
                 filteredQuestions.add(question);
             }
         }
@@ -139,7 +140,14 @@ public class QuestionManageController implements Initializable {
         List<Question> questions = QuestionDatabase.getAll();
         questionTable.setItems(FXCollections.observableArrayList(questions));
     }
-
+    static boolean CheckEmptyInput(String questionContent, String optionA, String optionB, String optionC, String optionD, String score){
+        if (questionContent.isEmpty() || optionA.isEmpty() || optionB.isEmpty() ||
+                optionC.isEmpty() || optionD.isEmpty() || score.isEmpty()) {
+            showMsg("Error","Error: All fields must be filled.");
+            return true;// Early exit on validation failure
+        }
+        return false;
+    }
     public void addQuestion(ActionEvent actionEvent) {
         String questionContent = newQuestionTextField.getText().trim();
         String optionA = optionATextField.getText().trim();
@@ -151,10 +159,8 @@ public class QuestionManageController implements Initializable {
         String score = newScoreTextField.getText().trim();
 
         // Validate inputs
-        if (questionContent.isEmpty() || optionA.isEmpty() || optionB.isEmpty() ||
-                optionC.isEmpty() || optionD.isEmpty() || score.isEmpty()) {
-            showMsg("Error","Error: All fields must be filled.");
-            return;// Early exit on validation failure
+        if(CheckEmptyInput(questionContent,optionA,optionB,optionC,optionD,score)){
+            return;
         }
 
         if ("Single".equals(type)) {
@@ -181,12 +187,12 @@ public class QuestionManageController implements Initializable {
     }
 
     // Helper method to validate single answer
-    private boolean isValidSingleAnswer(String answer) {
+    static boolean isValidSingleAnswer(String answer) {
         return "A".equals(answer) || "B".equals(answer) || "C".equals(answer) || "D".equals(answer);
     }
 
     // Helper method to validate multiple answers
-    private boolean isValidMultipleAnswer(String answer) {
+    static boolean isValidMultipleAnswer(String answer) {
         // Check if the answer contains only valid characters and has no duplicates
         // Check that the answer is not longer than 4 characters
         if (answer.length() > 4) {
@@ -260,13 +266,12 @@ public class QuestionManageController implements Initializable {
         newTypeComboBox.setValue(question.getType());
         newScoreTextField.setText(String.valueOf(question.getScore()));
     }
+
   public void updateQuestion(ActionEvent actionEvent) {
       Question selectedQuestion = questionTable.getSelectionModel().getSelectedItem();
 
-      if (newQuestionTextField.getText().trim().isEmpty() || optionATextField.getText().trim().isEmpty() || optionBTextField.getText().trim().isEmpty() ||
-              optionCTextField.getText().trim().isEmpty() || optionDTextField.getText().trim().isEmpty() || newScoreTextField.getText().trim().isEmpty()) {
-          showMsg("Error","Error: All fields must be filled.");
-          return;// Early exit on validation failure
+      if(CheckEmptyInput(newQuestionTextField.getText(),optionATextField.getText(),optionBTextField.getText(),optionCTextField.getText(),optionDTextField.getText(),newScoreTextField.getText())){
+          return;
       }
 
       if ("Single".equals(newTypeComboBox.getValue())) {

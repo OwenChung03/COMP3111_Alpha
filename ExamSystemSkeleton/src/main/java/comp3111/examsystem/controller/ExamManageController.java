@@ -204,6 +204,73 @@ public class ExamManageController implements Initializable {
         });
     }
 
+    static boolean CheckEmptyExam(String examName, String courseID, String examTime, String publish){
+        if (examName.isEmpty() || courseID == null || examTime.isEmpty() || publish == null) {
+            showMsg("Error", "Please fill in all required fields.");
+            return true;
+        }
+        return false;
+    }
+    static boolean CheckTime(String examTimeText){
+        int examTime;
+        try {
+            examTime = Integer.parseInt(examTimeText);
+            if (examTime <= 0) {
+                showMsg("Error", "Exam time must be a positive number.");
+                return true;
+            }
+        } catch (NumberFormatException e) {
+            showMsg("Error", "Exam time must be a valid number.");
+            return true;
+        }
+        return false;
+    }
+    static boolean CheckExamMatch(Exam exam, String ExamName, String CourseID, String Publish){
+
+
+        // Check if question content matches
+        if (!ExamName.isEmpty() && !exam.getExamName().toLowerCase().contains(ExamName)) {
+            return false;
+        }
+
+        // Check if the CourseID matches
+
+        if (CourseID != null && !CourseID.equals(String.valueOf(exam.getCourseKey()))) {
+            return false;
+        }
+
+        // Check if the score matches
+
+        if (!Publish.isEmpty() && !(exam.getPublish().equals(Publish))) {
+            return false;
+        }
+        return true;
+    }
+    static boolean CheckQuestionMatch(Question question, String questionContent, String selectedType, String scoreText){
+
+        // Check if question content matches
+        if (!questionContent.isEmpty() && !question.getQuestionContent().toLowerCase().contains(questionContent)) {
+            return false;
+        }
+
+        // Check if the type matches
+        if (selectedType != null && !selectedType.isEmpty() && !question.getType().equals(selectedType)) {
+            return false;
+        }
+
+        // Check if the score matches
+        if (!scoreText.isEmpty()) {
+            try {
+                int score = Integer.parseInt(scoreText);
+                if (question.getScore() == null || Integer.parseInt(question.getScore()) != score) {
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                return false; // Handle invalid score input
+            }
+        }
+        return true;
+    }
     public void addExam(ActionEvent actionEvent) {
         String examName = newexamNameTextField.getText().trim();
         String courseID = newCourseIDComboBox.getValue();
@@ -211,20 +278,11 @@ public class ExamManageController implements Initializable {
         String publishStatusText = PublishCombo.getValue();
 
         // Validate input
-        if (examName.isEmpty() || courseID == null || examTimeText.isEmpty() || publishStatusText == null) {
-            showMsg("Error", "Please fill in all required fields.");
+        if (CheckEmptyExam(examName,courseID,examTimeText,publishStatusText)){
             return;
         }
 
-        int examTime;
-        try {
-            examTime = Integer.parseInt(examTimeText);
-            if (examTime <= 0) {
-                showMsg("Error", "Exam time must be a positive number.");
-                return;
-            }
-        } catch (NumberFormatException e) {
-            showMsg("Error", "Exam time must be a valid number.");
+        if (CheckTime(examTimeText)){
             return;
         }
 
@@ -260,22 +318,16 @@ public class ExamManageController implements Initializable {
         String newCourseID = newCourseIDComboBox.getValue();
         String newExamTimeText = newexamTimeTextField.getText().trim();
         String newPublishStatus = PublishCombo.getValue();
-        String oldquestionKeys = selectedExam.getQuestionKeys();
-        // Validate input
-        if (newExamName.isEmpty() || newCourseID == null || newExamTimeText.isEmpty() || newPublishStatus == null) {
-            showMsg("Error", "Please fill in all required fields.");
+// Validate input
+        if (CheckEmptyExam(newExamName,newCourseID,newExamTimeText,newPublishStatus)){
             return;
         }
 
+        if (CheckTime(newExamTimeText)){
+            return;
+        }
         int newExamTime;
-        try {
-            newExamTime = Integer.parseInt(newExamTimeText);
-            if (newExamTime <= 0) {
-                showMsg("Error", "Exam time must be a positive number.");
-                return;
-            }
-        } catch (NumberFormatException e) {
-            showMsg("Error", "Exam time must be a valid number.");
+        if (CheckTime(newExamTimeText)){
             return;
         }
 
@@ -291,7 +343,7 @@ public class ExamManageController implements Initializable {
         // Update the selected exam
         selectedExam.setExamName(newExamName);
         selectedExam.setCourseKey(newCourseID); // Assuming setCourseKey() exists
-        selectedExam.setExamTime(String.valueOf(newExamTime)); // Assuming setExamTime() accepts a String
+        selectedExam.setExamTime(String.valueOf(Integer.parseInt(newExamTimeText))); // Assuming setExamTime() accepts a String
         selectedExam.setPublish(newPublishStatus); // Assuming setPublish() exists
         selectedExam.setQuestionKeys(questionKeys); // Assuming setQuestionKeys() exists
 
@@ -316,27 +368,9 @@ public class ExamManageController implements Initializable {
 
         // Filter questions based on the inputs
         for (Exam exam : allExams) {
-            boolean matches = true;
-
-            // Check if question content matches
-            if (!ExamName.isEmpty() && !exam.getExamName().toLowerCase().contains(ExamName)) {
-                matches = false;
-            }
-
-            // Check if the CourseID matches
-
-            if (CourseID != null && !CourseID.equals(String.valueOf(exam.getCourseKey()))) {
-                matches = false;
-            }
-
-            // Check if the score matches
-
-            if (!Publish.isEmpty() && !(exam.getPublish().equals(Publish))) {
-                matches = false;
-            }
 
             // If all checks pass, add the question to the filtered list
-            if (matches) {
+            if (CheckExamMatch(exam, ExamName, CourseID, Publish)) {
                 filteredExams.add(exam);
             }
         }
@@ -367,31 +401,9 @@ public class ExamManageController implements Initializable {
 
         // Filter questions based on the inputs
         for (Question question : allQuestions) {
-            boolean matches = true;
 
-            // Check if question content matches
-            if (!questionContent.isEmpty() && !question.getQuestionContent().toLowerCase().contains(questionContent)) {
-                matches = false;
-            }
-
-            // Check if the type matches
-            if (selectedType != null && !selectedType.isEmpty() && !question.getType().equals(selectedType)) {
-                matches = false;
-            }
-
-            // Check if the score matches
-            if (!scoreText.isEmpty()) {
-                try {
-                    int score = Integer.parseInt(scoreText);
-                    if (question.getScore() == null || Integer.parseInt(question.getScore()) != score) {
-                        matches = false;
-                    }
-                } catch (NumberFormatException e) {
-                    matches = false; // Handle invalid score input
-                }
-            }
             // If all checks pass, add the question to the filtered list
-            if (matches) {
+            if (CheckQuestionMatch(question, questionContent, selectedType, scoreText)) {
                 filteredQuestions.add(question);
             }
         }
@@ -430,7 +442,7 @@ public class ExamManageController implements Initializable {
             //
             // Add the copied question to the questionInExamTable
             questionInExamTable.getItems().add(copiedQuestion);
-            printReferIDs();
+            //printReferIDs();
 
         } else {
             showMsg("Error", "Please select a question to add.");

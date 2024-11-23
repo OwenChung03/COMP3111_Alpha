@@ -1,3 +1,4 @@
 username:hi,name:hi,gender:Male,age:90,position:Lecturer,department:hi,password:hi,id:1731849698888,
 username:Jerry,name:Jerry,gender:Male,age:24,position:Lecturer,department:CSE,password:Jerry,id:1731850277740,
 username:Timmy,name:Timmy,gender:Male,age:543,position:Lecturer,department:QFIN,password:Timmy,id:1731859465273,
+username:easy,name:easy,gender:Male,age:43,position:Lecturer,department:CSE,password:easy,id:1732331551591,
