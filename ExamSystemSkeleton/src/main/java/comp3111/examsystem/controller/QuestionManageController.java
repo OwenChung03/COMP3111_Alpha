@@ -146,12 +146,26 @@ public class QuestionManageController implements Initializable {
         }
         return false;
     }
+    static boolean CheckNegative(String score){
+        try {
+            // Attempt to parse the score
+            int parsedScore = Integer.parseInt(score);
+            // Check if the score is negative
+            return parsedScore < 0; // Return true if negative
+        } catch (NumberFormatException e) {
+            // Return true for invalid inputs (e.g., empty, non-numeric)
+            return true;
+        }
+    }
     static boolean Validation(String questionContent, String optionA, String optionB, String optionC, String optionD, String answer, String type, String score){
         if(CheckEmptyInput(questionContent,optionA,optionB,optionC,optionD,answer,type,score)){
             showMsg("Error","Error: All fields must be filled.");
             return false;
         }
-
+        if(CheckNegative(score)){
+            showMsg("Error","Error: Score is negative.");
+            return false;
+        }
         if ("Single".equals(type)) {
             // Validate single choice answer
             if (!isValidSingleAnswer(answer)) {

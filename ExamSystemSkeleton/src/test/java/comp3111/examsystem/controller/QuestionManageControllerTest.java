@@ -5,10 +5,6 @@ import comp3111.examsystem.entity.Teacher;
 import comp3111.examsystem.tools.Database;
 import org.junit.jupiter.api.Test;
 
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.TreeMap;
 
 import static comp3111.examsystem.controller.QuestionManageController.*;
 import static comp3111.examsystem.controller.TeacherLoginController.*;
@@ -274,5 +270,39 @@ class QuestionManageControllerTest {
         // Validate inputs
         assertEquals(false, isValidMultipleAnswer(answer));
     }
+    @Test
+    void TestNegative() {
 
+        String score = "-10";
+        // Validate inputs
+        assertEquals(true, CheckNegative(score));
+    }
+    @Test
+    void TestNegative1() {
+
+        String score = "10";
+        // Validate inputs
+        assertEquals(false, CheckNegative(score));
+    }
+    @Test
+    void TestNegative2() {
+
+        String score = "gg";
+        // Validate inputs
+        assertEquals(true, CheckNegative(score));
+    }
+    @Test
+    void CorrectValidation() {
+        String questionContent = "a";
+        String optionA = "a";
+        String optionB = "b";
+        String optionC = "c";
+        String optionD = "d";
+        String answer = "A";
+        String type = "Single";
+        String score = "10";
+
+        // Validate inputs
+        assertEquals(true,Validation(questionContent,optionA,optionB,optionC,optionD,answer,type,score));
+    }
 }

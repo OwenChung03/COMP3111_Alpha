@@ -88,8 +88,8 @@ public class ExamManageController implements Initializable {
         ExamDatabase = new Database<>(Exam.class); // Initialize the Exam database
         CourseDatabase = new Database<>(Course.class); // Initialize the Course database
         setupExamTableColumns();
-        setupQuestionInExamTableColumns();
-        setupQuestionTableColumns();
+        setupQuestionTableColumns(questionInExamColumn,typeColumn1,scoreColumn1);
+        setupQuestionTableColumns(questionColumn,typeColumn,scoreColumn);
         refreshExam(null); // Refresh exam table// Refresh questionInExam table
         refreshQuestionTable(null); // Refresh question table
         List<String> courseIDs = fetchCourseIDs(); // Implement this method to get Course IDs
@@ -134,6 +134,7 @@ public class ExamManageController implements Initializable {
         newexamTimeTextField.setText(selectedExam.getExamTime());
         PublishCombo.setValue(selectedExam.getPublish());
     }
+
     private List<String> fetchCourseIDs() {
         // Replace this with actual data fetching logic
         List<Course> allCourses = CourseDatabase.getAll();
@@ -146,17 +147,12 @@ public class ExamManageController implements Initializable {
         return courseIDs;// Sample Course IDs
     }
 
-    private void setupQuestionTableColumns() {
-        questionColumn.setCellValueFactory(new PropertyValueFactory<>("questionContent")); // Adjust as necessary
-        typeColumn1.setCellValueFactory(new PropertyValueFactory<>("type"));
-        scoreColumn1.setCellValueFactory(new PropertyValueFactory<>("score"));
+    private void setupQuestionTableColumns(TableColumn<Question, String> QuestionColumn,TableColumn<Question, String> TypeColumn,TableColumn<Question, String> ScoreColumn) {
+        QuestionColumn.setCellValueFactory(new PropertyValueFactory<>("questionContent")); // Adjust as necessary
+        TypeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+        ScoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
     }
 
-    private void setupQuestionInExamTableColumns() {
-        questionInExamColumn.setCellValueFactory(new PropertyValueFactory<>("questionContent")); // Adjust as necessary
-        typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
-        scoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
-    }
 
     private void setupExamTableColumns() {
         examNameColumn.setCellValueFactory(new PropertyValueFactory<>("examName"));
@@ -205,22 +201,16 @@ public class ExamManageController implements Initializable {
     }
 
     static boolean CheckEmptyExam(String examName, String courseID, String examTime, String publish){
-        if (examName.isEmpty() || courseID == null || examTime.isEmpty() || publish == null) {
-            showMsg("Error", "Please fill in all required fields.");
-            return true;
-        }
-        return false;
+        return examName.isEmpty() || courseID == null || examTime.isEmpty() || publish == null;
     }
     static boolean CheckTime(String examTimeText){
         int examTime;
         try {
             examTime = Integer.parseInt(examTimeText);
             if (examTime <= 0) {
-                showMsg("Error", "Exam time must be a positive number.");
                 return true;
             }
         } catch (NumberFormatException e) {
-            showMsg("Error", "Exam time must be a valid number.");
             return true;
         }
         return false;
@@ -229,22 +219,19 @@ public class ExamManageController implements Initializable {
 
 
         // Check if question content matches
-        if (!ExamName.isEmpty() && !exam.getExamName().toLowerCase().contains(ExamName)) {
+        if (!(ExamName.isEmpty() || exam.getExamName().toLowerCase().contains(ExamName))) {
             return false;
         }
 
         // Check if the CourseID matches
 
-        if (CourseID != null && !CourseID.equals(String.valueOf(exam.getCourseKey()))) {
+        if (!(CourseID == null || CourseID.equals(String.valueOf(exam.getCourseKey())))) {
             return false;
         }
 
         // Check if the score matches
 
-        if (!Publish.isEmpty() && !(exam.getPublish().equals(Publish))) {
-            return false;
-        }
-        return true;
+        return Publish.isEmpty() || exam.getPublish().equals(Publish);
     }
     static boolean CheckQuestionMatch(Question question, String questionContent, String selectedType, String scoreText){
 
@@ -271,6 +258,18 @@ public class ExamManageController implements Initializable {
         }
         return true;
     }
+    static boolean Validation(String examName,String courseID,String examTimeText,String publishStatusText){
+        if (CheckEmptyExam(examName,courseID,examTimeText,publishStatusText)){
+            showMsg("Error", "Please fill in all required fields.");
+            return true;
+        }
+
+        if (CheckTime(examTimeText)){
+            showMsg("Error", "Exam time must be a valid number.");
+            return true;
+        }
+        return false;
+    }
     public void addExam(ActionEvent actionEvent) {
         String examName = newexamNameTextField.getText().trim();
         String courseID = newCourseIDComboBox.getValue();
@@ -278,11 +277,7 @@ public class ExamManageController implements Initializable {
         String publishStatusText = PublishCombo.getValue();
 
         // Validate input
-        if (CheckEmptyExam(examName,courseID,examTimeText,publishStatusText)){
-            return;
-        }
-
-        if (CheckTime(examTimeText)){
+        if (Validation(examName,courseID,examTimeText,publishStatusText)){
             return;
         }
 
@@ -319,15 +314,7 @@ public class ExamManageController implements Initializable {
         String newExamTimeText = newexamTimeTextField.getText().trim();
         String newPublishStatus = PublishCombo.getValue();
 // Validate input
-        if (CheckEmptyExam(newExamName,newCourseID,newExamTimeText,newPublishStatus)){
-            return;
-        }
-
-        if (CheckTime(newExamTimeText)){
-            return;
-        }
-        int newExamTime;
-        if (CheckTime(newExamTimeText)){
+        if (Validation(newExamName,newCourseID,newExamTimeText,newPublishStatus)){
             return;
         }
 
@@ -449,14 +436,6 @@ public class ExamManageController implements Initializable {
         }
     }
 
-    private void printReferIDs() {
-        System.out.println("Refer IDs in questionInExamTable:");
-        for (Question question : questionInExamTable.getItems()) {
-            // Assuming getreferID() returns the referID of the question
-            String referID = question.getreferID();
-            System.out.println(referID);
-        }
-    }
 
     public void refreshExam(ActionEvent actionEvent) {
         List<Exam> exams = ExamDatabase.getAll(); // Fetch all exams from the database
