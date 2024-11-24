@@ -5,8 +5,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-
+/**
+ * The main entry point for the JavaFX application.
+ * This class extends the Application class and is responsible for
+ * initializing the application and setting up the primary stage.
+ */
 public class Main extends Application {
+	/**
+	 * The main entry point for the JavaFX application.
+	 * This class extends the Application class and is responsible for
+	 * initializing the application and setting up the primary stage.
+	 */
 	public void start(Stage primaryStage) {
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("LoginUI.fxml"));
@@ -18,7 +27,12 @@ public class Main extends Application {
 		}
 
 	}
-	
+	/**
+	 * The main method is the entry point of the application.
+	 * It launches the JavaFX application.
+	 *
+	 * @param args command-line arguments passed to the application
+	 */
 	public static void main(String[] args) {
 		launch(args);
 	}

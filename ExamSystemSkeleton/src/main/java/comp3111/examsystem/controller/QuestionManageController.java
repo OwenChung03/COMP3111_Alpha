@@ -17,43 +17,54 @@ import java.util.ResourceBundle;
 
 import static comp3111.examsystem.tools.MsgSender.showMsg;
 
+/**
+ * Controller class for managing questions in the examination system.
+ * This class handles the user interface for adding, updating, deleting,
+ * and filtering questions, as well as displaying them in a table.
+ */
 public class QuestionManageController implements Initializable {
 
     @FXML
-    public VBox Mainbox; //mainbox for QUI
-    public TextField teacherquestionTextField; //usage in QUI filter
-    public ComboBox<String> teachertypeComboBox; //usage in QUI filter
-    public TextField teacherscoreTextField; //usage in QUI filter
-    public Button resetButton; //usage in QUI filter
-    public Button filterButton; //usage in QUI filter
+    public VBox Mainbox; // Main container for the UI
+    public TextField teacherquestionTextField; // Input for filtering questions by content
+    public ComboBox<String> teachertypeComboBox; // Input for filtering questions by type
+    public TextField teacherscoreTextField; // Input for filtering questions by score
+    public Button resetButton; // Button to reset filters
+    public Button filterButton; // Button to apply filters
     @FXML
-    public TableView<Question> questionTable; //Question Table
-    public TableColumn<Question, String> questionColumn;
-    public TableColumn<Question, String> optionAColumn;
-    public TableColumn<Question, String> optionBColumn;
-    public TableColumn<Question, String> optionCColumn;
-    public TableColumn<Question, String> optionDColumn;
-    public TableColumn<Question, String> answerColumn;
-    public TableColumn<Question, String> typeColumn;
-    public TableColumn<Question, String> scoreColumn;
+    public TableView<Question> questionTable; // Table to display questions
+    public TableColumn<Question, String> questionColumn; // Column for question content
+    public TableColumn<Question, String> optionAColumn; // Column for option A
+    public TableColumn<Question, String> optionBColumn; // Column for option B
+    public TableColumn<Question, String> optionCColumn; // Column for option C
+    public TableColumn<Question, String> optionDColumn; // Column for option D
+    public TableColumn<Question, String> answerColumn; // Column for the correct answer
+    public TableColumn<Question, String> typeColumn; // Column for question type
+    public TableColumn<Question, String> scoreColumn; // Column for question score
     @FXML
-    public TextField newQuestionTextField;
-    public TextField optionATextField;
-    public TextField optionBTextField;
-    public TextField optionCTextField;
-    public TextField optionDTextField;
-    public ComboBox<String> newTypeComboBox;
-    public TextField AnswerTextField;
-    public TextField newScoreTextField;
+    public TextField newQuestionTextField; // Input for new question content
+    public TextField optionATextField; // Input for option A
+    public TextField optionBTextField; // Input for option B
+    public TextField optionCTextField; // Input for option C
+    public TextField optionDTextField; // Input for option D
+    public ComboBox<String> newTypeComboBox; // Selection for new question type
+    public TextField AnswerTextField; // Input for the correct answer
+    public TextField newScoreTextField; // Input for new question score
     @FXML
-    public Button addButton;
-    public Button refreshButton;
-    public Button deleteButton;
-    public Button updateButton;
+    public Button addButton; // Button to add a new question
+    public Button refreshButton; // Button to refresh the question table
+    public Button deleteButton; // Button to delete a question
+    public Button updateButton; // Button to update an existing question
 
-    //Complete all the requirement of QuestionManage UI
-    private Database<Question> QuestionDatabase;
+    private Database<Question> QuestionDatabase; // Database instance for questions
 
+    /**
+     * Initializes the controller after its root element has been processed.
+     * Sets up the table columns and loads initial data.
+     *
+     * @param location  The location used to resolve relative paths for the root object, or null if the location is not known.
+     * @param resources The resources used to localize the root object, or null if the root object was not localized.
+     */
     public void initialize(URL location, ResourceBundle resources) {
         QuestionDatabase = new Database<>(Question.class);
         setupTableColumns();
@@ -62,14 +73,22 @@ public class QuestionManageController implements Initializable {
             if (!CheckNull(newValue)) {
                 populateFields(newValue);
             }
-        });// Load initial data
+        });
     }
-    static boolean CheckNull(Question question){
-        if(question == null){
-            return true;
-        }
-        return false;
+
+    /**
+     * Checks if the given question is null.
+     *
+     * @param question The question to check.
+     * @return true if the question is null; false otherwise.
+     */
+    static boolean CheckNull(Question question) {
+        return question == null;
     }
+
+    /**
+     * Sets up the table columns for displaying question attributes.
+     */
     private void setupTableColumns() {
         questionColumn.setCellValueFactory(new PropertyValueFactory<>("questionContent"));
         optionAColumn.setCellValueFactory(new PropertyValueFactory<>("optionA"));
@@ -81,34 +100,35 @@ public class QuestionManageController implements Initializable {
         scoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
     }
 
-
+    /**
+     * Resets the question filtering inputs and refreshes the question table.
+     *
+     * @param actionEvent The ActionEvent triggered by the reset button.
+     */
     @FXML
-
     public void resetQUI(ActionEvent actionEvent) {
-        // Clear the text field for the question content
         teacherquestionTextField.clear();
-        // Reset the type combo box to its default state (no selection)
         teachertypeComboBox.setValue(null);
-        // Clear the text field for the score
         teacherscoreTextField.clear();
-        // Refresh the question table to show all questions without filters
         refreshQUI(actionEvent);
     }
 
+    /**
+     * Checks whether a question meets the filtering criteria based on question content, type, and score.
+     *
+     * @param question The question to check.
+     * @param questionContent The question content to filter by.
+     * @param selectedType The type of question to filter by.
+     * @param scoreText The score to filter by.
+     * @return true if the question matches the criteria; false otherwise.
+     */
     static boolean QuestionChecking(Question question, String questionContent, String selectedType, String scoreText) {
-        // Check if question content matches
-        if (!questionContent.isEmpty()){
+        if (!questionContent.isEmpty() && !question.getQuestionContent().toLowerCase().contains(questionContent)) {
             return false;
         }
-        if(!question.getQuestionContent().toLowerCase().contains(questionContent)){
-            return false;
-        }
-        // Check if the type matches
         if (!(selectedType == null || selectedType.isEmpty() || question.getType().equals(selectedType))) {
             return false;
         }
-
-        // Check if the score matches
         if (!scoreText.isEmpty()) {
             try {
                 int score = Integer.parseInt(scoreText);
@@ -121,77 +141,109 @@ public class QuestionManageController implements Initializable {
         }
         return true;
     }
+
+    /**
+     * Filters the questions based on the input fields and updates the question table.
+     *
+     * @param actionEvent The ActionEvent triggered by the filter button.
+     */
     public void queryQUI(ActionEvent actionEvent) {
-        // Get the filter values from the UI components
         String questionContent = teacherquestionTextField.getText().toLowerCase().trim();
         String selectedType = teachertypeComboBox.getValue();
         String scoreText = teacherscoreTextField.getText().trim();
-
-        // Get all questions from the database
         List<Question> allQuestions = QuestionDatabase.getAll();
-
-        // Create a list to hold the filtered questions
         List<Question> filteredQuestions = new ArrayList<>();
 
-        // Filter questions based on the inputs
         for (Question question : allQuestions) {
-            // If all checks pass, add the question to the filtered list
             if (QuestionChecking(question, questionContent, selectedType, scoreText)) {
                 filteredQuestions.add(question);
             }
         }
-        // Update the table with the filtered questions
         questionTable.setItems(FXCollections.observableArrayList(filteredQuestions));
     }
+
+    /**
+     * Refreshes the question table to display all questions from the database.
+     *
+     * @param actionEvent The ActionEvent triggered by the refresh button.
+     */
     public void refreshQUI(ActionEvent actionEvent) {
         List<Question> questions = QuestionDatabase.getAll();
         questionTable.setItems(FXCollections.observableArrayList(questions));
     }
-    static boolean CheckEmptyInput(String questionContent, String optionA, String optionB, String optionC, String optionD, String answer, String type, String score){
-        if (questionContent.isEmpty() || optionA.isEmpty() || optionB.isEmpty() ||
-                optionC.isEmpty() || optionD.isEmpty() || answer.isEmpty()||type.isEmpty()||score.isEmpty()) {
-            return true;// Early exit on validation failure
-        }
-        return false;
+
+    /**
+     * Checks if any required input fields are empty.
+     *
+     * @param questionContent The question content input.
+     * @param optionA The option A input.
+     * @param optionB The option B input.
+     * @param optionC The option C input.
+     * @param optionD The option D input.
+     * @param answer The correct answer input.
+     * @param type The question type input.
+     * @param score The score input.
+     * @return true if any field is empty; false otherwise.
+     */
+    static boolean CheckEmptyInput(String questionContent, String optionA, String optionB, String optionC, String optionD, String answer, String type, String score) {
+        return questionContent.isEmpty() || optionA.isEmpty() || optionB.isEmpty() || optionC.isEmpty() || optionD.isEmpty() || answer.isEmpty() || type.isEmpty() || score.isEmpty();
     }
-    static boolean CheckNegative(String score){
+
+    /**
+     * Checks if the provided score is negative or invalid.
+     *
+     * @param score The score input as a string.
+     * @return true if the score is negative or invalid; false otherwise.
+     */
+    static boolean CheckNegative(String score) {
         try {
-            // Attempt to parse the score
             int parsedScore = Integer.parseInt(score);
-            // Check if the score is negative
-            return parsedScore < 0; // Return true if negative
+            return parsedScore < 0;
         } catch (NumberFormatException e) {
-            // Return true for invalid inputs (e.g., empty, non-numeric)
-            return true;
+            return true; // Return true for invalid inputs
         }
     }
-    static boolean Validation(String questionContent, String optionA, String optionB, String optionC, String optionD, String answer, String type, String score){
-        if(CheckEmptyInput(questionContent,optionA,optionB,optionC,optionD,answer,type,score)){
-            showMsg("Error","Error: All fields must be filled.");
+
+    /**
+     * Validates the inputs for creating or updating a question.
+     *
+     * @param questionContent The question content input.
+     * @param optionA The option A input.
+     * @param optionB The option B input.
+     * @param optionC The option C input.
+     * @param optionD The option D input.
+     * @param answer The correct answer input.
+     * @param type The question type input.
+     * @param score The score input.
+     * @return true if all validations pass; false otherwise.
+     */
+    static boolean Validation(String questionContent, String optionA, String optionB, String optionC, String optionD, String answer, String type, String score) {
+        if (CheckEmptyInput(questionContent, optionA, optionB, optionC, optionD, answer, type, score)) {
+            showMsg("Error", "Error: All fields must be filled.");
             return false;
         }
-        if(CheckNegative(score)){
-            showMsg("Error","Error: Score is negative.");
+        if (CheckNegative(score)) {
+            showMsg("Error", "Error: Score is negative.");
             return false;
         }
-        if ("Single".equals(type)) {
-            // Validate single choice answer
-            if (!isValidSingleAnswer(answer)) {
-                showMsg("Error","Error: For single type, answer must be one of: A, B, C, D.");
-                return false; // Early exit on validation failure
-            }
-        } else if ("Multiple".equals(type)) {
-            // Validate multiple choice answer
-            if (!isValidMultipleAnswer(answer)) {
-                showMsg("Error","Error: For multiple type, answer must be a combination of letters A, B, C, D.");
-                return false; // Early exit on validation failure
-            }
-        } else {
-            showMsg("Error","Error: Invalid question type selected.");
-            return false; // Early exit on validation failure// Early exit on validation failure
+        if ("Single".equals(type) && !isValidSingleAnswer(answer)) {
+            showMsg("Error", "Error: For single type, answer must be one of: A, B, C, D.");
+            return false;
+        } else if ("Multiple".equals(type) && !isValidMultipleAnswer(answer)) {
+            showMsg("Error", "Error: For multiple type, answer must be a combination of letters A, B, C, D.");
+            return false;
+        } else if (!("Single".equals(type) || "Multiple".equals(type))) {
+            showMsg("Error", "Error: Invalid question type selected.");
+            return false;
         }
         return true;
     }
+
+    /**
+     * Adds a new question to the database based on the input fields.
+     *
+     * @param actionEvent The ActionEvent triggered by the add button.
+     */
     public void addQuestion(ActionEvent actionEvent) {
         String questionContent = newQuestionTextField.getText().trim();
         String optionA = optionATextField.getText().trim();
@@ -202,37 +254,41 @@ public class QuestionManageController implements Initializable {
         String type = newTypeComboBox.getValue();
         String score = newScoreTextField.getText().trim();
 
-        // Validate inputs
-        if(!Validation(questionContent,optionA,optionB,optionC,optionD,answer,type,score)){
+        if (!Validation(questionContent, optionA, optionB, optionC, optionD, answer, type, score)) {
             return;
         }
-        // Create a new Question object and add it to the database
+
         Question newQuestion = new Question(questionContent, optionA, optionB, optionC, optionD, answer, type, score);
-        QuestionDatabase.add(newQuestion); // Assuming add method in Database class
+        QuestionDatabase.add(newQuestion);
         refreshQUI(null);
     }
 
-    // Helper method to validate single answer
+    /**
+     * Validates a single choice answer.
+     *
+     * @param answer The answer input.
+     * @return true if the answer is valid; false otherwise.
+     */
     static boolean isValidSingleAnswer(String answer) {
         return "A".equals(answer) || "B".equals(answer) || "C".equals(answer) || "D".equals(answer);
     }
 
-    // Helper method to validate multiple answers
+    /**
+     * Validates a multiple choice answer.
+     *
+     * @param answer The answer input.
+     * @return true if the answer is valid; false otherwise.
+     */
     static boolean isValidMultipleAnswer(String answer) {
-        // Check if the answer contains only valid characters and has no duplicates
-        // Check that the answer is not longer than 4 characters
         if (answer.length() > 4) {
             return false;
         }
-
-        // Check for valid characters and ensure they are in order
         String validOptions = "ABCD";
         for (char c : answer.toCharArray()) {
             if (validOptions.indexOf(c) == -1) {
                 return false; // Invalid character found
             }
         }
-        // Check for duplicates
         for (int i = 0; i < answer.length(); i++) {
             for (int j = i + 1; j < answer.length(); j++) {
                 if (answer.charAt(i) == answer.charAt(j)) {
@@ -240,44 +296,45 @@ public class QuestionManageController implements Initializable {
                 }
             }
         }
-        // Ensure the answer is in the order of appearance in "ABCD"
         for (int i = 0; i < answer.length() - 1; i++) {
             if (answer.charAt(i) > answer.charAt(i + 1)) {
                 return false; // Not in order
             }
         }
-
         return true; // All checks passed
     }
 
+    /**
+     * Deletes the selected question from the database after confirmation.
+     *
+     * @param actionEvent The ActionEvent triggered by the delete button.
+     */
     public void deleteQuestion(ActionEvent actionEvent) {
         Question selectedQuestion = questionTable.getSelectionModel().getSelectedItem();
 
-        // Check if a question is selected
         if (CheckNull(selectedQuestion)) {
-            // Show an alert if no question is selected
-            showMsg("No Selection","Please select a question to delete.");
+            showMsg("No Selection", "Please select a question to delete.");
             return;
         }
 
-        // Confirm deletion
         Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmationAlert.setTitle("Delete Confirmation");
         confirmationAlert.setHeaderText("Are you sure you want to delete this question?");
         confirmationAlert.setContentText("Question: " + selectedQuestion.getQuestionContent());
 
-        // Show the confirmation dialog and wait for the user's response
         confirmationAlert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                // Delete the question from the database
-                QuestionDatabase.delByKey(String.valueOf(selectedQuestion.getId())); // Assuming you have a method to delete by ID
-
-                // Refresh the table to show the updated list of questions
+                QuestionDatabase.delByKey(String.valueOf(selectedQuestion.getId()));
                 refreshQUI(actionEvent);
             }
         });
     }
 
+    /**
+     * Populates the input fields with the data from the selected question.
+     *
+     * @param question The selected question to populate the fields with.
+     */
     private void populateFields(Question question) {
         newQuestionTextField.setText(question.getQuestionContent());
         optionATextField.setText(question.getOptionA());
@@ -289,40 +346,42 @@ public class QuestionManageController implements Initializable {
         newScoreTextField.setText(String.valueOf(question.getScore()));
     }
 
-  public void updateQuestion(ActionEvent actionEvent) {
-      Question selectedQuestion_1 = questionTable.getSelectionModel().getSelectedItem();
+    /**
+     * Updates the selected question with the data from the input fields.
+     *
+     * @param actionEvent The ActionEvent triggered by the update button.
+     */
+    public void updateQuestion(ActionEvent actionEvent) {
+        Question selectedQuestion_1 = questionTable.getSelectionModel().getSelectedItem();
 
-      String questionContent = newQuestionTextField.getText().trim();
-      String optionA = optionATextField.getText().trim();
-      String optionB = optionBTextField.getText().trim();
-      String optionC = optionCTextField.getText().trim();
-      String optionD = optionDTextField.getText().trim();
-      String answer = AnswerTextField.getText().trim();
-      String type = newTypeComboBox.getValue();
-      String score = newScoreTextField.getText().trim();
-      if(!Validation(questionContent,optionA,optionB,optionC,optionD,answer,type,score)){
-          return;
-      }
-      if (!CheckNull(selectedQuestion_1)) {
-          // Update the question's fields with values from the text fields
-          Question selectedQuestion = QuestionDatabase.queryByKey(String.valueOf(selectedQuestion_1.getId()));
-          selectedQuestion.setQuestionContent(questionContent);
-          selectedQuestion.setOptionA(optionA);
-          selectedQuestion.setOptionB(optionB);
-          selectedQuestion.setOptionC(optionC);
-          selectedQuestion.setOptionD(optionD);
-          selectedQuestion.setAnswer(answer);
-          selectedQuestion.setType(type);
-          selectedQuestion.setScore(score);
-          QuestionDatabase.update(selectedQuestion);
-          // Refresh the TableView to show updated data
-          questionTable.refresh();
+        String questionContent = newQuestionTextField.getText().trim();
+        String optionA = optionATextField.getText().trim();
+        String optionB = optionBTextField.getText().trim();
+        String optionC = optionCTextField.getText().trim();
+        String optionD = optionDTextField.getText().trim();
+        String answer = AnswerTextField.getText().trim();
+        String type = newTypeComboBox.getValue();
+        String score = newScoreTextField.getText().trim();
 
-          // Optionally, show a confirmation message
-          showMsg("Notice","Question updated successfully!");
-      } else {
-          showMsg("Notice","No question selected for update.");
-      }
-  }
+        if (!Validation(questionContent, optionA, optionB, optionC, optionD, answer, type, score)) {
+            return;
+        }
+
+        if (!CheckNull(selectedQuestion_1)) {
+            Question selectedQuestion = QuestionDatabase.queryByKey(String.valueOf(selectedQuestion_1.getId()));
+            selectedQuestion.setQuestionContent(questionContent);
+            selectedQuestion.setOptionA(optionA);
+            selectedQuestion.setOptionB(optionB);
+            selectedQuestion.setOptionC(optionC);
+            selectedQuestion.setOptionD(optionD);
+            selectedQuestion.setAnswer(answer);
+            selectedQuestion.setType(type);
+            selectedQuestion.setScore(score);
+            QuestionDatabase.update(selectedQuestion);
+            questionTable.refresh();
+            showMsg("Notice", "Question updated successfully!");
+        } else {
+            showMsg("Notice", "No question selected for update.");
+        }
+    }
 }
-

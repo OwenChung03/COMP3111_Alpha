@@ -9,20 +9,30 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Generic class for handling database operations on entities of type T.
+ * This class provides methods for querying, adding, updating, and deleting
+ * entities in a file-based database represented as a JSON-like structure.
+ *
+ * @param <T> the type of entities managed by this database
+ */
 public class Database<T> {
     Class<T> entitySample;
     String tableName;
     String jsonFile;
-
+    /**
+     * Constructs a Database object for the specified entity type.
+     *
+     * @param entity the class of the entity to manage
+     */
     public Database(Class<T> entity) {
         entitySample = entity;
         tableName = entitySample.getSimpleName().toLowerCase();
 
 
-        //jsonFile = Paths.get("C:","Users","jerry","IdeaProjects","COMP3111_Alpha","ExamSystemSkeleton","database", tableName + ".txt").toString();
+        jsonFile = Paths.get("C:","Users","jerry","IdeaProjects","COMP3111_Alpha","ExamSystemSkeleton","database", tableName + ".txt").toString();
         //jsonFile = Paths.get("/Users","owenchung","IdeaProjects","COMP3111_Alpha","ExamSystemSkeleton","database", tableName + ".txt").toString();
-        jsonFile = Paths.get("/Users","Terry","COMP3111_Alpha","ExamSystemSkeleton","database", tableName + ".txt").toString();
+        //jsonFile = Paths.get("/Users","Terry","COMP3111_Alpha","ExamSystemSkeleton","database", tableName + ".txt").toString();
         // /Users/owenchung/IdeaProjects/COMP3111_Alpha/ExamSystemSkeleton/database/course.txt
         File file = new File(jsonFile);
         if (!file.exists()) {
@@ -33,7 +43,12 @@ public class Database<T> {
             }
         }
     }
-
+    /**
+     * Queries the database for an entity by its key (ID).
+     *
+     * @param key the key of the entity to query
+     * @return the entity if found, or null if not found
+     */
     // Query database based on key
     public T queryByKey(String key) {
         List<String> slist = FileUtil.readFileByLines(jsonFile);
@@ -49,7 +64,12 @@ public class Database<T> {
         }
         return res;
     }
-
+    /**
+     * Queries the database for entities with specified keys.
+     *
+     * @param keys a list of keys to query
+     * @return a list of matching entities
+     */
     // Query database based on keys
     public List<T> queryByKeys(List<String> keys) {
         List<String> slist = FileUtil.readFileByLines(jsonFile);
@@ -67,7 +87,13 @@ public class Database<T> {
         }
         return res;
     }
-
+    /**
+     * Queries the database for entities matching a specific field value.
+     *
+     * @param fieldName  the name of the field to query
+     * @param fieldValue the value to match
+     * @return a list of matching entities
+     */
     // Query database based on field
     public List<T> queryByField(String fieldName, String fieldValue) {
         List<T> list = getAll();
@@ -83,7 +109,13 @@ public class Database<T> {
         list.addAll(resList);
         return list;
     }
-
+    /**
+     * Queries the database with fuzzy matching on a specific field.
+     *
+     * @param fieldName  the name of the field to query
+     * @param fieldValue the value to match (partial match)
+     * @return a list of matching entities
+     */
     // Query database based on field, but fuzzy matching
     public List<T> queryFuzzyByField(String fieldName, String fieldValue) {
         List<T> list = getAll();
@@ -98,7 +130,12 @@ public class Database<T> {
         list.addAll(resList);
         return list;
     }
-
+    /**
+     * Queries the database for entities matching the fields of a given entity.
+     *
+     * @param entity the entity to match against
+     * @return a list of matching entities
+     */
     // Query database based on entity
     public List<T> queryByEntity(T entity) {
         List<T> list = getAll();
@@ -140,7 +177,11 @@ public class Database<T> {
         list.addAll(resList);
         return list;
     }
-
+    /**
+     * Retrieves all entities from the database.
+     *
+     * @return a list of all entities
+     */
     // Query all the data from database
     public List<T> getAll() {
         List<String> slist = FileUtil.readFileByLines(jsonFile);
@@ -150,7 +191,13 @@ public class Database<T> {
         }
         return tlist;
     }
-
+    /**
+     * Joins two lists of entities based on their IDs.
+     *
+     * @param list1 the first list of entities
+     * @param list2 the second list of entities
+     * @return a list of joined entities
+     */
     // Join two table
     public List<T> join(List<T> list1, List<T> list2) {
         List<T> resList = new ArrayList<>();
@@ -167,6 +214,11 @@ public class Database<T> {
         return resList;
     }
 
+    /**
+     * Deletes an entity from the database by its key (ID).
+     *
+     * @param key the key of the entity to delete
+     */
     // Delete from database by key
     public void delByKey(String key) {
         List<T> tlist = getAll();
@@ -184,6 +236,12 @@ public class Database<T> {
         }
     }
 
+    /**
+     * Deletes entities from the database by a specific field value.
+     *
+     * @param fieldName  the name of the field to check
+     * @param fieldValue the value to match for deletion
+     */
     // Delete from database by field
     public void delByFiled(String fieldName, String fieldValue) {
         List<T> tlist = getAll();
@@ -200,7 +258,11 @@ public class Database<T> {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Updates an existing entity in the database based on its key (ID).
+     *
+     * @param entity the entity with updated values
+     */
     // Update database according the entity key
     public void update(T entity) {
         Long key1 = (Long) getValue(entity, "id");
@@ -234,6 +296,11 @@ public class Database<T> {
         }
     }
 
+    /**
+     * Adds a new entity to the database.
+     *
+     * @param entity the entity to add
+     */
     // Add data into database
     public void add(T entity) {
         setValue(entity, "id", System.currentTimeMillis());
@@ -245,7 +312,13 @@ public class Database<T> {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Retrieves the value of a specified field from an entity.
+     *
+     * @param entity    the entity to retrieve the value from
+     * @param fieldName the name of the field
+     * @return the value of the field
+     */
     private Object getValue(Object entity, String fieldName) {
         Object value;
         Class<?> clazz = entity.getClass();
@@ -267,7 +340,13 @@ public class Database<T> {
         }
         return value;
     }
-
+    /**
+     * Sets the value of a specified field in an entity.
+     *
+     * @param entity     the entity to modify
+     * @param fieldName  the name of the field
+     * @param fieldValue the value to set
+     */
     private void setValue(Object entity, String fieldName, Object fieldValue) {
         Class<?> clazz = entity.getClass();
         while (true) {
@@ -288,6 +367,12 @@ public class Database<T> {
         }
     }
 
+    /**
+     * Converts a list of entities to a string format for storage.
+     *
+     * @param tlist the list of entities to convert
+     * @return a string representation of the entities
+     */
     private String listToStr(List<T> tlist) {
         StringBuilder sbf = new StringBuilder();
         for (T t : tlist) {
@@ -295,7 +380,12 @@ public class Database<T> {
         }
         return sbf.toString();
     }
-
+    /**
+     * Converts a string representation of an entity to an entity object.
+     *
+     * @param txt the string to convert
+     * @return the corresponding entity
+     */
     private T txtToEntity(String txt) {
         T t = null;
         try {
@@ -316,6 +406,12 @@ public class Database<T> {
         return t;
     }
 
+    /**
+     * Converts an entity object to a string representation for storage.
+     *
+     * @param t the entity to convert
+     * @return the string representation of the entity
+     */
     private String entityToTxt(T t) {
         StringBuffer sbf = new StringBuffer();
         Class<?> clazz = entitySample;

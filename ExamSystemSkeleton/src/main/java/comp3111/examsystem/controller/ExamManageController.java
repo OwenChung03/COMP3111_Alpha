@@ -18,143 +18,167 @@ import java.util.stream.Collectors;
 
 import static comp3111.examsystem.tools.MsgSender.showMsg;
 
+/**
+ * Controller class for managing exams in the examination system.
+ * This class handles the user interface for creating, updating,
+ * deleting, and filtering exams, as well as displaying associated questions.
+ */
 public class ExamManageController implements Initializable {
 
-    //Complete all the requirement of QuestionManage UI
     @FXML
-    public VBox MainBox2;
+    public VBox MainBox2; // Main container for the UI
     @FXML
-    public TextField examNameTextField;
+    public TextField examNameTextField; // Input for filtering exams by name
     @FXML
-    public ComboBox<String> CourseIDComboBox;
+    public ComboBox<String> CourseIDComboBox; // Dropdown for selecting course IDs
     @FXML
-    public ComboBox<String> PublishComboBox;
+    public ComboBox<String> PublishComboBox; // Dropdown for selecting publish status
     @FXML
-    public Button resetButton1;
+    public Button resetButton1; // Button to reset exam filters
     @FXML
-    public Button filterButton1;
+    public Button filterButton1; // Button to apply filters to exams
     @FXML
-    public TextField scoreTextField1;
+    public TextField scoreTextField1; // Input for filtering questions by score
     @FXML
-    public TableView<Exam> ExamTable; //Question Table
+    public TableView<Exam> ExamTable; // Table to display exams
     @FXML
-    public TableColumn<Exam, String> examNameColumn;
+    public TableColumn<Exam, String> examNameColumn; // Column for exam names
     @FXML
-    public TableColumn<Exam, String> courseIDColumn;
+    public TableColumn<Exam, String> courseIDColumn; // Column for course IDs
     @FXML
-    public TableColumn<Exam, String> examTimeColumn;
+    public TableColumn<Exam, String> examTimeColumn; // Column for exam times
     @FXML
-    public TableColumn<Exam, String> publishColumn;
+    public TableColumn<Exam, String> publishColumn; // Column for publish status
     @FXML
-    public TableView<Question> questionInExamTable;
+    public TableView<Question> questionInExamTable; // Table to display questions in the selected exam
     @FXML
-    public TableColumn<Question, String> questionInExamColumn;
+    public TableColumn<Question, String> questionInExamColumn; // Column for question content in the exam
     @FXML
-    public TableColumn<Question, String> typeColumn1;
+    public TableColumn<Question, String> typeColumn1; // Column for question types in the exam
     @FXML
-    public TableColumn<Question, String> scoreColumn1;
+    public TableColumn<Question, String> scoreColumn1; // Column for question scores in the exam
     @FXML
-    public Button deletefromleftButton;
+    public Button deletefromleftButton; // Button to remove questions from the exam
     @FXML
-    public TextField newexamNameTextField;
+    public TextField newexamNameTextField; // Input for creating/updating exam names
     @FXML
-    public Button addtoleftButton;
+    public Button addtoleftButton; // Button to add questions to the exam
     @FXML
-    public TextField newexamTimeTextField;
+    public TextField newexamTimeTextField; // Input for setting exam time
     @FXML
-    public ComboBox<String> PublishCombo;
+    public ComboBox<String> PublishCombo; // Dropdown for publishing exam
     @FXML
-    public Button deleteButton1;
+    public Button deleteButton1; // Button to delete selected exam
     @FXML
-    public Button addButton1;
+    public Button addButton1; // Button to add a new exam
     @FXML
-    public Button resetButton;
-    public Button filterButton;
-    public TextField questionTextField;
-    public ComboBox<String> TypeComboBox;
-    public TableView<Question> questionTable;
-    public TableColumn<Question, String> questionColumn;
-    public TableColumn<Question, String> typeColumn;
-    public TableColumn<Question, String> scoreColumn;
-    public Button refreshButton;
-    public Button updateButton;
-    public ComboBox<String> newCourseIDComboBox;
-    private Database<Question> QuestionDatabase;
-    private Database<Exam> ExamDatabase;
-    private Database<Course> CourseDatabase;
+    public Button resetButton; // Button to reset question filters
+    public Button filterButton; // Button to apply filters to questions
+    public TextField questionTextField; // Input for filtering questions
+    public ComboBox<String> TypeComboBox; // Dropdown for selecting question type
+    public TableView<Question> questionTable; // Table to display all questions
+    public TableColumn<Question, String> questionColumn; // Column for question content
+    public TableColumn<Question, String> typeColumn; // Column for question types
+    public TableColumn<Question, String> scoreColumn; // Column for question scores
+    public Button refreshButton; // Button to refresh the question table
+    public Button updateButton; // Button to update an existing exam
+    public ComboBox<String> newCourseIDComboBox; // Dropdown for selecting course ID for a new exam
 
+    private Database<Question> QuestionDatabase; // Database instance for questions
+    private Database<Exam> ExamDatabase; // Database instance for exams
+    private Database<Course> CourseDatabase; // Database instance for courses
+
+    /**
+     * Initializes the controller after its root element has been processed.
+     * Sets up the table columns, loads initial data, and configures event listeners.
+     *
+     * @param location  The location used to resolve relative paths for the root object, or null if not known.
+     * @param resources The resources used to localize the root object, or null if not localized.
+     */
     public void initialize(URL location, ResourceBundle resources) {
-        QuestionDatabase = new Database<>(Question.class); // Initialize the Question database
-        ExamDatabase = new Database<>(Exam.class); // Initialize the Exam database
-        CourseDatabase = new Database<>(Course.class); // Initialize the Course database
+        QuestionDatabase = new Database<>(Question.class);
+        ExamDatabase = new Database<>(Exam.class);
+        CourseDatabase = new Database<>(Course.class);
         setupExamTableColumns();
-        setupQuestionTableColumns(questionInExamColumn,typeColumn1,scoreColumn1);
-        setupQuestionTableColumns(questionColumn,typeColumn,scoreColumn);
-        refreshExam(null); // Refresh exam table// Refresh questionInExam table
-        refreshQuestionTable(null); // Refresh question table
-        List<String> courseIDs = fetchCourseIDs(); // Implement this method to get Course IDs
+        setupQuestionTableColumns(questionInExamColumn, typeColumn1, scoreColumn1);
+        setupQuestionTableColumns(questionColumn, typeColumn, scoreColumn);
+        refreshExam(null);
+        refreshQuestionTable(null);
+        List<String> courseIDs = fetchCourseIDs();
         CourseIDComboBox.setItems(FXCollections.observableArrayList(courseIDs));
         newCourseIDComboBox.setItems(FXCollections.observableArrayList(courseIDs));
-        // Add listener to load questions when an exam is selected
+
+        // Load questions when an exam is selected
         ExamTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (!CheckNull(newValue)) {
                 loadQuestionsForExam(newValue);
-                populateExamDetails(newValue); // New method to populate details
+                populateExamDetails(newValue);
             }
         });
     }
 
+    /**
+     * Loads questions associated with the selected exam into the question table.
+     *
+     * @param selectedExam The exam whose questions should be loaded.
+     */
     private void loadQuestionsForExam(Exam selectedExam) {
-        // Clear the current questions in the QuestionInExam table
         questionInExamTable.getItems().clear();
-
-        // Get the question keys from the selected exam
-        String questionKeys = selectedExam.getQuestionKeys(); // Ensure this method exists
-
-        // Split the keys into an array
+        String questionKeys = selectedExam.getQuestionKeys();
         String[] keys = questionKeys.split("/");
 
-        // Fetch questions based on IDs
         List<Question> questions = new ArrayList<>();
         for (String key : keys) {
-            Question question = QuestionDatabase.queryByKey(key); // Fetch question by ID
+            Question question = QuestionDatabase.queryByKey(key);
             if (!CheckNull(question)) {
                 questions.add(question);
             }
         }
-
-        // Populate the QuestionInExam table
         questionInExamTable.setItems(FXCollections.observableArrayList(questions));
     }
 
+    /**
+     * Populates input fields with details from the selected exam.
+     *
+     * @param selectedExam The exam to populate fields with.
+     */
     private void populateExamDetails(Exam selectedExam) {
-        // Populate text fields and combo boxes with selected exam details
         newexamNameTextField.setText(selectedExam.getExamName());
         newCourseIDComboBox.setValue(selectedExam.getCourseKey());
         newexamTimeTextField.setText(selectedExam.getExamTime());
         PublishCombo.setValue(selectedExam.getPublish());
     }
 
+    /**
+     * Fetches course IDs from the course database.
+     *
+     * @return A list of course IDs.
+     */
     private List<String> fetchCourseIDs() {
-        // Replace this with actual data fetching logic
         List<Course> allCourses = CourseDatabase.getAll();
-
-        // Check if the course list is empty
-        // Extract CourseIDs from the Course objects
-        List<String> courseIDs = allCourses.stream()
-                .map(Course::getCourseId) // Assuming getCourseID() returns the Course ID as a String
+        return allCourses.stream()
+                .map(Course::getCourseId)
                 .collect(Collectors.toList());
-
-        return courseIDs;// Sample Course IDs
     }
 
-    private void setupQuestionTableColumns(TableColumn<Question, String> QuestionColumn,TableColumn<Question, String> TypeColumn,TableColumn<Question, String> ScoreColumn) {
-        QuestionColumn.setCellValueFactory(new PropertyValueFactory<>("questionContent")); // Adjust as necessary
+    /**
+     * Sets up the columns for the question tables.
+     *
+     * @param QuestionColumn The column for question content.
+     * @param TypeColumn The column for question types.
+     * @param ScoreColumn The column for question scores.
+     */
+    private void setupQuestionTableColumns(TableColumn<Question, String> QuestionColumn,
+                                           TableColumn<Question, String> TypeColumn,
+                                           TableColumn<Question, String> ScoreColumn) {
+        QuestionColumn.setCellValueFactory(new PropertyValueFactory<>("questionContent"));
         TypeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
         ScoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
     }
 
-
+    /**
+     * Sets up the columns for the exam table.
+     */
     private void setupExamTableColumns() {
         examNameColumn.setCellValueFactory(new PropertyValueFactory<>("examName"));
         courseIDColumn.setCellValueFactory(new PropertyValueFactory<>("courseKey"));
@@ -162,66 +186,228 @@ public class ExamManageController implements Initializable {
         publishColumn.setCellValueFactory(new PropertyValueFactory<>("publish"));
     }
 
-    //All the QuestionManageUI functions being handled
+    /**
+     * Resets the exam filtering inputs and refreshes the exam table.
+     *
+     * @param actionEvent The ActionEvent triggered by the reset button.
+     */
     public void resetExam(ActionEvent actionEvent) {
         examNameTextField.clear();
-        // Reset the type combo box to its default state (no selection)
         CourseIDComboBox.setValue(null);
-        // Clear the text field for the score
         PublishComboBox.setValue(null);
-        // Refresh the question table to show all questions without filters
         refreshExam(actionEvent);
     }
-    static <T> boolean CheckNull(T exam){
-        if(exam == null){
-            return true;
-        }
-        return false;
+
+    /**
+     * Checks if the given exam object is null.
+     *
+     * @param exam The exam to check.
+     * @return true if the exam is null; false otherwise.
+     */
+    static <T> boolean CheckNull(T exam) {
+        return exam == null;
     }
 
+    /**
+     * Deletes the selected exam after user confirmation.
+     *
+     * @param actionEvent The ActionEvent triggered by the delete button.
+     */
     public void deleteExam(ActionEvent actionEvent) {
         Exam selectedExam = ExamTable.getSelectionModel().getSelectedItem();
-
-        // Check if a question is selected
         if (CheckNull(selectedExam)) {
-            // Show an alert if no question is selected
             showMsg("No Selection", "Please select an exam to delete.");
             return;
         }
 
-        // Confirm deletion
         Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmationAlert.setTitle("Delete Confirmation");
         confirmationAlert.setHeaderText("Are you sure you want to delete this exam?");
         confirmationAlert.setContentText("Exam: " + selectedExam.getExamName());
 
-        // Show the confirmation dialog and wait for the user's response
         confirmationAlert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                // Delete the question from the database
-                ExamDatabase.delByKey(String.valueOf(selectedExam.getId())); // Assuming you have a method to delete by ID
-
-                // Refresh the table to show the updated list of questions
+                ExamDatabase.delByKey(String.valueOf(selectedExam.getId()));
                 refreshExam(actionEvent);
             }
         });
     }
 
-    static boolean CheckEmptyExam(String examName, String courseID, String examTime, String publish){
+    /**
+     * Checks if any required exam input fields are empty.
+     *
+     * @param examName The exam name input.
+     * @param courseID The course ID input.
+     * @param examTime The exam time input.
+     * @param publish The publish status input.
+     * @return true if any field is empty; false otherwise.
+     */
+    static boolean CheckEmptyExam(String examName, String courseID, String examTime, String publish) {
         return examName.isEmpty() || courseID == null || examTime.isEmpty() || publish == null;
     }
-    static boolean CheckTime(String examTimeText){
+
+    /**
+     * Validates if the provided exam time is a positive integer.
+     *
+     * @param examTimeText The exam time input as a string.
+     * @return true if the exam time is negative or invalid; false otherwise.
+     */
+    static boolean CheckTime(String examTimeText) {
         int examTime;
         try {
             examTime = Integer.parseInt(examTimeText);
-            if (examTime <= 0) {
-                return true;
-            }
+            return examTime <= 0;
         } catch (NumberFormatException e) {
+            return true;
+        }
+    }
+
+    /**
+     * Validates the exam inputs for adding or updating an exam.
+     *
+     * @param examName The exam name input.
+     * @param courseID The course ID input.
+     * @param examTimeText The exam time input.
+     * @param publishStatusText The publish status input.
+     * @return true if validation fails; false otherwise.
+     */
+    static boolean Validation(String examName, String courseID, String examTimeText, String publishStatusText) {
+        if (CheckEmptyExam(examName, courseID, examTimeText, publishStatusText)) {
+            showMsg("Error", "Please fill in all required fields.");
+            return true;
+        }
+        if (CheckTime(examTimeText)) {
+            showMsg("Error", "Exam time must be a valid number.");
             return true;
         }
         return false;
     }
+
+    /**
+     * Adds a new exam based on the input fields.
+     *
+     * @param actionEvent The ActionEvent triggered by the add button.
+     */
+    public void addExam(ActionEvent actionEvent) {
+        String examName = newexamNameTextField.getText().trim();
+        String courseID = newCourseIDComboBox.getValue();
+        String examTimeText = newexamTimeTextField.getText().trim();
+        String publishStatusText = PublishCombo.getValue();
+
+        if (Validation(examName, courseID, examTimeText, publishStatusText)) {
+            return;
+        }
+
+        // Collect question IDs from the questionInExamTable
+        StringBuilder questionKeysBuilder = new StringBuilder();
+        for (Question question : questionInExamTable.getItems()) {
+            if (questionKeysBuilder.length() > 0) {
+                questionKeysBuilder.append("/"); // Append separator before adding the next ID
+            }
+            questionKeysBuilder.append(question.getId()); // Assuming you have a method getId() in your Question class
+        }
+        String questionKeys = questionKeysBuilder.toString(); // Convert to string
+
+        Exam newExam = new Exam(examName, courseID, examTimeText, publishStatusText, questionKeys);
+        ExamDatabase.add(newExam);
+        refreshExam(actionEvent);
+    }
+
+    /**
+     * Updates the selected exam with new details from the input fields.
+     *
+     * @param actionEvent The ActionEvent triggered by the update button.
+     */
+    public void updateExam(ActionEvent actionEvent) {
+        Exam selectedExam = ExamTable.getSelectionModel().getSelectedItem();
+        if (CheckNull(selectedExam)) {
+            showMsg("No Selection", "Please select an exam to update.");
+            return;
+        }
+
+        String newExamName = newexamNameTextField.getText().trim();
+        String newCourseID = newCourseIDComboBox.getValue();
+        String newExamTimeText = newexamTimeTextField.getText().trim();
+        String newPublishStatus = PublishCombo.getValue();
+
+        if (Validation(newExamName, newCourseID, newExamTimeText, newPublishStatus)) {
+            return;
+        }
+
+        String questionKeys = questionInExamTable.getItems().stream()
+                .map(question -> {
+                    long id = question.getId();
+                    return (id == 0) ? question.getreferID() : String.valueOf(id);
+                })
+                .collect(Collectors.joining("/"));
+
+        selectedExam.setExamName(newExamName);
+        selectedExam.setCourseKey(newCourseID);
+        selectedExam.setExamTime(newExamTimeText);
+        selectedExam.setPublish(newPublishStatus);
+        selectedExam.setQuestionKeys(questionKeys);
+
+        ExamDatabase.update(selectedExam);
+        refreshExam(actionEvent);
+        showMsg("Success", "Exam updated successfully.");
+    }
+
+    /**
+     * Filters the exams based on the input fields and updates the exam table.
+     *
+     * @param actionEvent The ActionEvent triggered by the filter button.
+     */
+    public void filterExam(ActionEvent actionEvent) {
+        String ExamName = examNameTextField.getText().toLowerCase().trim();
+        String CourseID = CourseIDComboBox.getValue();
+        String Publish = PublishComboBox.getValue();
+
+        List<Exam> allExams = ExamDatabase.getAll();
+        List<Exam> filteredExams = allExams.stream()
+                .filter(exam -> CheckExamMatch(exam, ExamName, CourseID, Publish))
+                .collect(Collectors.toList());
+
+        ExamTable.setItems(FXCollections.observableArrayList(filteredExams));
+    }
+
+    /**
+     * Resets the question filtering inputs and refreshes the question table.
+     *
+     * @param actionEvent The ActionEvent triggered by the reset button.
+     */
+    public void resetQuestion(ActionEvent actionEvent) {
+        questionTextField.clear();
+        TypeComboBox.setValue(null);
+        scoreTextField1.clear();
+        refreshQuestionTable(actionEvent);
+    }
+
+    /**
+     * Filters the questions based on the input fields and updates the question table.
+     *
+     * @param actionEvent The ActionEvent triggered by the filter button.
+     */
+    public void filterQuestion(ActionEvent actionEvent) {
+        String questionContent = questionTextField.getText().toLowerCase().trim();
+        String selectedType = TypeComboBox.getValue();
+        String scoreText = scoreTextField1.getText().trim();
+
+        List<Question> allQuestions = QuestionDatabase.getAll();
+        List<Question> filteredQuestions = allQuestions.stream()
+                .filter(question -> CheckQuestionMatch(question, questionContent, selectedType, scoreText))
+                .collect(Collectors.toList());
+
+        questionTable.setItems(FXCollections.observableArrayList(filteredQuestions));
+    }
+    /**
+     * Checks if the given exam matches the specified filter criteria.
+     *
+     * @param exam     The exam to be checked against the filter criteria.
+     * @param ExamName The name filter to match against the exam's name.
+     * @param CourseID The course ID filter to match against the exam's course key.
+     * @param Publish  The publish status filter to match against the exam's publish status.
+     * @return true if the exam matches all provided criteria; false otherwise.
+     */
     static boolean CheckExamMatch(Exam exam, String ExamName, String CourseID, String Publish){
 
 
@@ -231,6 +417,15 @@ public class ExamManageController implements Initializable {
         }
         return true;
     }
+    /**
+     * Checks if the given question matches the specified filter criteria.
+     *
+     * @param question      The question to be checked against the filter criteria.
+     * @param questionContent The content filter to match against the question's content.
+     * @param selectedType  The question type filter to match against the question's type.
+     * @param scoreText     The score filter to match against the question's score.
+     * @return true if the question matches all provided criteria; false otherwise.
+     */
     static boolean CheckQuestionMatch(Question question, String questionContent, String selectedType, String scoreText){
 
         // Check if question content matches
@@ -256,201 +451,73 @@ public class ExamManageController implements Initializable {
         }
         return true;
     }
-    static boolean Validation(String examName,String courseID,String examTimeText,String publishStatusText){
-        if (CheckEmptyExam(examName,courseID,examTimeText,publishStatusText)){
-            showMsg("Error", "Please fill in all required fields.");
-            return true;
-        }
-
-        if (CheckTime(examTimeText)){
-            showMsg("Error", "Exam time must be a valid number.");
-            return true;
-        }
-        return false;
-    }
-    public void addExam(ActionEvent actionEvent) {
-        String examName = newexamNameTextField.getText().trim();
-        String courseID = newCourseIDComboBox.getValue();
-        String examTimeText = newexamTimeTextField.getText().trim();
-        String publishStatusText = PublishCombo.getValue();
-
-        // Validate input
-        if (Validation(examName,courseID,examTimeText,publishStatusText)){
-            return;
-        }
-
-        // Collect question IDs from the questionInExamTable
-        StringBuilder questionKeysBuilder = new StringBuilder();
-        for (Question question : questionInExamTable.getItems()) {
-            if (questionKeysBuilder.length() > 0) {
-                questionKeysBuilder.append("/"); // Append separator before adding the next ID
-            }
-            questionKeysBuilder.append(question.getId()); // Assuming you have a method getId() in your Question class
-        }
-        String questionKeys = questionKeysBuilder.toString(); // Convert to string
-
-        // Create a new Exam object
-        Exam newExam = new Exam(examName, courseID, examTimeText, publishStatusText, questionKeys);
-
-        // Add the new exam to the database
-        ExamDatabase.add(newExam); // Assuming add method exists in your Database class
-
-        // Refresh the exam table to show the new exam
-        refreshExam(actionEvent);
-    }
-
-    // Method to get question keys as a joined string
-
-    public void updateExam(ActionEvent actionEvent) {
-        Exam selectedExam = ExamTable.getSelectionModel().getSelectedItem();
-        if (CheckNull(selectedExam)) {
-            showMsg("No Selection", "Please select an exam to update.");
-            return;
-        }
-
-        // Retrieve updated values from the UI components
-        String newExamName = newexamNameTextField.getText().trim();
-        String newCourseID = newCourseIDComboBox.getValue();
-        String newExamTimeText = newexamTimeTextField.getText().trim();
-        String newPublishStatus = PublishCombo.getValue();
-// Validate input
-        if (Validation(newExamName,newCourseID,newExamTimeText,newPublishStatus)){
-            return;
-        }
-
-        // Retrieve existing question keys from the selected exam
-        // Retrieve existing question keys from the selected exam
-        String questionKeys = questionInExamTable.getItems().stream()
-                .map(question -> {
-                    long id = question.getId();
-                    return (id == 0) ? question.getreferID() : String.valueOf(id);
-                })
-                .collect(Collectors.joining("/"));
-        //String combinedKeys = String.join("/", oldquestionKeys, questionKeys);
-        // Update the selected exam
-        selectedExam.setExamName(newExamName);
-        selectedExam.setCourseKey(newCourseID); // Assuming setCourseKey() exists
-        selectedExam.setExamTime(newExamTimeText); // Assuming setExamTime() accepts a String
-        selectedExam.setPublish(newPublishStatus); // Assuming setPublish() exists
-        selectedExam.setQuestionKeys(questionKeys); // Assuming setQuestionKeys() exists
-
-        // Update the exam in the database
-        ExamDatabase.update(selectedExam); // Assuming update method exists in your Database class
-
-        // Refresh the exam table to show the updated exam
-        refreshExam(actionEvent);
-        showMsg("Success", "Exam updated successfully.");
-    }
-
-    public void filterExam(ActionEvent actionEvent) {
-        String ExamName = examNameTextField.getText().toLowerCase().trim();
-
-        String CourseID = CourseIDComboBox.getValue();
-        String Publish = PublishComboBox.getValue();
-        // Get all questions from the database
-        List<Exam> allExams = ExamDatabase.getAll();
-
-        // Create a list to hold the filtered questions
-        List<Exam> filteredExams = new ArrayList<>();
-
-        // Filter questions based on the inputs
-        for (Exam exam : allExams) {
-
-            // If all checks pass, add the question to the filtered list
-            if (CheckExamMatch(exam, ExamName, CourseID, Publish)) {
-                filteredExams.add(exam);
-            }
-        }
-        // Update the table with the filtered questions
-        ExamTable.setItems(FXCollections.observableArrayList(filteredExams));
-    }
-
-    public void resetQuestion(ActionEvent actionEvent) {
-        questionTextField.clear();
-        // Reset the type combo box to its default state (no selection)
-        TypeComboBox.setValue(null);
-        // Clear the text field for the score
-        scoreTextField1.clear();
-        // Refresh the question table to show all questions without filters
-        refreshQuestionTable(actionEvent);
-    }
-
-    public void filterQuestion(ActionEvent actionEvent) {
-        String questionContent = questionTextField.getText().toLowerCase().trim();
-        String selectedType = TypeComboBox.getValue();
-        String scoreText = scoreTextField1.getText().trim();
-
-        // Get all questions from the database
-        List<Question> allQuestions = QuestionDatabase.getAll();
-
-        // Create a list to hold the filtered questions
-        List<Question> filteredQuestions = new ArrayList<>();
-
-        // Filter questions based on the inputs
-        for (Question question : allQuestions) {
-
-            // If all checks pass, add the question to the filtered list
-            if (CheckQuestionMatch(question, questionContent, selectedType, scoreText)) {
-                filteredQuestions.add(question);
-            }
-        }
-        // Update the table with the filtered questions
-        questionTable.setItems(FXCollections.observableArrayList(filteredQuestions));
-    }
-
+    /**
+     * Deletes a selected question from the exam's question list.
+     *
+     * @param actionEvent The ActionEvent triggered by the delete from left button.
+     */
     public void Deletefromleft(ActionEvent actionEvent) {
         Question selectedQuestion = questionInExamTable.getSelectionModel().getSelectedItem();
-
         if (!CheckNull(selectedQuestion)) {
-            // Remove the selected question from the questionInExamTable
             questionInExamTable.getItems().remove(selectedQuestion);
-
         } else {
             showMsg("Error", "Please select a question to delete.");
         }
     }
+
+    /**
+     * Checks for duplicates before adding a question to the exam.
+     *
+     * @param newQuestion The question to check for duplicates.
+     * @return true if a duplicate is found; false otherwise.
+     */
     public boolean HasDuplicate(Question newQuestion) {
-        // Iterate through the items in the questionInExamTable
-        for (Question existingQuestion : questionInExamTable.getItems()) {
-            // Compare their IDs
-            if (Objects.equals(existingQuestion.getreferID(), String.valueOf(newQuestion.getId()))) {
-                return true; // Duplicate found
-            }
-        }
-        return false;
+        return questionInExamTable.getItems().stream()
+                .anyMatch(existingQuestion -> Objects.equals(existingQuestion.getreferID(), String.valueOf(newQuestion.getId())));
     }
-        public void Addtoleft(ActionEvent actionEvent) {
+
+    /**
+     * Adds a selected question to the exam's question list.
+     *
+     * @param actionEvent The ActionEvent triggered by the add to left button.
+     */
+    public void Addtoleft(ActionEvent actionEvent) {
         Question selectedQuestion = questionTable.getSelectionModel().getSelectedItem();
-
-        if (!CheckNull(selectedQuestion)&&!(HasDuplicate(selectedQuestion)) ){
-                // Create a full copy of the selected question
-                Question copiedQuestion = new Question(
-                        selectedQuestion.getQuestionContent(),
-                        selectedQuestion.getOptionA(),
-                        selectedQuestion.getOptionB(),
-                        selectedQuestion.getOptionC(),
-                        selectedQuestion.getOptionD(),
-                        selectedQuestion.getAnswer(),
-                        selectedQuestion.getType(),
-                        selectedQuestion.getScore(),
-                        String.valueOf(selectedQuestion.getId())
-                );
-                //
-                // Add the copied question to the questionInExamTable
-                questionInExamTable.getItems().add(copiedQuestion);
-                //printReferIDs();
-        }else {
-                showMsg("Error", "Please select a non duplicate question to add.");
-            }
+        if (!CheckNull(selectedQuestion) && !HasDuplicate(selectedQuestion)) {
+            Question copiedQuestion = new Question(
+                    selectedQuestion.getQuestionContent(),
+                    selectedQuestion.getOptionA(),
+                    selectedQuestion.getOptionB(),
+                    selectedQuestion.getOptionC(),
+                    selectedQuestion.getOptionD(),
+                    selectedQuestion.getAnswer(),
+                    selectedQuestion.getType(),
+                    selectedQuestion.getScore(),
+                    String.valueOf(selectedQuestion.getId())
+            );
+            questionInExamTable.getItems().add(copiedQuestion);
+        } else {
+            showMsg("Error", "Please select a non-duplicate question to add.");
+        }
     }
 
-        public void refreshExam (ActionEvent actionEvent){
-            List<Exam> exams = ExamDatabase.getAll(); // Fetch all exams from the database
-            ExamTable.setItems(FXCollections.observableArrayList(exams)); // Update the table
-        }
+    /**
+     * Refreshes the exam table to display all exams from the database.
+     *
+     * @param actionEvent The ActionEvent triggered by the refresh button.
+     */
+    public void refreshExam(ActionEvent actionEvent) {
+        List<Exam> exams = ExamDatabase.getAll();
+        ExamTable.setItems(FXCollections.observableArrayList(exams));
+    }
 
-        public void refreshQuestionTable (ActionEvent actionEvent){
-            List<Question> questions = QuestionDatabase.getAll(); // Fetch all exams from the database
-            questionTable.setItems(FXCollections.observableArrayList(questions)); // Update the table
-        }
+    /**
+     * Refreshes the question table to display all questions from the database.
+     *
+     * @param actionEvent The ActionEvent triggered by the refresh button.
+     */
+    public void refreshQuestionTable(ActionEvent actionEvent) {
+        List<Question> questions = QuestionDatabase.getAll();
+        questionTable.setItems(FXCollections.observableArrayList(questions));
+    }
 }
