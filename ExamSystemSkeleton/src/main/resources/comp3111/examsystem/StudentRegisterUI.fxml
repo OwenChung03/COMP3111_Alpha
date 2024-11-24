@@ -60,7 +60,7 @@
         <HBox alignment="CENTER" prefHeight="450.0" prefWidth="600.0" spacing="20.0">
             <children>
                 <Button mnemonicParsing="false" onAction="#close" text="Close" />
-                <Button mnemonicParsing="false" onAction="#enterinfo" text="Register" />
+                <Button mnemonicParsing="false" onAction="#registerStudent" text="Register" />
             </children>
         </HBox>
     </children>
