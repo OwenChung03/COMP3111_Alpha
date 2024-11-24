@@ -101,7 +101,9 @@ public class StudentLoginController implements Initializable {
     /**
      * @param username  studnet unique username
      * @param password  student login password
-     * @return
+     * @return whether successful
+     *
+     *
      */
     static boolean isValidLogin(String username, String password) {
         // Replace this with actual login logic (e.g., checking against a database)
