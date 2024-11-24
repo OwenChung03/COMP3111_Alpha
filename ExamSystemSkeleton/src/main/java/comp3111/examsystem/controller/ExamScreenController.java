@@ -191,9 +191,9 @@ public class ExamScreenController {
     }
 
     // Modify the loadQuestion method to handle both Single and Multiple question types
-    private void loadQuestion(int index) {
+    public boolean loadQuestion(int index) {
         if (index < 0 || index >= questions.size()) {
-            return;  // Ensure index is within bounds
+            return false;  // Ensure index is within bounds
         }
 
         Question currentQuestion = questions.get(index);
@@ -221,6 +221,7 @@ public class ExamScreenController {
         questionsListView.getSelectionModel().select(index);
 
         updateButtonVisibility();
+        return true;
     }
 
     // Show RadioButtons and hide CheckBoxes
