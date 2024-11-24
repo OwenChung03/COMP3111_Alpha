@@ -13,3 +13,4 @@ studentId:1731855262445,courseId:COMP2011,examName:COMP211,totalScore:30,fullSco
 studentId:1731855262445,courseId:COMP2011,examName:COMP211,totalScore:0,fullScore:30,timeSpent:0 min 1 sec,id:1732371734544,
 studentId:1731855262445,courseId:COMP2011,examName:COMP211,totalScore:10,fullScore:30,timeSpent:0 min 2 sec,id:1732373169727,
 studentId:1731855262445,courseId:COMP2011,examName:COMP211,totalScore:0,fullScore:30,timeSpent:0 min 8 sec,id:1732436066034,
+studentId:1731855262445,courseId:COMP2011,examName:COMP211,totalScore:30,fullScore:30,timeSpent:0 min 14 sec,id:1732461350550,

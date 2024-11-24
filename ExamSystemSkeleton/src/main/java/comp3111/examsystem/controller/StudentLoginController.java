@@ -59,6 +59,7 @@ public class StudentLoginController implements Initializable {
     }
 
 
+
     //purely UI implementation, I separated the logic into different boolean function.
     //Please don't count it in the coverage ratio
     @FXML
@@ -96,6 +97,12 @@ public class StudentLoginController implements Initializable {
         }
     }
 
+
+    /**
+     * @param username  studnet unique username
+     * @param password  student login password
+     * @return
+     */
     static boolean isValidLogin(String username, String password) {
         // Replace this with actual login logic (e.g., checking against a database)
         boolean username_flag = username.matches(ALLOWED_LOGIN_CHARS);

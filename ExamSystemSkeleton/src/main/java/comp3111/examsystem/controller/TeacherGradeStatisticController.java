@@ -174,20 +174,28 @@ public class TeacherGradeStatisticController implements Initializable {
         // Clear existing data
         pieChart.getData().clear();
 
-        // Group students by score ranges
+        // Group students by percentage score ranges
         Map<String, Long> scoreDistribution = gradeList.stream()
                 .collect(Collectors.groupingBy(
                         grade -> {
-                            int score = Integer.parseInt(grade.getTotalScore());
-                            if (score >= 90) return "90-100";
-                            else if (score >= 80) return "80-89";
-                            else if (score >= 70) return "70-79";
-                            else if (score >= 60) return "60-69";
-                            else return "Below 60";
+                            // Get the total score and full score
+                            int totalScore = Integer.parseInt(grade.getTotalScore());
+                            int fullScore = Integer.parseInt(grade.getFullScore());
+
+                            // Calculate percentage score
+                            double percentageScore = (double) totalScore / fullScore * 100;
+
+                            // Determine percentage range
+                            if (percentageScore >= 90) return "90-100%";
+                            else if (percentageScore >= 80) return "80-89%";
+                            else if (percentageScore >= 70) return "70-79%";
+                            else if (percentageScore >= 60) return "60-69%";
+                            else return "Below 60%";
                         },
                         Collectors.counting()
                 ));
 
+        // Add data to the pie chart
         scoreDistribution.forEach((range, count) ->
                 pieChart.getData().add(new PieChart.Data(range, count)));
     }
