@@ -139,6 +139,7 @@ public class ExamManageController implements Initializable {
         // Replace this with actual data fetching logic
         List<Course> allCourses = CourseDatabase.getAll();
 
+        // Check if the course list is empty
         // Extract CourseIDs from the Course objects
         List<String> courseIDs = allCourses.stream()
                 .map(Course::getCourseId) // Assuming getCourseID() returns the Course ID as a String
@@ -225,18 +226,7 @@ public class ExamManageController implements Initializable {
 
 
         // Check if question content matches
-        if (!(ExamName.isEmpty() || exam.getExamName().toLowerCase().contains(ExamName))) {
-            return false;
-        }
-
-        // Check if the CourseID matches
-
-        if (!(CourseID == null || CourseID.equals(String.valueOf(exam.getCourseKey())))) {
-            return false;
-        }
-
-        // Check if the score matches
-        if(!(Publish.isEmpty() || exam.getPublish().contains(Publish))){
+        if (!(ExamName.isEmpty() || exam.getExamName().toLowerCase().contains(ExamName))||!(CourseID == null || CourseID.equals(String.valueOf(exam.getCourseKey())))||!(Publish == null || exam.getPublish().contains(Publish))){
             return false;
         }
         return true;
@@ -419,13 +409,22 @@ public class ExamManageController implements Initializable {
             showMsg("Error", "Please select a question to delete.");
         }
     }
-
-    public void Addtoleft(ActionEvent actionEvent) {
+    public boolean HasDuplicate(Question newQuestion) {
+        // Iterate through the items in the questionInExamTable
+        for (Question existingQuestion : questionInExamTable.getItems()) {
+            // Compare their IDs
+            if (Objects.equals(existingQuestion.getreferID(), String.valueOf(newQuestion.getId()))) {
+                return true; // Duplicate found
+            }
+        }
+        return false;
+    }
+        public void Addtoleft(ActionEvent actionEvent) {
         Question selectedQuestion = questionTable.getSelectionModel().getSelectedItem();
 
-        if (!CheckNull(selectedQuestion)) {
-            // Create a full copy of the selected question
-            Question copiedQuestion = new Question(
+        if (!CheckNull(selectedQuestion)&&!(HasDuplicate(selectedQuestion)) ){
+                // Create a full copy of the selected question
+                Question copiedQuestion = new Question(
                         selectedQuestion.getQuestionContent(),
                         selectedQuestion.getOptionA(),
                         selectedQuestion.getOptionB(),
@@ -440,9 +439,8 @@ public class ExamManageController implements Initializable {
                 // Add the copied question to the questionInExamTable
                 questionInExamTable.getItems().add(copiedQuestion);
                 //printReferIDs();
-
-            } else {
-                showMsg("Error", "Please select a question to add.");
+        }else {
+                showMsg("Error", "Please select a non duplicate question to add.");
             }
     }
 
@@ -455,6 +453,4 @@ public class ExamManageController implements Initializable {
             List<Question> questions = QuestionDatabase.getAll(); // Fetch all exams from the database
             questionTable.setItems(FXCollections.observableArrayList(questions)); // Update the table
         }
-
-
 }

@@ -1,5 +1,6 @@
 package comp3111.examsystem.controller;
 
+import comp3111.examsystem.entity.Course;
 import comp3111.examsystem.entity.Exam;
 import comp3111.examsystem.entity.Question;
 import comp3111.examsystem.entity.Teacher;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static comp3111.examsystem.controller.ExamManageController.*;
@@ -132,8 +134,8 @@ class ExamManageControllerTest {
         String publish = "Yes";
         String questionKeys = "0";
         Exam exam = new Exam("Quiz1", "COMP2211", examTime, publish, questionKeys);
-        String new_publish = "";
-        assertEquals(false,CheckExamMatch(exam,examName, courseKey, ""));
+        String new_publish = null;
+        assertEquals(false,CheckExamMatch(exam,examName, courseKey, new_publish));
     }
     @Test
     void Wrong_Publish() {

@@ -290,7 +290,8 @@ public class QuestionManageController implements Initializable {
     }
 
   public void updateQuestion(ActionEvent actionEvent) {
-      Question selectedQuestion = questionTable.getSelectionModel().getSelectedItem();
+      Question selectedQuestion_1 = questionTable.getSelectionModel().getSelectedItem();
+
       String questionContent = newQuestionTextField.getText().trim();
       String optionA = optionATextField.getText().trim();
       String optionB = optionBTextField.getText().trim();
@@ -302,8 +303,9 @@ public class QuestionManageController implements Initializable {
       if(!Validation(questionContent,optionA,optionB,optionC,optionD,answer,type,score)){
           return;
       }
-      if (!CheckNull(selectedQuestion)) {
+      if (!CheckNull(selectedQuestion_1)) {
           // Update the question's fields with values from the text fields
+          Question selectedQuestion = QuestionDatabase.queryByKey(String.valueOf(selectedQuestion_1.getId()));
           selectedQuestion.setQuestionContent(questionContent);
           selectedQuestion.setOptionA(optionA);
           selectedQuestion.setOptionB(optionB);
@@ -312,7 +314,7 @@ public class QuestionManageController implements Initializable {
           selectedQuestion.setAnswer(answer);
           selectedQuestion.setType(type);
           selectedQuestion.setScore(score);
-
+          QuestionDatabase.update(selectedQuestion);
           // Refresh the TableView to show updated data
           questionTable.refresh();
 
