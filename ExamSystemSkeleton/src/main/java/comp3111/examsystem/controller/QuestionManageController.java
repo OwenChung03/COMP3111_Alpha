@@ -59,12 +59,17 @@ public class QuestionManageController implements Initializable {
         setupTableColumns();
         refreshQUI(null);
         questionTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
+            if (!CheckNull(newValue)) {
                 populateFields(newValue);
             }
         });// Load initial data
     }
-
+    static boolean CheckNull(Question question){
+        if(question == null){
+            return true;
+        }
+        return false;
+    }
     private void setupTableColumns() {
         questionColumn.setCellValueFactory(new PropertyValueFactory<>("questionContent"));
         optionAColumn.setCellValueFactory(new PropertyValueFactory<>("optionA"));
@@ -249,7 +254,7 @@ public class QuestionManageController implements Initializable {
         Question selectedQuestion = questionTable.getSelectionModel().getSelectedItem();
 
         // Check if a question is selected
-        if (selectedQuestion == null) {
+        if (CheckNull(selectedQuestion)) {
             // Show an alert if no question is selected
             showMsg("No Selection","Please select a question to delete.");
             return;
@@ -297,7 +302,7 @@ public class QuestionManageController implements Initializable {
       if(!Validation(questionContent,optionA,optionB,optionC,optionD,answer,type,score)){
           return;
       }
-      if (selectedQuestion != null) {
+      if (!CheckNull(selectedQuestion)) {
           // Update the question's fields with values from the text fields
           selectedQuestion.setQuestionContent(questionContent);
           selectedQuestion.setOptionA(optionA);

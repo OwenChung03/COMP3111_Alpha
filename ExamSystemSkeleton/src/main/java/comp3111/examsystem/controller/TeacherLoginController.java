@@ -71,10 +71,8 @@ public class TeacherLoginController implements Initializable {
         // Assume we have an validation method
         if (CheckEmpty(teachers)) {
             showMsg("Error", "Login Failed: No user found.");
-            return;
-        }
-
-        if (ValidLogin(username, password) && Checkpassword(teachers,password)) {
+            return;}
+        else if (ValidLogin(username, password) && Checkpassword(teachers,password)) {
             showMsg("Welcome", "Login Successful");
 
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("TeacherMainUI.fxml"));
@@ -136,16 +134,16 @@ public class TeacherLoginController implements Initializable {
             showMsg("Error", "Error: Please fill in all fields correctly.");
             return;
         }
-        if(!CheckAge(age)) {
+        else if(!CheckAge(age)) {
             showMsg("Error", "Error: Please enter a valid age.");
             return;
         }
-        if(!checkPassword(password, passwordConfirm)) {
+        else if(!checkPassword(password, passwordConfirm)) {
 
             showMsg("Error", "Error: Passwords do not match.");
             return;
         }
-        if(checkUser(username)) {
+        else if(checkUser(username)) {
 
             showMsg("Error", "Error: Username already exists. Please choose a different one.");
             return;

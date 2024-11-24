@@ -1,5 +1,6 @@
 package comp3111.examsystem.controller;
 
+import comp3111.examsystem.entity.Exam;
 import comp3111.examsystem.entity.Question;
 import comp3111.examsystem.entity.Teacher;
 import comp3111.examsystem.tools.Database;
@@ -304,5 +305,15 @@ class QuestionManageControllerTest {
 
         // Validate inputs
         assertEquals(true,Validation(questionContent,optionA,optionB,optionC,optionD,answer,type,score));
+    }
+    @Test
+    void NullQuestion(){
+        Question question = null;
+        assertEquals(true,CheckNull(question));
+    }
+    @Test
+    void Non_NullQuestion(){
+        Question question = new Question("What is your name","owen","terry","jerry","other","D","Single","10");
+        assertEquals(false,CheckNull(question));
     }
 }

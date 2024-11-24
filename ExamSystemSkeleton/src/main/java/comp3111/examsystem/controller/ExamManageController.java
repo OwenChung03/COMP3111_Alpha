@@ -177,6 +177,7 @@ public class ExamManageController implements Initializable {
         }
         return false;
     }
+
     public void deleteExam(ActionEvent actionEvent) {
         Exam selectedExam = ExamTable.getSelectionModel().getSelectedItem();
 
