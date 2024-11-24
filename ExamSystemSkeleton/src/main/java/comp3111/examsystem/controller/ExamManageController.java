@@ -88,8 +88,8 @@ public class ExamManageController implements Initializable {
         ExamDatabase = new Database<>(Exam.class); // Initialize the Exam database
         CourseDatabase = new Database<>(Course.class); // Initialize the Course database
         setupExamTableColumns();
-        setupQuestionInExamTableColumns();
-        setupQuestionTableColumns();
+        setupQuestionTableColumns(questionInExamColumn,typeColumn1,scoreColumn1);
+        setupQuestionTableColumns(questionColumn,typeColumn,scoreColumn);
         refreshExam(null); // Refresh exam table// Refresh questionInExam table
         refreshQuestionTable(null); // Refresh question table
         List<String> courseIDs = fetchCourseIDs(); // Implement this method to get Course IDs
@@ -97,7 +97,7 @@ public class ExamManageController implements Initializable {
         newCourseIDComboBox.setItems(FXCollections.observableArrayList(courseIDs));
         // Add listener to load questions when an exam is selected
         ExamTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
+            if (!CheckNull(newValue)) {
                 loadQuestionsForExam(newValue);
                 populateExamDetails(newValue); // New method to populate details
             }
@@ -118,7 +118,7 @@ public class ExamManageController implements Initializable {
         List<Question> questions = new ArrayList<>();
         for (String key : keys) {
             Question question = QuestionDatabase.queryByKey(key); // Fetch question by ID
-            if (question != null) {
+            if (!CheckNull(question)) {
                 questions.add(question);
             }
         }
@@ -134,10 +134,12 @@ public class ExamManageController implements Initializable {
         newexamTimeTextField.setText(selectedExam.getExamTime());
         PublishCombo.setValue(selectedExam.getPublish());
     }
+
     private List<String> fetchCourseIDs() {
         // Replace this with actual data fetching logic
         List<Course> allCourses = CourseDatabase.getAll();
 
+        // Check if the course list is empty
         // Extract CourseIDs from the Course objects
         List<String> courseIDs = allCourses.stream()
                 .map(Course::getCourseId) // Assuming getCourseID() returns the Course ID as a String
@@ -146,17 +148,12 @@ public class ExamManageController implements Initializable {
         return courseIDs;// Sample Course IDs
     }
 
-    private void setupQuestionTableColumns() {
-        questionColumn.setCellValueFactory(new PropertyValueFactory<>("questionContent")); // Adjust as necessary
-        typeColumn1.setCellValueFactory(new PropertyValueFactory<>("type"));
-        scoreColumn1.setCellValueFactory(new PropertyValueFactory<>("score"));
+    private void setupQuestionTableColumns(TableColumn<Question, String> QuestionColumn,TableColumn<Question, String> TypeColumn,TableColumn<Question, String> ScoreColumn) {
+        QuestionColumn.setCellValueFactory(new PropertyValueFactory<>("questionContent")); // Adjust as necessary
+        TypeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+        ScoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
     }
 
-    private void setupQuestionInExamTableColumns() {
-        questionInExamColumn.setCellValueFactory(new PropertyValueFactory<>("questionContent")); // Adjust as necessary
-        typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
-        scoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
-    }
 
     private void setupExamTableColumns() {
         examNameColumn.setCellValueFactory(new PropertyValueFactory<>("examName"));
@@ -175,12 +172,18 @@ public class ExamManageController implements Initializable {
         // Refresh the question table to show all questions without filters
         refreshExam(actionEvent);
     }
+    static <T> boolean CheckNull(T exam){
+        if(exam == null){
+            return true;
+        }
+        return false;
+    }
 
     public void deleteExam(ActionEvent actionEvent) {
         Exam selectedExam = ExamTable.getSelectionModel().getSelectedItem();
 
         // Check if a question is selected
-        if (selectedExam == null) {
+        if (CheckNull(selectedExam)) {
             // Show an alert if no question is selected
             showMsg("No Selection", "Please select an exam to delete.");
             return;
@@ -204,6 +207,67 @@ public class ExamManageController implements Initializable {
         });
     }
 
+    static boolean CheckEmptyExam(String examName, String courseID, String examTime, String publish){
+        return examName.isEmpty() || courseID == null || examTime.isEmpty() || publish == null;
+    }
+    static boolean CheckTime(String examTimeText){
+        int examTime;
+        try {
+            examTime = Integer.parseInt(examTimeText);
+            if (examTime <= 0) {
+                return true;
+            }
+        } catch (NumberFormatException e) {
+            return true;
+        }
+        return false;
+    }
+    static boolean CheckExamMatch(Exam exam, String ExamName, String CourseID, String Publish){
+
+
+        // Check if question content matches
+        if (!(ExamName.isEmpty() || exam.getExamName().toLowerCase().contains(ExamName))||!(CourseID == null || CourseID.equals(String.valueOf(exam.getCourseKey())))||!(Publish == null || exam.getPublish().contains(Publish))){
+            return false;
+        }
+        return true;
+    }
+    static boolean CheckQuestionMatch(Question question, String questionContent, String selectedType, String scoreText){
+
+        // Check if question content matches
+        if (!questionContent.isEmpty() && !question.getQuestionContent().toLowerCase().contains(questionContent)) {
+            return false;
+        }
+
+        // Check if the type matches
+        if (selectedType != null && !selectedType.isEmpty() && !question.getType().equals(selectedType)) {
+            return false;
+        }
+
+        // Check if the score matches
+        if (!scoreText.isEmpty()) {
+            try {
+                int score = Integer.parseInt(scoreText);
+                if (question.getScore() == null || Integer.parseInt(question.getScore()) != score) {
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                return false; // Handle invalid score input
+            }
+        }
+        return true;
+    }
+    static boolean Validation(String examName,String courseID,String examTimeText,String publishStatusText){
+        if (CheckEmptyExam(examName,courseID,examTimeText,publishStatusText)){
+            showMsg("Error", "Please fill in all required fields.");
+            return true;
+        }
+
+        if (CheckTime(examTimeText)){
+            showMsg("Error", "Exam time must be a valid number.");
+            return true;
+        }
+        return false;
+    }
     public void addExam(ActionEvent actionEvent) {
         String examName = newexamNameTextField.getText().trim();
         String courseID = newCourseIDComboBox.getValue();
@@ -211,20 +275,7 @@ public class ExamManageController implements Initializable {
         String publishStatusText = PublishCombo.getValue();
 
         // Validate input
-        if (examName.isEmpty() || courseID == null || examTimeText.isEmpty() || publishStatusText == null) {
-            showMsg("Error", "Please fill in all required fields.");
-            return;
-        }
-
-        int examTime;
-        try {
-            examTime = Integer.parseInt(examTimeText);
-            if (examTime <= 0) {
-                showMsg("Error", "Exam time must be a positive number.");
-                return;
-            }
-        } catch (NumberFormatException e) {
-            showMsg("Error", "Exam time must be a valid number.");
+        if (Validation(examName,courseID,examTimeText,publishStatusText)){
             return;
         }
 
@@ -234,7 +285,7 @@ public class ExamManageController implements Initializable {
             if (questionKeysBuilder.length() > 0) {
                 questionKeysBuilder.append("/"); // Append separator before adding the next ID
             }
-            questionKeysBuilder.append(question.getreferID()); // Assuming you have a method getId() in your Question class
+            questionKeysBuilder.append(question.getId()); // Assuming you have a method getId() in your Question class
         }
         String questionKeys = questionKeysBuilder.toString(); // Convert to string
 
@@ -248,9 +299,11 @@ public class ExamManageController implements Initializable {
         refreshExam(actionEvent);
     }
 
+    // Method to get question keys as a joined string
+
     public void updateExam(ActionEvent actionEvent) {
         Exam selectedExam = ExamTable.getSelectionModel().getSelectedItem();
-        if (selectedExam == null) {
+        if (CheckNull(selectedExam)) {
             showMsg("No Selection", "Please select an exam to update.");
             return;
         }
@@ -260,22 +313,8 @@ public class ExamManageController implements Initializable {
         String newCourseID = newCourseIDComboBox.getValue();
         String newExamTimeText = newexamTimeTextField.getText().trim();
         String newPublishStatus = PublishCombo.getValue();
-        String oldquestionKeys = selectedExam.getQuestionKeys();
-        // Validate input
-        if (newExamName.isEmpty() || newCourseID == null || newExamTimeText.isEmpty() || newPublishStatus == null) {
-            showMsg("Error", "Please fill in all required fields.");
-            return;
-        }
-
-        int newExamTime;
-        try {
-            newExamTime = Integer.parseInt(newExamTimeText);
-            if (newExamTime <= 0) {
-                showMsg("Error", "Exam time must be a positive number.");
-                return;
-            }
-        } catch (NumberFormatException e) {
-            showMsg("Error", "Exam time must be a valid number.");
+// Validate input
+        if (Validation(newExamName,newCourseID,newExamTimeText,newPublishStatus)){
             return;
         }
 
@@ -291,7 +330,7 @@ public class ExamManageController implements Initializable {
         // Update the selected exam
         selectedExam.setExamName(newExamName);
         selectedExam.setCourseKey(newCourseID); // Assuming setCourseKey() exists
-        selectedExam.setExamTime(String.valueOf(newExamTime)); // Assuming setExamTime() accepts a String
+        selectedExam.setExamTime(newExamTimeText); // Assuming setExamTime() accepts a String
         selectedExam.setPublish(newPublishStatus); // Assuming setPublish() exists
         selectedExam.setQuestionKeys(questionKeys); // Assuming setQuestionKeys() exists
 
@@ -316,27 +355,9 @@ public class ExamManageController implements Initializable {
 
         // Filter questions based on the inputs
         for (Exam exam : allExams) {
-            boolean matches = true;
-
-            // Check if question content matches
-            if (!ExamName.isEmpty() && !exam.getExamName().toLowerCase().contains(ExamName)) {
-                matches = false;
-            }
-
-            // Check if the CourseID matches
-
-            if (CourseID != null && !CourseID.equals(String.valueOf(exam.getCourseKey()))) {
-                matches = false;
-            }
-
-            // Check if the score matches
-
-            if (!Publish.isEmpty() && !(exam.getPublish().equals(Publish))) {
-                matches = false;
-            }
 
             // If all checks pass, add the question to the filtered list
-            if (matches) {
+            if (CheckExamMatch(exam, ExamName, CourseID, Publish)) {
                 filteredExams.add(exam);
             }
         }
@@ -367,31 +388,9 @@ public class ExamManageController implements Initializable {
 
         // Filter questions based on the inputs
         for (Question question : allQuestions) {
-            boolean matches = true;
 
-            // Check if question content matches
-            if (!questionContent.isEmpty() && !question.getQuestionContent().toLowerCase().contains(questionContent)) {
-                matches = false;
-            }
-
-            // Check if the type matches
-            if (selectedType != null && !selectedType.isEmpty() && !question.getType().equals(selectedType)) {
-                matches = false;
-            }
-
-            // Check if the score matches
-            if (!scoreText.isEmpty()) {
-                try {
-                    int score = Integer.parseInt(scoreText);
-                    if (question.getScore() == null || Integer.parseInt(question.getScore()) != score) {
-                        matches = false;
-                    }
-                } catch (NumberFormatException e) {
-                    matches = false; // Handle invalid score input
-                }
-            }
             // If all checks pass, add the question to the filtered list
-            if (matches) {
+            if (CheckQuestionMatch(question, questionContent, selectedType, scoreText)) {
                 filteredQuestions.add(question);
             }
         }
@@ -402,7 +401,7 @@ public class ExamManageController implements Initializable {
     public void Deletefromleft(ActionEvent actionEvent) {
         Question selectedQuestion = questionInExamTable.getSelectionModel().getSelectedItem();
 
-        if (selectedQuestion != null) {
+        if (!CheckNull(selectedQuestion)) {
             // Remove the selected question from the questionInExamTable
             questionInExamTable.getItems().remove(selectedQuestion);
 
@@ -410,50 +409,48 @@ public class ExamManageController implements Initializable {
             showMsg("Error", "Please select a question to delete.");
         }
     }
-
-    public void Addtoleft(ActionEvent actionEvent) {
+    public boolean HasDuplicate(Question newQuestion) {
+        // Iterate through the items in the questionInExamTable
+        for (Question existingQuestion : questionInExamTable.getItems()) {
+            // Compare their IDs
+            if (Objects.equals(existingQuestion.getreferID(), String.valueOf(newQuestion.getId()))) {
+                return true; // Duplicate found
+            }
+        }
+        return false;
+    }
+        public void Addtoleft(ActionEvent actionEvent) {
         Question selectedQuestion = questionTable.getSelectionModel().getSelectedItem();
 
-        if (selectedQuestion != null) {
-            // Create a full copy of the selected question
-            Question copiedQuestion = new Question(
-                    selectedQuestion.getQuestionContent(),
-                    selectedQuestion.getOptionA(),
-                    selectedQuestion.getOptionB(),
-                    selectedQuestion.getOptionC(),
-                    selectedQuestion.getOptionD(),
-                    selectedQuestion.getAnswer(),
-                    selectedQuestion.getType(),
-                    selectedQuestion.getScore(),
-                    String.valueOf(selectedQuestion.getId())
-            );
-            //
-            // Add the copied question to the questionInExamTable
-            questionInExamTable.getItems().add(copiedQuestion);
-            //printReferIDs();
+        if (!CheckNull(selectedQuestion)&&!(HasDuplicate(selectedQuestion)) ){
+                // Create a full copy of the selected question
+                Question copiedQuestion = new Question(
+                        selectedQuestion.getQuestionContent(),
+                        selectedQuestion.getOptionA(),
+                        selectedQuestion.getOptionB(),
+                        selectedQuestion.getOptionC(),
+                        selectedQuestion.getOptionD(),
+                        selectedQuestion.getAnswer(),
+                        selectedQuestion.getType(),
+                        selectedQuestion.getScore(),
+                        String.valueOf(selectedQuestion.getId())
+                );
+                //
+                // Add the copied question to the questionInExamTable
+                questionInExamTable.getItems().add(copiedQuestion);
+                //printReferIDs();
+        }else {
+                showMsg("Error", "Please select a non duplicate question to add.");
+            }
+    }
 
-        } else {
-            showMsg("Error", "Please select a question to add.");
+        public void refreshExam (ActionEvent actionEvent){
+            List<Exam> exams = ExamDatabase.getAll(); // Fetch all exams from the database
+            ExamTable.setItems(FXCollections.observableArrayList(exams)); // Update the table
         }
-    }
 
-    private void printReferIDs() {
-        System.out.println("Refer IDs in questionInExamTable:");
-        for (Question question : questionInExamTable.getItems()) {
-            // Assuming getreferID() returns the referID of the question
-            String referID = question.getreferID();
-            System.out.println(referID);
+        public void refreshQuestionTable (ActionEvent actionEvent){
+            List<Question> questions = QuestionDatabase.getAll(); // Fetch all exams from the database
+            questionTable.setItems(FXCollections.observableArrayList(questions)); // Update the table
         }
-    }
-
-    public void refreshExam(ActionEvent actionEvent) {
-        List<Exam> exams = ExamDatabase.getAll(); // Fetch all exams from the database
-        ExamTable.setItems(FXCollections.observableArrayList(exams)); // Update the table
-    }
-
-    public void refreshQuestionTable(ActionEvent actionEvent) {
-        List<Question> questions = QuestionDatabase.getAll(); // Fetch all exams from the database
-        questionTable.setItems(FXCollections.observableArrayList(questions)); // Update the table
-    }
-
 }
