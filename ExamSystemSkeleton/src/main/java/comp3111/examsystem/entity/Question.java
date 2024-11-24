@@ -13,7 +13,6 @@ public class Question extends Entity {
     private String score;
     private String referID;
 
-
     public Question() {
         super();
     }
@@ -41,6 +40,8 @@ public class Question extends Entity {
         this.score = score;
         this.referID = "0";
     }
+
+
     // Getters and setters
     public String getQuestionContent() {
         return questionContent;
@@ -111,4 +112,5 @@ public class Question extends Entity {
     public void setreferID(String referID) {
         this.referID = referID;
     }
+
 }
