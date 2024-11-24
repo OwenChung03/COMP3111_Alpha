@@ -29,34 +29,38 @@ public class TeacherLoginController implements Initializable {
     private TextField registernameTxt;
     @FXML
     private PasswordField passwordTxt;
-    @FXML
     private Button loginButton;
-    @FXML
     private Button registerButton;
-    @FXML
     public TextField nameTxt;
-    @FXML
     public ComboBox<String> genderCombo; // Ensure this matches the fx:id in FXML
-    @FXML
     public TextField ageTxt;
-    @FXML
     public ComboBox<String> PositionCombo;
-    @FXML
     public TextField departmentTxt;
-    @FXML
     public PasswordField passwordconfirmTxt;
-    private Database<Teacher> TeacherDatabase;
+    static Database<Teacher> TeacherDatabase;
 
     public void initialize(URL location, ResourceBundle resources) {
         TeacherDatabase = new Database<>(Teacher.class);
     }
     // Method to register a new teacher (to be called in your register method)
 
-    private boolean ValidLogin (String username, String password){
+    static boolean ValidLogin(String username, String password){
         // Initialize the database
         boolean username_flag = username.matches(ALLOWED_LOGIN_CHARS);
         boolean password_flag = password.matches(ALLOWED_PASSWORD_CHARS);
         return username_flag && password_flag;
+    }
+    static boolean CheckEmpty(List<Teacher> teachers){
+        if (teachers.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+    static boolean Checkpassword(List<Teacher> teachers, String password){
+        if (teachers.get(0).getPassword().equals(password)) {
+            return true;
+        }
+        return false;
     }
 
     @FXML
@@ -65,31 +69,27 @@ public class TeacherLoginController implements Initializable {
         String password = passwordTxt.getText();
         List<Teacher> teachers = TeacherDatabase.queryByField("username", username);
         // Assume we have an validation method
-        if (teachers.isEmpty()) {
+        if (CheckEmpty(teachers)) {
             showMsg("Error", "Login Failed: No user found.");
-            return;
-        }
+            return;}
+        else if (ValidLogin(username, password) && Checkpassword(teachers,password)) {
+            showMsg("Welcome", "Login Successful");
 
-        if (ValidLogin(username, password) && teachers.get(0).getPassword().equals(password)) {
-
-            if (true) {
-                showMsg("Welcome", "Login Successful");
-
-                FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("TeacherMainUI.fxml"));
-                Stage stage = new Stage();
-                stage.setTitle("Hi " + usernameTxt.getText() + ", Welcome to HKUST Examination System");
-                try {
-                    stage.setScene(new Scene(fxmlLoader.load()));
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-                stage.show();
-                ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();
-            } else {
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("TeacherMainUI.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Hi " + usernameTxt.getText() + ", Welcome to HKUST Examination System");
+            try {
+                stage.setScene(new Scene(fxmlLoader.load()));
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            stage.show();
+            ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();
+        }else {
                 showMsg("Error", "Invalid username or password.");
             }
-        }
     }
+
 
     @FXML
     public void register (ActionEvent e){
@@ -113,62 +113,82 @@ public class TeacherLoginController implements Initializable {
     @FXML
     public void enterinfo (ActionEvent e){
         // Retrieve data from input fields
-        String username = usernameTxt.getText();
+        String username = registernameTxt.getText();
+
         String name = nameTxt.getText();
+
         String age = ageTxt.getText();
+
         String gender = genderCombo.getValue();
+
         String position = PositionCombo.getValue();
+
         String department = departmentTxt.getText();
+
         String password = passwordTxt.getText();
+
         String passwordConfirm = passwordconfirmTxt.getText();
 
         // Basic validation (you can expand this as needed)
-        if (username.isEmpty() || name.isEmpty() || gender == null || age.isEmpty() || position == null || department.isEmpty() || password.isEmpty() || passwordConfirm.isEmpty()) {
-            // Show an error message (you can use an Alert dialog for this)
+        if (!CheckRegister(username,name,gender,age,position,department,password,passwordConfirm)){
             showMsg("Error", "Error: Please fill in all fields correctly.");
             return;
         }
-        try {// Convert age from String to int
-            int agenum = Integer.parseInt(ageTxt.getText());
-            if (agenum <= 0) {
-                showMsg("Error", "Error: Age must be a positive number.");
-                return;
-            }
-        } catch (NumberFormatException e1) {
+        else if(!CheckAge(age)) {
             showMsg("Error", "Error: Please enter a valid age.");
             return;
         }
+        else if(!checkPassword(password, passwordConfirm)) {
 
-        // Validate that the passwords match
-        if (!password.equals(passwordConfirm)) {
             showMsg("Error", "Error: Passwords do not match.");
             return;
         }
-        if (!TeacherDatabase.queryByField("username", username).isEmpty()) {
+        else if(checkUser(username)) {
+
             showMsg("Error", "Error: Username already exists. Please choose a different one.");
             return;
         }
-
         // Create a new Teacher object
         Teacher newTeacher = new Teacher(username, name, gender, age, position, department, password);
 
-        System.out.println(newTeacher);
+        //System.out.println(newTeacher);
 
         // Add the new student to the database (write to file)
         TeacherDatabase.add(newTeacher);
 
-        System.out.println("Added");
-
-        List<Teacher> allTeachers = TeacherDatabase.getAll();
-        System.out.println("All teachers after registration:");
-        for (Teacher teacher : allTeachers) {
-            System.out.println(teacher);
-        }
-
-        // Show success message
         showMsg("Welcome", "Teacher registered successfully!");
 
         Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
         stage.close();
+    }
+    static boolean CheckRegister(String username, String name, String gender, String age, String position, String department, String password, String passwordConfirm) {
+        if (username.isEmpty()||name.isEmpty() || gender == null || age.isEmpty() || position == null || department.isEmpty() || password.isEmpty() || passwordConfirm.isEmpty()){
+            return false;
+        }
+        return true;
+    }
+    static boolean CheckAge(String age) {
+        try {// Convert age from String to int
+            int agenum = Integer.parseInt(age);
+            if (agenum <= 0) {
+                return false;
+            }
+        } catch (NumberFormatException e1) {
+            return false;
+        }
+        return true;
+    }
+    static boolean checkPassword(String password, String passwordConfirm) {
+        // Validate that the passwords match
+        if (!password.equals(passwordConfirm)) {
+            return false;
+        }
+        return true;
+    }
+    static boolean checkUser(String username){
+        if (TeacherDatabase.queryByField("username", username).isEmpty()) {
+             return false;
+        }
+        return true;
     }
 }
