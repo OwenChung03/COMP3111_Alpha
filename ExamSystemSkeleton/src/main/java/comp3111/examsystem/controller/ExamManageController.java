@@ -235,8 +235,10 @@ public class ExamManageController implements Initializable {
         }
 
         // Check if the score matches
-
-        return Publish.isEmpty() || exam.getPublish().equals(Publish);
+        if(!(Publish.isEmpty() || exam.getPublish().contains(Publish))){
+            return false;
+        }
+        return true;
     }
     static boolean CheckQuestionMatch(Question question, String questionContent, String selectedType, String scoreText){
 
@@ -337,7 +339,7 @@ public class ExamManageController implements Initializable {
         // Update the selected exam
         selectedExam.setExamName(newExamName);
         selectedExam.setCourseKey(newCourseID); // Assuming setCourseKey() exists
-        selectedExam.setExamTime(String.valueOf(Integer.parseInt(newExamTimeText))); // Assuming setExamTime() accepts a String
+        selectedExam.setExamTime(newExamTimeText); // Assuming setExamTime() accepts a String
         selectedExam.setPublish(newPublishStatus); // Assuming setPublish() exists
         selectedExam.setQuestionKeys(questionKeys); // Assuming setQuestionKeys() exists
 
@@ -423,35 +425,35 @@ public class ExamManageController implements Initializable {
         if (!CheckNull(selectedQuestion)) {
             // Create a full copy of the selected question
             Question copiedQuestion = new Question(
-                    selectedQuestion.getQuestionContent(),
-                    selectedQuestion.getOptionA(),
-                    selectedQuestion.getOptionB(),
-                    selectedQuestion.getOptionC(),
-                    selectedQuestion.getOptionD(),
-                    selectedQuestion.getAnswer(),
-                    selectedQuestion.getType(),
-                    selectedQuestion.getScore(),
-                    String.valueOf(selectedQuestion.getId())
-            );
-            //
-            // Add the copied question to the questionInExamTable
-            questionInExamTable.getItems().add(copiedQuestion);
-            //printReferIDs();
+                        selectedQuestion.getQuestionContent(),
+                        selectedQuestion.getOptionA(),
+                        selectedQuestion.getOptionB(),
+                        selectedQuestion.getOptionC(),
+                        selectedQuestion.getOptionD(),
+                        selectedQuestion.getAnswer(),
+                        selectedQuestion.getType(),
+                        selectedQuestion.getScore(),
+                        String.valueOf(selectedQuestion.getId())
+                );
+                //
+                // Add the copied question to the questionInExamTable
+                questionInExamTable.getItems().add(copiedQuestion);
+                //printReferIDs();
 
-        } else {
-            showMsg("Error", "Please select a question to add.");
+            } else {
+                showMsg("Error", "Please select a question to add.");
+            }
+    }
+
+        public void refreshExam (ActionEvent actionEvent){
+            List<Exam> exams = ExamDatabase.getAll(); // Fetch all exams from the database
+            ExamTable.setItems(FXCollections.observableArrayList(exams)); // Update the table
         }
-    }
 
+        public void refreshQuestionTable (ActionEvent actionEvent){
+            List<Question> questions = QuestionDatabase.getAll(); // Fetch all exams from the database
+            questionTable.setItems(FXCollections.observableArrayList(questions)); // Update the table
+        }
 
-    public void refreshExam(ActionEvent actionEvent) {
-        List<Exam> exams = ExamDatabase.getAll(); // Fetch all exams from the database
-        ExamTable.setItems(FXCollections.observableArrayList(exams)); // Update the table
-    }
-
-    public void refreshQuestionTable(ActionEvent actionEvent) {
-        List<Question> questions = QuestionDatabase.getAll(); // Fetch all exams from the database
-        questionTable.setItems(FXCollections.observableArrayList(questions)); // Update the table
-    }
 
 }

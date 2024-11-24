@@ -7,6 +7,10 @@ import comp3111.examsystem.tools.Database;
 import org.junit.jupiter.api.Test;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static comp3111.examsystem.controller.ExamManageController.*;
 import static comp3111.examsystem.controller.QuestionManageController.*;
 import static comp3111.examsystem.controller.TeacherLoginController.*;
@@ -129,7 +133,7 @@ class ExamManageControllerTest {
         String questionKeys = "0";
         Exam exam = new Exam("Quiz1", "COMP2211", examTime, publish, questionKeys);
         String new_publish = "";
-        assertEquals(false,CheckExamMatch(exam,examName, courseKey, new_publish));
+        assertEquals(false,CheckExamMatch(exam,examName, courseKey, ""));
     }
     @Test
     void Wrong_Publish() {
@@ -206,6 +210,16 @@ class ExamManageControllerTest {
         assertEquals(false,CheckQuestionMatch(question, questionContent, selectedType, scoreText) );
     }
     @Test
+    void NegativeScore() {
+        Question question = new Question("What is your name","owen","terry","jerry","other","D","Single","10");
+        question.setScore(null);
+        String questionContent = "";
+        String selectedType = "";
+        String scoreText = "-10";
+
+        assertEquals(false,CheckQuestionMatch(question, questionContent, selectedType, scoreText) );
+    }
+    @Test
     void test_Validation() {
         String examName = "Quiz1";
         String courseID = "COMP2211";
@@ -229,6 +243,5 @@ class ExamManageControllerTest {
         Exam exam = new Exam("Quiz1", courseKey, examTime, publish, questionKeys);;
         assertEquals(false,CheckNull(exam));
     }
-
 
 }
