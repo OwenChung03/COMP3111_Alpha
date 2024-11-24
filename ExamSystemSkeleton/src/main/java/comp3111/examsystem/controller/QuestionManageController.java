@@ -59,12 +59,17 @@ public class QuestionManageController implements Initializable {
         setupTableColumns();
         refreshQUI(null);
         questionTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
+            if (!CheckNull(newValue)) {
                 populateFields(newValue);
             }
         });// Load initial data
     }
-
+    static boolean CheckNull(Question question){
+        if(question == null){
+            return true;
+        }
+        return false;
+    }
     private void setupTableColumns() {
         questionColumn.setCellValueFactory(new PropertyValueFactory<>("questionContent"));
         optionAColumn.setCellValueFactory(new PropertyValueFactory<>("optionA"));
@@ -90,6 +95,32 @@ public class QuestionManageController implements Initializable {
         refreshQUI(actionEvent);
     }
 
+    static boolean QuestionChecking(Question question, String questionContent, String selectedType, String scoreText) {
+        // Check if question content matches
+        if (!questionContent.isEmpty()){
+            return false;
+        }
+        if(!question.getQuestionContent().toLowerCase().contains(questionContent)){
+            return false;
+        }
+        // Check if the type matches
+        if (!(selectedType == null || selectedType.isEmpty() || question.getType().equals(selectedType))) {
+            return false;
+        }
+
+        // Check if the score matches
+        if (!scoreText.isEmpty()) {
+            try {
+                int score = Integer.parseInt(scoreText);
+                if (question.getScore() == null || Integer.parseInt(question.getScore()) != score) {
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                return false; // Handle invalid score input
+            }
+        }
+        return true;
+    }
     public void queryQUI(ActionEvent actionEvent) {
         // Get the filter values from the UI components
         String questionContent = teacherquestionTextField.getText().toLowerCase().trim();
@@ -104,31 +135,8 @@ public class QuestionManageController implements Initializable {
 
         // Filter questions based on the inputs
         for (Question question : allQuestions) {
-            boolean matches = true;
-
-            // Check if question content matches
-            if (!questionContent.isEmpty() && !question.getQuestionContent().toLowerCase().contains(questionContent)) {
-                matches = false;
-            }
-
-            // Check if the type matches
-            if (selectedType != null && !selectedType.isEmpty() && !question.getType().equals(selectedType)) {
-                matches = false;
-            }
-
-            // Check if the score matches
-            if (!scoreText.isEmpty()) {
-                try {
-                    int score = Integer.parseInt(scoreText);
-                    if (question.getScore() == null || Integer.parseInt(question.getScore()) != score) {
-                        matches = false;
-                    }
-                } catch (NumberFormatException e) {
-                    matches = false; // Handle invalid score input
-                }
-            }
             // If all checks pass, add the question to the filtered list
-            if (matches) {
+            if (QuestionChecking(question, questionContent, selectedType, scoreText)) {
                 filteredQuestions.add(question);
             }
         }
@@ -139,7 +147,51 @@ public class QuestionManageController implements Initializable {
         List<Question> questions = QuestionDatabase.getAll();
         questionTable.setItems(FXCollections.observableArrayList(questions));
     }
-
+    static boolean CheckEmptyInput(String questionContent, String optionA, String optionB, String optionC, String optionD, String answer, String type, String score){
+        if (questionContent.isEmpty() || optionA.isEmpty() || optionB.isEmpty() ||
+                optionC.isEmpty() || optionD.isEmpty() || answer.isEmpty()||type.isEmpty()||score.isEmpty()) {
+            return true;// Early exit on validation failure
+        }
+        return false;
+    }
+    static boolean CheckNegative(String score){
+        try {
+            // Attempt to parse the score
+            int parsedScore = Integer.parseInt(score);
+            // Check if the score is negative
+            return parsedScore < 0; // Return true if negative
+        } catch (NumberFormatException e) {
+            // Return true for invalid inputs (e.g., empty, non-numeric)
+            return true;
+        }
+    }
+    static boolean Validation(String questionContent, String optionA, String optionB, String optionC, String optionD, String answer, String type, String score){
+        if(CheckEmptyInput(questionContent,optionA,optionB,optionC,optionD,answer,type,score)){
+            showMsg("Error","Error: All fields must be filled.");
+            return false;
+        }
+        if(CheckNegative(score)){
+            showMsg("Error","Error: Score is negative.");
+            return false;
+        }
+        if ("Single".equals(type)) {
+            // Validate single choice answer
+            if (!isValidSingleAnswer(answer)) {
+                showMsg("Error","Error: For single type, answer must be one of: A, B, C, D.");
+                return false; // Early exit on validation failure
+            }
+        } else if ("Multiple".equals(type)) {
+            // Validate multiple choice answer
+            if (!isValidMultipleAnswer(answer)) {
+                showMsg("Error","Error: For multiple type, answer must be a combination of letters A, B, C, D.");
+                return false; // Early exit on validation failure
+            }
+        } else {
+            showMsg("Error","Error: Invalid question type selected.");
+            return false; // Early exit on validation failure// Early exit on validation failure
+        }
+        return true;
+    }
     public void addQuestion(ActionEvent actionEvent) {
         String questionContent = newQuestionTextField.getText().trim();
         String optionA = optionATextField.getText().trim();
@@ -151,29 +203,9 @@ public class QuestionManageController implements Initializable {
         String score = newScoreTextField.getText().trim();
 
         // Validate inputs
-        if (questionContent.isEmpty() || optionA.isEmpty() || optionB.isEmpty() ||
-                optionC.isEmpty() || optionD.isEmpty() || score.isEmpty()) {
-            showMsg("Error","Error: All fields must be filled.");
-            return;// Early exit on validation failure
+        if(!Validation(questionContent,optionA,optionB,optionC,optionD,answer,type,score)){
+            return;
         }
-
-        if ("Single".equals(type)) {
-            // Validate single choice answer
-            if (!isValidSingleAnswer(answer)) {
-                showMsg("Error","Error: For single type, answer must be one of: A, B, C, D.");
-                return; // Early exit on validation failure
-            }
-        } else if ("Multiple".equals(type)) {
-            // Validate multiple choice answer
-            if (!isValidMultipleAnswer(answer)) {
-                showMsg("Error","Error: For multiple type, answer must be a combination of letters A, B, C, D.");
-                return; // Early exit on validation failure
-            }
-        } else {
-            showMsg("Error","Error: Invalid question type selected.");
-            return; // Early exit on validation failure// Early exit on validation failure
-        }
-
         // Create a new Question object and add it to the database
         Question newQuestion = new Question(questionContent, optionA, optionB, optionC, optionD, answer, type, score);
         QuestionDatabase.add(newQuestion); // Assuming add method in Database class
@@ -181,12 +213,12 @@ public class QuestionManageController implements Initializable {
     }
 
     // Helper method to validate single answer
-    private boolean isValidSingleAnswer(String answer) {
+    static boolean isValidSingleAnswer(String answer) {
         return "A".equals(answer) || "B".equals(answer) || "C".equals(answer) || "D".equals(answer);
     }
 
     // Helper method to validate multiple answers
-    private boolean isValidMultipleAnswer(String answer) {
+    static boolean isValidMultipleAnswer(String answer) {
         // Check if the answer contains only valid characters and has no duplicates
         // Check that the answer is not longer than 4 characters
         if (answer.length() > 4) {
@@ -222,13 +254,9 @@ public class QuestionManageController implements Initializable {
         Question selectedQuestion = questionTable.getSelectionModel().getSelectedItem();
 
         // Check if a question is selected
-        if (selectedQuestion == null) {
+        if (CheckNull(selectedQuestion)) {
             // Show an alert if no question is selected
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("No Selection");
-            alert.setHeaderText(null);
-            alert.setContentText("Please select a question to delete.");
-            alert.showAndWait();
+            showMsg("No Selection","Please select a question to delete.");
             return;
         }
 
@@ -260,43 +288,33 @@ public class QuestionManageController implements Initializable {
         newTypeComboBox.setValue(question.getType());
         newScoreTextField.setText(String.valueOf(question.getScore()));
     }
+
   public void updateQuestion(ActionEvent actionEvent) {
-      Question selectedQuestion = questionTable.getSelectionModel().getSelectedItem();
+      Question selectedQuestion_1 = questionTable.getSelectionModel().getSelectedItem();
 
-      if (newQuestionTextField.getText().trim().isEmpty() || optionATextField.getText().trim().isEmpty() || optionBTextField.getText().trim().isEmpty() ||
-              optionCTextField.getText().trim().isEmpty() || optionDTextField.getText().trim().isEmpty() || newScoreTextField.getText().trim().isEmpty()) {
-          showMsg("Error","Error: All fields must be filled.");
-          return;// Early exit on validation failure
+      String questionContent = newQuestionTextField.getText().trim();
+      String optionA = optionATextField.getText().trim();
+      String optionB = optionBTextField.getText().trim();
+      String optionC = optionCTextField.getText().trim();
+      String optionD = optionDTextField.getText().trim();
+      String answer = AnswerTextField.getText().trim();
+      String type = newTypeComboBox.getValue();
+      String score = newScoreTextField.getText().trim();
+      if(!Validation(questionContent,optionA,optionB,optionC,optionD,answer,type,score)){
+          return;
       }
-
-      if ("Single".equals(newTypeComboBox.getValue())) {
-          // Validate single choice answer
-          if (!isValidSingleAnswer(AnswerTextField.getText().trim())) {
-              showMsg("Error","Error: For single type, answer must be one of: A, B, C, D.");
-              return; // Early exit on validation failure
-          }
-      } else if ("Multiple".equals(newTypeComboBox.getValue())) {
-          // Validate multiple choice answer
-          if (!isValidMultipleAnswer(AnswerTextField.getText().trim())) {
-              showMsg("Error","Error: For multiple type, answer must be a combination of letters A, B, C, D.");
-              return; // Early exit on validation failure
-          }
-      } else {
-          showMsg("Error","Error: Invalid question type selected.");
-          return; // Early exit on validation failure// Early exit on validation failure
-      }
-
-      if (selectedQuestion != null) {
+      if (!CheckNull(selectedQuestion_1)) {
           // Update the question's fields with values from the text fields
-          selectedQuestion.setQuestionContent(newQuestionTextField.getText().trim());
-          selectedQuestion.setOptionA(optionATextField.getText().trim());
-          selectedQuestion.setOptionB(optionBTextField.getText().trim());
-          selectedQuestion.setOptionC(optionCTextField.getText().trim());
-          selectedQuestion.setOptionD(optionDTextField.getText().trim());
-          selectedQuestion.setAnswer(AnswerTextField.getText().trim());
-          selectedQuestion.setType(newTypeComboBox.getValue());
-          selectedQuestion.setScore(newScoreTextField.getText().trim());
-
+          Question selectedQuestion = QuestionDatabase.queryByKey(String.valueOf(selectedQuestion_1.getId()));
+          selectedQuestion.setQuestionContent(questionContent);
+          selectedQuestion.setOptionA(optionA);
+          selectedQuestion.setOptionB(optionB);
+          selectedQuestion.setOptionC(optionC);
+          selectedQuestion.setOptionD(optionD);
+          selectedQuestion.setAnswer(answer);
+          selectedQuestion.setType(type);
+          selectedQuestion.setScore(score);
+          QuestionDatabase.update(selectedQuestion);
           // Refresh the TableView to show updated data
           questionTable.refresh();
 
